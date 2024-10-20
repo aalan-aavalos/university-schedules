@@ -2,6 +2,8 @@
 
 import React from "react";
 
+import Padoru from "@/public/gifs/padoru.gif";
+
 import { generateClient } from "aws-amplify/api";
 import { listTodos } from "@/graphql/queries";
 
@@ -40,12 +42,13 @@ const ButtonQuery = () => {
       </Button>
 
       <Image
-        src="/gifs/padoru.gif"
+        src={Padoru.src}
         alt="Descripción de la imagen"
         className="w-[10%] h-[10%] object-cover"
         width={100}
         height={100}
         priority
+        unoptimized
       />
 
       <div className="p-2 bg-blue-500 ">Hola</div>
