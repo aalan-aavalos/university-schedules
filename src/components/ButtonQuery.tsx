@@ -9,6 +9,7 @@ import { Button } from "@mui/material";
 
 import { enqueueSnackbar } from "notistack";
 import { useConfirm } from "material-ui-confirm";
+import Image from "next/image";
 
 const client = generateClient();
 
@@ -37,6 +38,15 @@ const ButtonQuery = () => {
       <Button variant="contained" onClick={() => query_data()}>
         Consultar datos
       </Button>
+
+      <Image
+        src="/gifs/padoru.gif"
+        alt="Descripción de la imagen"
+        className="w-[10%] h-[10%] object-cover"
+        width={100}
+        height={100}
+        priority
+      />
 
       <div className="p-2 bg-blue-500 ">Hola</div>
     </>
