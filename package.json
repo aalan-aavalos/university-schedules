@@ -11,8 +11,16 @@
   "dependencies": {
     "@aws-amplify/adapter-nextjs": "^1.2.22",
     "@aws-amplify/ui-react": "^6.5.4",
+    "@emotion/cache": "^11.13.1",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.4",
+    "@mui/material": "^6.1.4",
+    "@mui/material-nextjs": "^6.1.4",
     "aws-amplify": "^6.6.5",
+    "material-ui-confirm": "^3.0.16",
     "next": "14.2.15",
+    "notistack": "^3.0.1",
     "react": "^18",
     "react-dom": "^18"
   },
