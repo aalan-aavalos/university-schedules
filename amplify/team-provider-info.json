@@ -10,6 +10,15 @@
       "StackName": "amplify-universityschedules-dev-8efbe",
       "StackId": "arn:aws:cloudformation:us-east-1:339712969873:stack/amplify-universityschedules-dev-8efbe/52944960-8d73-11ef-98d6-12c5ab4778b3",
       "AmplifyAppId": "dm7qjm85o3673"
+    },
+    "categories": {
+      "auth": {
+        "universityschedules659f8662": {},
+        "universityschedules": {}
+      },
+      "api": {
+        "universityschedules": {}
+      }
     }
   }
 }

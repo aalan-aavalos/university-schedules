@@ -10,30 +10,30 @@ import { listTodos } from "@/graphql/queries";
 import { Button } from "@mui/material";
 
 import { enqueueSnackbar } from "notistack";
-import { useConfirm } from "material-ui-confirm";
+// import { useConfirm } from "materi/*  */al-ui-confirm";
 import Image from "next/image";
 
 const client = generateClient();
 
 const ButtonQuery = () => {
-  const confirm = useConfirm();
+  // const confirm = useConfirm();
 
   const query_data = async (name: string = "Invitado") => {
-    confirm({ description: "This action is permanent!" })
-      .then(async () => {
-        const allTodos = await client.graphql({
-          query: listTodos,
-        });
+    /* confirm({ description: "This action is permanent!" })
+      .then(async () => { */
+    const allTodos = await client.graphql({
+      query: listTodos,
+    });
 
-        console.log("Bienvenido,", name);
-        console.log("consultando....");
-        console.log(allTodos);
+    console.log("Bienvenido,", name);
+    console.log("consultando....");
+    console.log(allTodos);
 
-        enqueueSnackbar("That was easy!");
-      })
+    enqueueSnackbar("That was easy!");
+    /* })
       .catch(() => {
         enqueueSnackbar("That wasn't easy!");
-      });
+      }); */
   };
   return (
     <>
