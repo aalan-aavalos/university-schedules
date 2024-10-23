@@ -26,7 +26,7 @@ function useAuth(allowedRoles?: string[]): UseAuthResult {
                 setUser(null);
 
                 router.push('/');
-                console.error(err);
+                console.error("Error en la autenticación", err);
             } finally {
                 setLoading(false);
             }

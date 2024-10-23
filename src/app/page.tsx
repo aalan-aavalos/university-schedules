@@ -1,37 +1,40 @@
 "use client";
 
-import { fetchUserAttributes, signOut } from "aws-amplify/auth";
-import { withAuthenticator } from "@aws-amplify/ui-react";
-import "@aws-amplify/ui-react/styles.css";
+import React, { useState } from "react";
 
-import { Button } from "@mui/material";
-import { ButtonQuery } from "@/components/ButtonQuery";
+import { Box, Tab } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
-export function App() {
-  const info_user = async () => {
-    try {
-      const user = await fetchUserAttributes();
+import { SingInForm } from "@/components/login/SingInForm";
+import { SingUpForm } from "@/components/login/SingUpForm";
 
-      console.log("user:", user);
-    } catch (error) {
-      console.error("Error al obtener el usuario autenticado:", error);
-    }
+const App = () => {
+  const [value, setValue] = useState("1");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
   };
 
   return (
     <>
-      {/* <h1>Hello {user?.username}</h1> */}
-      <Button variant="contained" color="error" onClick={() => signOut()}>
-        Sign out
-      </Button>
+      <h1>Bienvenido</h1>
 
-      <Button variant="contained" onClick={info_user}>
-        See user
-      </Button>
-
-      <ButtonQuery />
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Sing In" value="1" />
+            <Tab label="Sing Up" value="2" />
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+          <SingInForm />
+        </TabPanel>
+        <TabPanel value="2">
+          <SingUpForm />
+        </TabPanel>
+      </TabContext>
     </>
   );
-}
+};
 
-export default withAuthenticator(App);
+export default App;
