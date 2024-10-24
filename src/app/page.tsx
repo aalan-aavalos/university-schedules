@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -9,9 +9,9 @@ import { SingInForm } from "@/components/login/SingInForm";
 import { SingUpForm } from "@/components/login/SingUpForm";
 
 const App = () => {
-  const [value, setValue] = useState("1");
+  const [value, setValue] = useState<string>("1");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
 

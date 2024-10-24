@@ -33,8 +33,9 @@ const Page = () => {
 
   return (
     <div>
-      <h1>Bienvenido, {user?.nickname}!</h1>
+      <h1>Bienvenido, {user?.preferred_username}!</h1>
       <p>Email: {user?.email}</p>
+      <p>Rol : {user?.["custom:rol"]}</p>
 
       <ButtonQuery />
       <Button

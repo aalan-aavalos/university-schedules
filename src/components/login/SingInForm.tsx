@@ -1,31 +1,67 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 
-import { Button, TextField } from "@mui/material";
-import { signIn, type SignInInput } from "aws-amplify/auth";
+import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+
+import {
+  signIn,
+  type SignInInput,
+  signOut,
+  fetchUserAttributes,
+  type FetchUserAttributesOutput,
+} from "aws-amplify/auth";
+
+import { enqueueSnackbar } from "notistack";
 
 import { useRouter } from "next/navigation";
 
-interface formProps {
+interface FormProps {
   email: string;
   password: string;
 }
 
-const initialForm: formProps = { email: "", password: "" };
+const initialForm: FormProps = { email: "", password: "" };
 
 const SingInForm = () => {
-  const [form, setForm] = useState<formProps>(initialForm);
+  const [form, setForm] = useState<FormProps>(initialForm);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
   const singInFunction = async ({ username, password }: SignInInput) => {
     try {
-      const { isSignedIn, nextStep } = await signIn({ username, password });
-      console.log(isSignedIn, nextStep);
+      setIsLoading(true);
+
+      const { isSignedIn } = await signIn({ username, password });
+
+      /* En caso de que la sessión no este activa termina todo */
+      if (!isSignedIn) {
+        console.error("Error al iniciar sesión");
+        enqueueSnackbar("Error al iniciar sesión", { variant: "error" });
+        return;
+      }
+
+      const { "custom:rol": rol }: FetchUserAttributesOutput =
+        await fetchUserAttributes();
+
+      if (!rol) {
+        await signOut();
+        console.error(
+          "La cuenta no tiene un rol definido o no exisite el rol, rol:",
+          rol
+        );
+        enqueueSnackbar(
+          "La cuenta no tiene un rol definido o no exisite el rol",
+          { variant: "error" }
+        );
+        return;
+      }
+
+      router.push("/dashboard");
     } catch (error) {
       console.log("error signing in", error);
     } finally {
       setForm(initialForm);
-      router.push("/dashboard");
+      setIsLoading(false);
     }
   };
 
@@ -43,31 +79,38 @@ const SingInForm = () => {
   };
 
   return (
-    <form onSubmit={(e) => onSubmit(e)}>
-      <TextField
-        required
-        type="email"
-        name="email"
-        label="Email"
-        variant="outlined"
-        autoComplete="email"
-        onChange={(e) => handleChange(e)}
-        value={form.email}
-      />
-      <TextField
-        required
-        type="password"
-        name="password"
-        label="Password"
-        variant="outlined"
-        autoComplete="current-password"
-        onChange={(e) => handleChange(e)}
-        value={form.password}
-      />
-      <Button variant="contained" type="submit">
-        Sing In
-      </Button>
-    </form>
+    <>
+      <Backdrop sx={{ color: "#fff", zIndex: 2000 }} open={isLoading}>
+        Cargando...
+        <CircularProgress color="inherit"></CircularProgress>
+      </Backdrop>
+
+      <form onSubmit={(e) => onSubmit(e)}>
+        <TextField
+          required
+          type="email"
+          name="email"
+          label="Email"
+          variant="outlined"
+          autoComplete="email"
+          onChange={(e) => handleChange(e)}
+          value={form.email}
+        />
+        <TextField
+          required
+          type="password"
+          name="password"
+          label="Password"
+          variant="outlined"
+          autoComplete="current-password"
+          onChange={(e) => handleChange(e)}
+          value={form.password}
+        />
+        <Button variant="contained" type="submit">
+          Sing In
+        </Button>
+      </form>
+    </>
   );
 };
 
