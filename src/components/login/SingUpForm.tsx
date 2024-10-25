@@ -1,5 +1,11 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
-import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 import {
   signUp,
   confirmSignUp,
@@ -142,8 +148,27 @@ const SingUpForm = () => {
         Cargando...
         <CircularProgress color="inherit"></CircularProgress>
       </Backdrop>
-
-      <form onSubmit={(e) => onSubmit(e)}>
+      <Box
+        component="form"
+        onSubmit={onSubmit}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          maxWidth: "400px",
+          padding: "2rem",
+          margin: "auto",
+          boxShadow: 1,
+          minHeight: "100vh", // Centra el contenido verticalmente
+        }}
+      >
+        <img
+          src="/logo.png" // Ruta de tu imagen
+          alt="Descripción de la imagen"
+          style={{ width: "100px", height: "100px", marginBottom: "1.5rem" }}
+        />
         {!isVerificationStep ? (
           <>
             <TextField
@@ -153,8 +178,10 @@ const SingUpForm = () => {
               label="Email"
               variant="outlined"
               autoComplete="email"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               value={form.email}
+              sx={{ marginBottom: "1.5rem" }}
+              fullWidth
             />
             <TextField
               required
@@ -163,8 +190,10 @@ const SingUpForm = () => {
               label="Password"
               variant="outlined"
               autoComplete="current-password"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               value={form.password}
+              sx={{ marginBottom: "1.5rem" }}
+              fullWidth
             />
             <TextField
               required
@@ -173,10 +202,12 @@ const SingUpForm = () => {
               label="Preferred Username"
               autoComplete="username"
               variant="outlined"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               value={form.preferred_username}
+              sx={{ marginBottom: "1.5rem" }}
+              fullWidth
             />
-            <Button variant="contained" type="submit">
+            <Button color="success" variant="contained" type="submit" sx={{ padding: "0.75rem" }} fullWidth>
               Sign Up
             </Button>
           </>
@@ -188,15 +219,17 @@ const SingUpForm = () => {
               name="verificationCode"
               label="Verification Code"
               variant="outlined"
-              onChange={(e) => handleChange(e)}
+              onChange={handleChange}
               value={form.verificationCode}
+              sx={{ marginBottom: "1.5rem" }}
+              fullWidth
             />
-            <Button variant="contained" type="submit">
+            <Button color="success" variant="contained" type="submit" sx={{ padding: "0.75rem" }} fullWidth>
               Verify
             </Button>
           </>
         )}
-      </form>
+      </Box>
     </>
   );
 };

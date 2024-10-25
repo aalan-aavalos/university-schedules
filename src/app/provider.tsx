@@ -10,11 +10,11 @@ import { ConfirmProvider } from "material-ui-confirm";
 import { SnackbarProvider } from "notistack";
 
 // Configuración de Amplify
-import { Amplify } from "aws-amplify";
-import amplifyConfig from "../aws-exports";
+// import { Amplify } from "aws-amplify";
+// import amplifyConfig from "../aws-exports";
 import "@aws-amplify/ui-react/styles.css";
 
-Amplify.configure(amplifyConfig, { ssr: true });
+// Amplify.configure(amplifyConfig, { ssr: true });
 
 import { ButtonProps } from "@mui/material";
 import { ConfirmOptions } from "material-ui-confirm";

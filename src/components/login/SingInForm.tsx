@@ -1,7 +1,11 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 
 import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
-
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
 import {
   signIn,
   type SignInInput,
@@ -77,41 +81,72 @@ const SingInForm = () => {
     console.log("Datos obtenidos....", form);
     singInFunction({ username: form.email, password: form.password });
   };
+    return (
+      <>
+        <Box
+  component="form"
+  onSubmit={onSubmit}
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    maxWidth: "400px",
+    padding: "2rem",
+    margin: "auto",
+    boxShadow: 1,
+  }}
+>
+  {/* Imagen arriba del primer TextField */}
+  <img
+    src="/logo.png" // Ruta de tu imagen
+    alt="Descripción de la imagen"
+    style={{ width: "100px", height: "100px", marginBottom: "1.5rem" }} // Estilos para la imagen
+  />
 
-  return (
-    <>
-      <Backdrop sx={{ color: "#fff", zIndex: 2000 }} open={isLoading}>
-        Cargando...
-        <CircularProgress color="inherit"></CircularProgress>
-      </Backdrop>
+  <TextField
+    fullWidth
+    required
+    type="email"
+    name="email"
+    label="Email"
+    variant="outlined"
+    autoComplete="email"
+    onChange={handleChange}
+    value={form.email}
+    sx={{ marginBottom: "1.5rem" }}
+  />
+  <TextField
+    fullWidth
+    required
+    type="password"
+    name="password"
+    label="Password"
+    variant="outlined"
+    autoComplete="current-password"
+    onChange={handleChange}
+    value={form.password}
+    sx={{ marginBottom: "1.5rem" }}
+  />
+  <Button
+    fullWidth
+    color="success"
+    variant="contained"
+    type="submit"
+    sx={{ padding: "0.75rem" }}
+  >
+    Sign In
+  </Button>
+</Box>
 
-      <form onSubmit={(e) => onSubmit(e)}>
-        <TextField
-          required
-          type="email"
-          name="email"
-          label="Email"
-          variant="outlined"
-          autoComplete="email"
-          onChange={(e) => handleChange(e)}
-          value={form.email}
-        />
-        <TextField
-          required
-          type="password"
-          name="password"
-          label="Password"
-          variant="outlined"
-          autoComplete="current-password"
-          onChange={(e) => handleChange(e)}
-          value={form.password}
-        />
-        <Button variant="contained" type="submit">
-          Sing In
-        </Button>
-      </form>
-    </>
-  );
-};
+  
+        <Backdrop sx={{ color: "#fff", zIndex: 2000 }} open={isLoading}>
+          Cargando...
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  };
 
 export { SingInForm };
