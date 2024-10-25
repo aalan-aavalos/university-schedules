@@ -4,6 +4,8 @@ import React from "react";
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 
+import { AppProvider } from "@toolpad/core/AppProvider";
+
 import { ConfirmProvider } from "material-ui-confirm";
 import { SnackbarProvider } from "notistack";
 
@@ -45,7 +47,9 @@ const Provider = ({ children }: { children: React.ReactNode }) => {
           horizontal: "center",
         }}
       >
-        <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+        <AppRouterCacheProvider>
+          <AppProvider>{children}</AppProvider>
+        </AppRouterCacheProvider>
       </SnackbarProvider>
     </ConfirmProvider>
   );
