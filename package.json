@@ -19,12 +19,14 @@
     "@mui/material": "^6.1.5",
     "@mui/material-nextjs": "^6.1.4",
     "@toolpad/core": "^0.8.1",
+    "@types/vis": "^4.21.27",
     "aws-amplify": "^6.6.5",
     "material-ui-confirm": "^3.0.16",
     "next": "14.2.15",
     "notistack": "^3.0.1",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "vis-timeline": "^7.7.3"
   },
   "devDependencies": {
     "@types/node": "^20",

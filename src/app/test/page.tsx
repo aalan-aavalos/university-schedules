@@ -18,7 +18,7 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 
 import { useDemoRouter } from "@toolpad/core/internal";
 
-const rol: string = "aadm";
+/* const rol: string = "adm"; */
 
 const NAVIGATION: Navigation = [
   {
@@ -27,7 +27,7 @@ const NAVIGATION: Navigation = [
     icon: <DashboardIcon />,
   },
 
-  rol === "adm" && {
+  /* rol === "adm" && */ {
     segment: "orders",
     title: "Orders",
     icon: <ShoppingCartIcon />,
@@ -87,7 +87,7 @@ export default function DashboardLayoutBranding(props: DemoProps) {
     <AppProvider
       navigation={NAVIGATION}
       branding={{
-        logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />,
+        /* logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />, */
         title: "University Schedules",
       }}
       router={router}
