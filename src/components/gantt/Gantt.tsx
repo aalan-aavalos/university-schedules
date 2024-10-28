@@ -76,7 +76,9 @@ const Gantt = () => {
       multiselect: true,
     };
 
-    const container: HTMLElement = document.getElementById("visualization");
+    const container: HTMLElement = document.getElementById(
+      "visualization"
+    ) as HTMLElement;
 
     new Timeline(container, itemsGantt, groupsGantt, options);
   };

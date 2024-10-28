@@ -31,6 +31,7 @@ const SingInForm = () => {
     try {
       setIsLoading(true);
 
+      /* await signOut(); */
       const { isSignedIn } = await signIn({ username, password });
 
       /* En caso de que la sessión no este activa termina todo */

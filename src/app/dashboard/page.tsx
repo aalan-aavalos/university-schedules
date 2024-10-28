@@ -1,59 +1,53 @@
 "use client";
 
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@mui/material";
-
+/* Autenticación */
 import { signOut, type FetchUserAttributesOutput } from "aws-amplify/auth";
-
+import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
-// layout:
-import Box from "@mui/material/Box";
-
-import Typography from "@mui/material/Typography";
-
+/* MaterialUI */
+import { Button, Box } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
+import { Dashboard, CalendarMonth, EditCalendar } from "@mui/icons-material";
 
-import DashboardIcon from "@mui/icons-material/Dashboard";
-
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-
+/* MUI Toolpad */
 import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
-
 import { DashboardLayout } from "@toolpad/core/DashboardLayout";
-
 import { useDemoRouter } from "@toolpad/core/internal";
 
+/* Components */
 import { Gantt } from "@/components/gantt/Gantt";
 
-/* const rol: string = "adm"; */
+/* const NAVIGATION_STUDENT: Navigation = [
+  {
+    segment: "dashboard",
+    title: "Inicio",
+    icon: <Dashboard />,
+  },
+  {
+    segment: "generator_schedule",
+    title: "Generar Calendario",
+    icon: <CalendarMonth />,
+  },
+  {
+    segment: "administrator_schedules",
+    title: "Administrar Calendarios",
+    icon: <EditCalendar />,
+  },
+]; */
 
-const NAVIGATION_STUDENT: Navigation = [
+/* const NAVIGATION_ADMIN: Navigation = [
   {
     segment: "dashboard",
     title: "Inicio",
     icon: <DashboardIcon />,
   },
 
-  {
-    segment: "teacher_schedule",
-    title: "Calendario",
-    icon: <CalendarMonthIcon />,
-  },
-];
-
-/* const NAVIGATION_TEACHER: Navigation = [
-  {
-    segment: "dashboard",
-    title: "Inicio",
-    icon: <DashboardIcon />,
-  },
-
-  {
-    segment: "student_schedule",
-    title: "Calendario",
-    icon: <CalendarMonthIcon />,
-  },
+  // {
+  //   segment: "user",
+  //   title: "Calendario",
+  //   icon: <CalendarMonthIcon />,
+  // },
 ]; */
 
 const demoTheme = createTheme({
@@ -72,6 +66,49 @@ const demoTheme = createTheme({
   },
 });
 
+const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
+  const NAVIGATION_BAR: Navigation = [
+    {
+      segment: "dashboard",
+      title: "Inicio",
+      icon: <Dashboard />,
+    },
+  ];
+
+  const { ["custom:rol"]: rol } = user as FetchUserAttributesOutput;
+
+  switch (rol) {
+    case "admin":
+      NAVIGATION_BAR.push({
+        segment: "generator_schedule",
+        title: "Generar Calendario",
+        icon: <CalendarMonth />,
+      });
+      break;
+
+    case "coordinator":
+      break;
+
+    case "teacher":
+      break;
+
+    case "student":
+      NAVIGATION_BAR.push({
+        segment: "administrator_schedules",
+        title: "Administrar Calendarios",
+        icon: <EditCalendar />,
+      });
+      break;
+
+    default:
+      break;
+  }
+
+  console.log(rol);
+
+  return NAVIGATION_BAR;
+};
+
 function DemoPageContent({
   pathname,
   user,
@@ -80,6 +117,7 @@ function DemoPageContent({
   user: FetchUserAttributesOutput | null;
 }) {
   const router = useRouter();
+
   return (
     <Box
       sx={{
@@ -87,7 +125,6 @@ function DemoPageContent({
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        textAlign: "center",
       }}
     >
       {pathname === "/dashboard" && (
@@ -113,20 +150,10 @@ function DemoPageContent({
   );
 }
 
-interface DemoProps {
-  window?: () => Window;
-}
-
-const Page = (props: DemoProps) => {
-  const { window } = props;
-
+const Page = () => {
   const routerMUI = useDemoRouter("/dashboard");
 
-  const demoWindow = window !== undefined ? window() : undefined;
-
   const { isAuthenticated, user, loading } = useAuth();
-
-  /* const getNavigation = (): Navigation => {}; */
 
   if (loading) {
     return <div>Loading...</div>;
@@ -138,14 +165,13 @@ const Page = (props: DemoProps) => {
 
   return (
     <AppProvider
-      navigation={NAVIGATION_STUDENT}
+      navigation={getNavigation(user)}
       branding={{
         /* logo: <img src="https://mui.com/static/logo.png" alt="MUI logo" />, */
         title: "University Schedules",
       }}
       router={routerMUI}
       theme={demoTheme}
-      window={demoWindow}
     >
       <DashboardLayout>
         <DemoPageContent user={user} pathname={routerMUI.pathname} />

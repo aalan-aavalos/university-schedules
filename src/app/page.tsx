@@ -5,15 +5,32 @@ import React, { SyntheticEvent, useState } from "react";
 import { Box, Tab } from "@mui/material";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 
+import { useRouter } from "next/navigation";
+
 import { SingInForm } from "@/components/login/SingInForm";
 import { SingUpForm } from "@/components/login/SingUpForm";
+
+import { useAuth } from "@/hooks/useAuth";
 
 const App = () => {
   const [value, setValue] = useState<string>("1");
 
+  const router = useRouter();
+
+  const { isAuthenticated, loading } = useAuth();
+
   const handleChange = (event: SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isAuthenticated) {
+    router.push("/dashboard");
+    return <h1>Ya tienes sesión</h1>;
+  }
 
   return (
     <>
@@ -38,6 +55,3 @@ const App = () => {
 };
 
 export default App;
-
-
-
