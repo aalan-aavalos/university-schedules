@@ -1,5 +1,45 @@
-type Todo @model @auth(rules: [{allow: private}]) {
+type Coordinator @model @auth(rules: [{allow: private}]) {
   id: ID!
-  name: String
+  coordinator_name: String!
+  areaID: ID! @index(name: "byArea")
+}
+
+type Teacher @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  teacher_name: String!
+  subjects: [Subject] @hasMany(indexName: "byTeacher", fields: ["id"])
+}
+
+type Student @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  student_name: String!
+  four_month_period: Int!
+  careerID: ID! @index(name: "byCareer")
+}
+
+type Subject @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  subject_name: String!
+  schedule: [AWSJSON!]
+  four_month_period: Int!
+  careerID: ID! @index(name: "byCareer")
+  teacherID: ID! @index(name: "byTeacher")
+}
+
+type Area @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  area_name: String!
+  careers: [Career] @hasMany(indexName: "byArea", fields: ["id"])
+  coordinators: [Coordinator] @hasMany(indexName: "byArea", fields: ["id"])
+}
+
+type Career @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  career_name: String!
+  level: String!
+  four_month_periods: Int!
+  areaID: ID! @index(name: "byArea")
+  subjects: [Subject] @hasMany(indexName: "byCareer", fields: ["id"])
+  students: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
 }
  

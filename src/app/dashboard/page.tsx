@@ -1,14 +1,22 @@
 "use client";
 
 /* Autenticación */
-import { signOut, type FetchUserAttributesOutput } from "aws-amplify/auth";
+import { type FetchUserAttributesOutput } from "aws-amplify/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
 
 /* MaterialUI */
-import { Button, Box } from "@mui/material";
+import { Box } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
-import { Dashboard, CalendarMonth, EditCalendar } from "@mui/icons-material";
+import {
+  SpaceDashboard,
+  CalendarMonth,
+  EditCalendar,
+  ManageAccounts,
+  Business,
+  PostAdd,
+  
+  School,
+} from "@mui/icons-material";
 
 /* MUI Toolpad */
 import { AppProvider, type Navigation } from "@toolpad/core/AppProvider";
@@ -16,62 +24,26 @@ import { DashboardLayout } from "@toolpad/core/DashboardLayout";
 import { useDemoRouter } from "@toolpad/core/internal";
 
 /* Components */
+
+// General
+import { Start } from "@/components/views/Start";
+
+// Administrator
+
+import { AreasAdmin } from "@/components/views/admin/AreasAdmin";
+import { CareerAdmin } from "@/components/views/admin/CareerAdmin";
+import { SubjectsAdmin } from "@/components/views/admin/SubjectsAdmin";
+import { UsersAdmin } from "@/components/views/admin/UsersAdmin";
+
+// Teacher
 import { Gantt } from "@/components/gantt/Gantt";
-
-/* const NAVIGATION_STUDENT: Navigation = [
-  {
-    segment: "dashboard",
-    title: "Inicio",
-    icon: <Dashboard />,
-  },
-  {
-    segment: "generator_schedule",
-    title: "Generar Calendario",
-    icon: <CalendarMonth />,
-  },
-  {
-    segment: "administrator_schedules",
-    title: "Administrar Calendarios",
-    icon: <EditCalendar />,
-  },
-]; */
-
-/* const NAVIGATION_ADMIN: Navigation = [
-  {
-    segment: "dashboard",
-    title: "Inicio",
-    icon: <DashboardIcon />,
-  },
-
-  // {
-  //   segment: "user",
-  //   title: "Calendario",
-  //   icon: <CalendarMonthIcon />,
-  // },
-]; */
-
-const demoTheme = createTheme({
-  cssVariables: {
-    colorSchemeSelector: "data-toolpad-color-scheme",
-  },
-  colorSchemes: { light: true, dark: true },
-  breakpoints: {
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 600,
-      lg: 1200,
-      xl: 1536,
-    },
-  },
-});
 
 const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
   const NAVIGATION_BAR: Navigation = [
     {
       segment: "dashboard",
       title: "Inicio",
-      icon: <Dashboard />,
+      icon: <SpaceDashboard />,
     },
   ];
 
@@ -79,17 +51,43 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
 
   switch (rol) {
     case "admin":
-      NAVIGATION_BAR.push({
-        segment: "generator_schedule",
-        title: "Generar Calendario",
-        icon: <CalendarMonth />,
-      });
+      NAVIGATION_BAR.push(
+        {
+          kind: "header",
+          title: "Administrador",
+        },
+        {
+          segment: "areas_admin",
+          title: "Areas",
+          icon: <Business />,
+        },
+        {
+          segment: "career_admin",
+          title: "Carreras",
+          icon: <School />,
+        },
+        {
+          segment: "subjects_admin",
+          title: "Materias",
+          icon: <PostAdd />,
+        },
+        {
+          segment: "user_admin",
+          title: "Usuarios",
+          icon: <ManageAccounts />,
+        }
+      );
       break;
 
     case "coordinator":
       break;
 
     case "teacher":
+      NAVIGATION_BAR.push({
+        segment: "generator_schedule",
+        title: "Generar Calendario",
+        icon: <CalendarMonth />,
+      });
       break;
 
     case "student":
@@ -109,6 +107,22 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
   return NAVIGATION_BAR;
 };
 
+const demoTheme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: "data-toolpad-color-scheme",
+  },
+  colorSchemes: { light: true, dark: true },
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 600,
+      md: 600,
+      lg: 1200,
+      xl: 1536,
+    },
+  },
+});
+
 function DemoPageContent({
   pathname,
   user,
@@ -116,8 +130,6 @@ function DemoPageContent({
   pathname: string;
   user: FetchUserAttributesOutput | null;
 }) {
-  const router = useRouter();
-
   return (
     <Box
       sx={{
@@ -127,24 +139,16 @@ function DemoPageContent({
         alignItems: "center",
       }}
     >
-      {pathname === "/dashboard" && (
-        <div>
-          <h1>Bienvenido, {user?.preferred_username}!</h1>
-          <p>Email: {user?.email}</p>
-          <p>Rol : {user?.["custom:rol"]}</p>
+      {/* General */}
+      {pathname === "/dashboard" && <Start user={user} />}
 
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => {
-              router.push("/");
-              signOut();
-            }}
-          >
-            Sign out
-          </Button>
-        </div>
-      )}
+      {/* Administrator */}
+      {pathname === "/areas_admin" && <AreasAdmin />}
+      {pathname === "/career_admin" && <CareerAdmin />}
+      {pathname === "/subjects_admin" && <SubjectsAdmin />}
+      {pathname === "/user_admin" && <UsersAdmin />}
+
+      {/* Teacher */}
       {pathname === "/teacher_schedule" && <Gantt />}
     </Box>
   );

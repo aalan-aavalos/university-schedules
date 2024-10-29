@@ -20,6 +20,7 @@ function useAuth(allowedRoles?: string[]): UseAuthResult {
                 const currentUser = await fetchUserAttributes();
 
                 setIsAuthenticated(true);
+                router.push('/dashboard');
                 setUser(currentUser);
             } catch (err) {
                 setIsAuthenticated(false);

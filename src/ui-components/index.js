@@ -4,6 +4,8 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
-export { default as TodoCreateForm } from "./TodoCreateForm";
-export { default as TodoUpdateForm } from "./TodoUpdateForm";
+export { default as AreaCreateForm } from "./AreaCreateForm";
+export { default as AreaUpdateForm } from "./AreaUpdateForm";
+export { default as TeacherCreateForm } from "./TeacherCreateForm";
+export { default as TeacherUpdateForm } from "./TeacherUpdateForm";
 export { default as studioTheme } from "./studioTheme";

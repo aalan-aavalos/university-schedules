@@ -1,5 +1,7 @@
 import React, { ChangeEvent, FormEvent, useState } from "react";
+
 import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+
 import {
   signUp,
   confirmSignUp,
@@ -9,6 +11,7 @@ import {
   fetchUserAttributes,
   signOut,
 } from "aws-amplify/auth";
+
 import { enqueueSnackbar } from "notistack";
 
 import { useRouter } from "next/navigation";
@@ -175,6 +178,25 @@ const SingUpForm = () => {
               variant="outlined"
               onChange={(e) => handleChange(e)}
               value={form.preferred_username}
+            />
+            <TextField
+              required
+              type="text"
+              name=""
+              label="Carrera"
+              variant="outlined"
+              onChange={(e) => handleChange(e)}
+              // value={form.preferred_username}
+            />
+            <TextField
+              required
+              type="number"
+              slotProps={{ htmlInput: { min: 1, max: 6 } }}
+              name=""
+              label="Cuatrimestre"
+              variant="outlined"
+              onChange={(e) => handleChange(e)}
+              // value={form.preferred_username}
             />
             <Button variant="contained" type="submit">
               Sign Up
