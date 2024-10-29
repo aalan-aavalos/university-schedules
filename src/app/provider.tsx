@@ -2,20 +2,23 @@
 
 import React from "react";
 
+/* Providers de Material UI */
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
-
 import { AppProvider } from "@toolpad/core/AppProvider";
 
+/* Provider de los cuadros de confirmación */
 import { ConfirmProvider } from "material-ui-confirm";
+/* Provider de los Toast */
 import { SnackbarProvider } from "notistack";
 
-// Configuración de Amplify
+/* Configuración de Amplify */
 import { Amplify } from "aws-amplify";
 import amplifyConfig from "../aws-exports";
 import "@aws-amplify/ui-react/styles.css";
 
 Amplify.configure(amplifyConfig, { ssr: true });
 
+/* Tipos de datos */
 import { ButtonProps } from "@mui/material";
 import { ConfirmOptions } from "material-ui-confirm";
 

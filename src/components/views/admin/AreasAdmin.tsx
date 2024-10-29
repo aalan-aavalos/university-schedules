@@ -1,5 +1,4 @@
-"use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -8,71 +7,33 @@ import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
-  GridRowsProp,
-  GridRowModesModel,
-  GridRowModes,
   DataGrid,
   GridColDef,
-  GridToolbarContainer,
+  GridRowModesModel,
+  GridRowModes,
   GridActionsCellItem,
   GridEventListener,
   GridRowId,
   GridRowModel,
   GridRowEditStopReasons,
+  GridToolbarContainer,
   GridSlots,
 } from "@mui/x-data-grid";
-/* import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-  randomArrayItem,
-} from "@mui/x-data-grid-generator"; */
 
-/* const roles = ["Market", "Finance", "Development"];
-const randomRole = () => {
-  return randomArrayItem(roles);
-}; */
+/* Custom Queries */
+import { getAllAreas } from "@/custom-graphql/queries";
 
-const initialRows: GridRowsProp = [
-  /* {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 25,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 36,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 19,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 28,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  },
-  {
-    id: randomId(),
-    name: randomTraderName(),
-    age: 23,
-    joinDate: randomCreatedDate(),
-    role: randomRole(),
-  }, */
-];
+/* Hooks */
+import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
+
+interface Areas {
+  id: string;
+  area_name: string;
+  isNew?: boolean;
+}
 
 interface EditToolbarProps {
-  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
+  setRows: React.Dispatch<React.SetStateAction<Areas[]>>;
   setRowModesModel: (
     newModel: (oldModel: GridRowModesModel) => GridRowModesModel
   ) => void;
@@ -82,29 +43,45 @@ function EditToolbar(props: EditToolbarProps) {
   const { setRows, setRowModesModel } = props;
 
   const handleClick = () => {
-    const id = Math.random(); /* randomId(); */
-    setRows((oldRows) => [
-      ...oldRows,
-      { id, name: "", age: "", role: "", isNew: true },
-    ]);
+    const id = Math.random().toString();
+    setRows((oldRows) => [...oldRows, { id, area_name: "", isNew: true }]);
     setRowModesModel((oldModel) => ({
       ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "area_name" },
     }));
   };
 
   return (
     <GridToolbarContainer>
       <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add record
+        Add Area
       </Button>
     </GridToolbarContainer>
   );
 }
 
-export default function FullFeaturedCrudGrid() {
-  const [rows, setRows] = useState(initialRows);
+const AreasAdmin = () => {
+  const [areas, setAreas] = useState<Array<Areas>>([]);
   const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+
+  const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
+
+  useEffect(() => {
+    const excuteQueries = async () => {
+      try {
+        showLoading();
+
+        const res_areas = await getAllAreas();
+        setAreas(res_areas);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        hideLoading();
+      }
+    };
+
+    excuteQueries();
+  }, [hideLoading, showLoading]);
 
   const handleRowEditStop: GridEventListener<"rowEditStop"> = (
     params,
@@ -124,7 +101,7 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const handleDeleteClick = (id: GridRowId) => () => {
-    setRows(rows.filter((row) => row.id !== id));
+    setAreas(areas.filter((row) => row.id !== id));
   };
 
   const handleCancelClick = (id: GridRowId) => () => {
@@ -133,15 +110,17 @@ export default function FullFeaturedCrudGrid() {
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow!.isNew) {
-      setRows(rows.filter((row) => row.id !== id));
+    const editedRow = areas.find((row) => row.id === id);
+    if (editedRow?.isNew) {
+      setAreas(areas.filter((row) => row.id !== id));
     }
   };
 
   const processRowUpdate = (newRow: GridRowModel) => {
-    const updatedRow = { ...newRow, isNew: false };
-    setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+    const updatedRow: Areas = { id: newRow.id, area_name: newRow.area_name };
+    setAreas((prevAreas) =>
+      prevAreas.map((row) => (row.id === newRow.id ? updatedRow : row))
+    );
     return updatedRow;
   };
 
@@ -150,30 +129,12 @@ export default function FullFeaturedCrudGrid() {
   };
 
   const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", width: 180, editable: true },
+    { field: "id", headerName: "ID", flex: 1 },
     {
-      field: "age",
-      headerName: "Age",
-      type: "number",
-      width: 80,
-      align: "left",
-      headerAlign: "left",
+      field: "area_name",
+      headerName: "Nombre de Area",
+      flex: 2,
       editable: true,
-    },
-    {
-      field: "joinDate",
-      headerName: "Join date",
-      type: "date",
-      width: 180,
-      editable: true,
-    },
-    {
-      field: "role",
-      headerName: "Department",
-      width: 220,
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Market", "Finance", "Development"],
     },
     {
       field: "actions",
@@ -187,6 +148,7 @@ export default function FullFeaturedCrudGrid() {
         if (isInEditMode) {
           return [
             <GridActionsCellItem
+              key={Math.random()}
               icon={<SaveIcon />}
               label="Save"
               sx={{
@@ -195,6 +157,7 @@ export default function FullFeaturedCrudGrid() {
               onClick={handleSaveClick(id)}
             />,
             <GridActionsCellItem
+              key={Math.random()}
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
@@ -206,6 +169,7 @@ export default function FullFeaturedCrudGrid() {
 
         return [
           <GridActionsCellItem
+            key={Math.random()}
             icon={<EditIcon />}
             label="Edit"
             className="textPrimary"
@@ -213,6 +177,7 @@ export default function FullFeaturedCrudGrid() {
             color="inherit"
           />,
           <GridActionsCellItem
+            key={Math.random()}
             icon={<DeleteIcon />}
             label="Delete"
             onClick={handleDeleteClick(id)}
@@ -224,33 +189,38 @@ export default function FullFeaturedCrudGrid() {
   ];
 
   return (
-    <Box
-      sx={{
-        height: 500,
-        width: "100%",
-        "& .actions": {
-          color: "text.secondary",
-        },
-        "& .textPrimary": {
-          color: "text.primary",
-        },
-      }}
-    >
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        editMode="row"
-        rowModesModel={rowModesModel}
-        onRowModesModelChange={handleRowModesModelChange}
-        onRowEditStop={handleRowEditStop}
-        processRowUpdate={processRowUpdate}
-        slots={{
-          toolbar: EditToolbar as GridSlots["toolbar"],
+    <div>
+      {LoadingBackdrop}
+      <Box
+        sx={{
+          height: 500,
+          width: "75vw",
+          "& .actions": {
+            color: "text.secondary",
+          },
+          "& .textPrimary": {
+            color: "text.primary",
+          },
         }}
-        slotProps={{
-          toolbar: { setRows, setRowModesModel },
-        }}
-      />
-    </Box>
+      >
+        <DataGrid
+          rows={areas}
+          columns={columns}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          onRowEditStop={handleRowEditStop}
+          processRowUpdate={processRowUpdate}
+          slots={{
+            toolbar: EditToolbar as GridSlots["toolbar"],
+          }}
+          slotProps={{
+            toolbar: { setRows: setAreas, setRowModesModel },
+          }}
+        />
+      </Box>
+    </div>
   );
-}
+};
+
+export { AreasAdmin };
