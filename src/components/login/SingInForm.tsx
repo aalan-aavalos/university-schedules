@@ -94,7 +94,7 @@ const SingInForm = () => {
           label="Email"
           variant="outlined"
           autoComplete="email"
-          onChange={(e) => handleChange(e)}
+          onChange={handleChange}
           value={form.email}
         />
         <TextField
@@ -104,7 +104,7 @@ const SingInForm = () => {
           label="Password"
           variant="outlined"
           autoComplete="current-password"
-          onChange={(e) => handleChange(e)}
+          onChange={handleChange}
           value={form.password}
         />
         <Button variant="contained" type="submit">

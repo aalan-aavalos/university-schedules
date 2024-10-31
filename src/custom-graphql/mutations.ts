@@ -36,21 +36,29 @@ export const updateOneTeacher = async (id: string, new_teacher_name: string) => 
 /* Area actions */
 
 export const createOneArea = async (area_name: string) => {
-    const newArea = await client.graphql({
+    await client.graphql({
         query: createArea,
         variables: { input: { "area_name": area_name, } }
     });
 
-    console.log(newArea)
+    const allAreas = await client.graphql({
+        query: listAreas
+    });
+
+    return allAreas.data.listAreas.items
 }
 
 export const updateOneArea = async (id: string, new_area_name: string) => {
-    const updatedArea = await client.graphql({
+    await client.graphql({
         query: updateArea,
         variables: { input: { id, "area_name": new_area_name, } }
     });
 
-    console.log(updatedArea)
+    const allAreas = await client.graphql({
+        query: listAreas
+    });
+
+    return allAreas.data.listAreas.items
 }
 
 export const deleteOneArea = async (id: string) => {

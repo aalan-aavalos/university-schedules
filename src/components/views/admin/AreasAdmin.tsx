@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
 /* Material UI */
 import {
@@ -15,7 +15,11 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 /* Custom Queries */
 import { getAllAreas } from "@/custom-graphql/queries";
-import { deleteOneArea } from "@/custom-graphql/mutations";
+import {
+  deleteOneArea,
+  createOneArea,
+  updateOneArea,
+} from "@/custom-graphql/mutations";
 
 /* Hooks */
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
@@ -25,7 +29,7 @@ import { useDisclosure } from "@/hooks/useDisclousure";
 import { useConfirm } from "material-ui-confirm";
 import { enqueueSnackbar } from "notistack";
 
-interface Areas {
+interface AreaProps {
   id: string;
   area_name: string;
   createdAt: string;
@@ -33,8 +37,28 @@ interface Areas {
   __typename: string;
 }
 
+const initialArea: AreaProps = {
+  id: "",
+  area_name: "",
+  createdAt: "",
+  updatedAt: "",
+  __typename: "",
+};
+
+interface FormProps {
+  area_name: string;
+}
+
+const initialForm: FormProps = {
+  area_name: "",
+};
+
 const AreasAdmin = () => {
-  const [areas, setAreas] = useState<Array<Areas>>([]);
+  const [areas, setAreas] = useState<Array<AreaProps>>([]);
+  const [form, setForm] = useState<FormProps>(initialForm);
+  const [row, setRow] = useState<AreaProps>(initialArea);
+
+  const [formUpdate, setFormUpdate] = useState(false);
 
   const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
   const { isOpen, onClose, onOpen } = useDisclosure(false);
@@ -57,13 +81,92 @@ const AreasAdmin = () => {
     executeQueries();
   }, [hideLoading, showLoading]);
 
-  const handleEdit = (id: string) => {
-    console.log(`Editando área con ID: ${id}`);
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const handleDelete = async (row: Areas) => {
+  const onOpenUpdate = (row: AreaProps) => {
+    const { area_name } = row;
+
+    setRow(row);
+    setFormUpdate(true);
+    setForm((prevForm) => ({ ...prevForm, area_name }));
+
+    onOpen();
+  };
+
+  const createArea = async () => {
+    const { area_name } = form;
+
+    setFormUpdate(false);
+
+    try {
+      showLoading();
+
+      const res_areas = await createOneArea(area_name);
+
+      if (res_areas) {
+        setAreas(res_areas);
+      }
+
+      const message = "Area creada correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al crea el area";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+
+    setForm(initialForm);
+    onClose();
+  };
+
+  const queryArea = async () => {
+    try {
+      showLoading();
+      const res_area = await getAllAreas();
+      setAreas(res_area);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const updateArea = async () => {
+    const { area_name: new_area_name } = form;
+
+    try {
+      showLoading();
+
+      const res_areas = await updateOneArea(row.id, new_area_name);
+
+      if (res_areas) {
+        setAreas(res_areas);
+      }
+
+      const message = "Area actualizada correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al actualizar el area";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+
+    setForm(initialForm);
+    setFormUpdate(false);
+    onClose();
+  };
+
+  const deleteArea = async (row: AreaProps) => {
     const { id, area_name } = row;
-    console.log(`Eliminando área con ID: ${id}`);
 
     confirm({
       title: "Confirmar eliminación",
@@ -72,10 +175,9 @@ const AreasAdmin = () => {
       .then(async () => {
         try {
           showLoading();
-          const res_data = await deleteOneArea(id);
-          if (res_data) {
-            // setAreas((prev) => prev.filter((area) => area.id !== id));
-            setAreas(res_data);
+          const res_areas = await deleteOneArea(id);
+          if (res_areas) {
+            setAreas(res_areas);
           }
           const message = "Area eliminada correctamente";
           enqueueSnackbar(message, { variant: "success" });
@@ -88,22 +190,6 @@ const AreasAdmin = () => {
         }
       })
       .catch(() => {});
-  };
-
-  const handleQuery = async () => {
-    try {
-      showLoading();
-      const res_area = await getAllAreas();
-      setAreas(res_area);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      hideLoading();
-    }
-  };
-
-  const handleCreate = () => {
-    onOpen();
   };
 
   const columns: GridColDef[] = [
@@ -124,7 +210,7 @@ const AreasAdmin = () => {
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleEdit(row.id)}
+              onClick={() => onOpenUpdate(row)}
               style={{ marginRight: 8 }}
             >
               Editar
@@ -132,7 +218,7 @@ const AreasAdmin = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => handleDelete(row)}
+              onClick={() => deleteArea(row)}
             >
               Eliminar
             </Button>
@@ -144,12 +230,12 @@ const AreasAdmin = () => {
   return (
     <div>
       {LoadingBackdrop}
-      <Box sx={{ height: 400, width: "75vw" }}>
+      <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="success" onClick={handleCreate}>
+          <Button variant="contained" color="success" onClick={onOpen}>
             Crear
           </Button>
-          <Button variant="contained" onClick={handleQuery}>
+          <Button variant="contained" onClick={queryArea}>
             Consultar
           </Button>
         </Box>
@@ -167,13 +253,13 @@ const AreasAdmin = () => {
         open={isOpen}
         PaperProps={{
           component: "form",
-          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+          onSubmit: (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            onClose();
+            if (formUpdate) {
+              updateArea();
+              return;
+            }
+            createArea();
           },
         }}
       >
@@ -185,16 +271,23 @@ const AreasAdmin = () => {
           <TextField
             autoFocus
             required
+            margin="dense"
             name="area_name"
             label="Nombre de area"
             type="text"
             fullWidth
             variant="standard"
+            onChange={handleChange}
+            value={form.area_name}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>Cancelar</Button>
-          <Button type="submit">Crear</Button>
+          <Button variant="contained" color="error" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button variant="contained" type="submit">
+            {formUpdate ? "Actualizar" : "Crear"}
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
