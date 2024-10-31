@@ -248,7 +248,7 @@ export type Area = {
   id: string,
   area_name: string,
   careers?: ModelCareerConnection | null,
-  coordinators?: ModelCoordinatorConnection | null,
+  coordinators?: ModelCareerConnection | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -266,7 +266,7 @@ export type Career = {
   level: string,
   four_month_periods: number,
   areaID: string,
-  subjects?: ModelSubjectConnection | null,
+  subjects?: ModelStudentConnection | null,
   students?: ModelStudentConnection | null,
   createdAt: string,
   updatedAt: string,
@@ -275,12 +275,6 @@ export type Career = {
 export type ModelStudentConnection = {
   __typename: "ModelStudentConnection",
   items:  Array<Student | null >,
-  nextToken?: string | null,
-};
-
-export type ModelCoordinatorConnection = {
-  __typename: "ModelCoordinatorConnection",
-  items:  Array<Coordinator | null >,
   nextToken?: string | null,
 };
 
@@ -334,6 +328,12 @@ export type ModelCoordinatorFilterInput = {
   and?: Array< ModelCoordinatorFilterInput | null > | null,
   or?: Array< ModelCoordinatorFilterInput | null > | null,
   not?: ModelCoordinatorFilterInput | null,
+};
+
+export type ModelCoordinatorConnection = {
+  __typename: "ModelCoordinatorConnection",
+  items:  Array<Coordinator | null >,
+  nextToken?: string | null,
 };
 
 export enum ModelSortDirection {
@@ -747,7 +747,7 @@ export type CreateAreaMutation = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -770,7 +770,7 @@ export type UpdateAreaMutation = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -793,7 +793,7 @@ export type DeleteAreaMutation = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -815,7 +815,7 @@ export type CreateCareerMutation = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -841,7 +841,7 @@ export type UpdateCareerMutation = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -867,7 +867,7 @@ export type DeleteCareerMutation = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -1146,7 +1146,7 @@ export type GetAreaQuery = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1187,7 +1187,7 @@ export type GetCareerQuery = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -1462,7 +1462,7 @@ export type OnCreateAreaSubscription = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1484,7 +1484,7 @@ export type OnUpdateAreaSubscription = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1506,7 +1506,7 @@ export type OnDeleteAreaSubscription = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
-      __typename: "ModelCoordinatorConnection",
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1527,7 +1527,7 @@ export type OnCreateCareerSubscription = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -1552,7 +1552,7 @@ export type OnUpdateCareerSubscription = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {
@@ -1577,7 +1577,7 @@ export type OnDeleteCareerSubscription = {
     four_month_periods: number,
     areaID: string,
     subjects?:  {
-      __typename: "ModelSubjectConnection",
+      __typename: "ModelStudentConnection",
       nextToken?: string | null,
     } | null,
     students?:  {

@@ -10,7 +10,7 @@ type Teacher @model @auth(rules: [{allow: private}]) {
   subjects: [Subject] @hasMany(indexName: "byTeacher", fields: ["id"])
 }
 
-type Student @model @auth(rules: [{allow: private}]) {
+type Student @model @auth(rules: [{allow: private}, {allow: public, operations: [create]}]) {
   id: ID!
   student_name: String!
   four_month_period: Int!
@@ -30,16 +30,16 @@ type Area @model @auth(rules: [{allow: private}]) {
   id: ID!
   area_name: String!
   careers: [Career] @hasMany(indexName: "byArea", fields: ["id"])
-  coordinators: [Coordinator] @hasMany(indexName: "byArea", fields: ["id"])
+  coordinators: [Career] @hasMany(indexName: "byArea", fields: ["id"])
 }
 
-type Career @model @auth(rules: [{allow: private}]) {
+type Career @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
   career_name: String!
   level: String!
   four_month_periods: Int!
   areaID: ID! @index(name: "byArea")
-  subjects: [Subject] @hasMany(indexName: "byCareer", fields: ["id"])
+  subjects: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
   students: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
 }
  
