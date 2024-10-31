@@ -4,16 +4,11 @@ import React from "react";
 
 import Padoru from "@/public/gifs/padoru.gif";
 
-import { generateClient } from "aws-amplify/api";
-import { listTodos } from "@/graphql/queries";
-
 import { Button } from "@mui/material";
 
 import { enqueueSnackbar } from "notistack";
 // import { useConfirm } from "materi/*  */al-ui-confirm";
 import Image from "next/image";
-
-const client = generateClient();
 
 const ButtonQuery = () => {
   // const confirm = useConfirm();
@@ -21,13 +16,9 @@ const ButtonQuery = () => {
   const query_data = async (name: string = "Invitado") => {
     /* confirm({ description: "This action is permanent!" })
       .then(async () => { */
-    const allTodos = await client.graphql({
-      query: listTodos,
-    });
 
     console.log("Bienvenido,", name);
     console.log("consultando....");
-    console.log(allTodos);
 
     enqueueSnackbar("That was easy!");
     /* })

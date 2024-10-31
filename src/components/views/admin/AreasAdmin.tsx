@@ -1,76 +1,74 @@
-import React, { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Close";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+
+/* Material UI */
 import {
-  DataGrid,
-  GridColDef,
-  GridRowModesModel,
-  GridRowModes,
-  GridActionsCellItem,
-  GridEventListener,
-  GridRowId,
-  GridRowModel,
-  GridRowEditStopReasons,
-  GridToolbarContainer,
-  GridSlots,
-} from "@mui/x-data-grid";
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 /* Custom Queries */
 import { getAllAreas } from "@/custom-graphql/queries";
+import {
+  deleteOneArea,
+  createOneArea,
+  updateOneArea,
+} from "@/custom-graphql/mutations";
 
 /* Hooks */
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
+import { useDisclosure } from "@/hooks/useDisclousure";
 
-interface Areas {
+/* Feedback */
+import { useConfirm } from "material-ui-confirm";
+import { enqueueSnackbar } from "notistack";
+
+interface AreaProps {
   id: string;
   area_name: string;
-  isNew?: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __typename: string;
 }
 
-interface EditToolbarProps {
-  setRows: React.Dispatch<React.SetStateAction<Areas[]>>;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel
-  ) => void;
+const initialArea: AreaProps = {
+  id: "",
+  area_name: "",
+  createdAt: "",
+  updatedAt: "",
+  __typename: "",
+};
+
+interface FormProps {
+  area_name: string;
 }
 
-function EditToolbar(props: EditToolbarProps) {
-  const { setRows, setRowModesModel } = props;
-
-  const handleClick = () => {
-    const id = Math.random().toString();
-    setRows((oldRows) => [...oldRows, { id, area_name: "", isNew: true }]);
-    setRowModesModel((oldModel) => ({
-      ...oldModel,
-      [id]: { mode: GridRowModes.Edit, fieldToFocus: "area_name" },
-    }));
-  };
-
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-        Add Area
-      </Button>
-    </GridToolbarContainer>
-  );
-}
+const initialForm: FormProps = {
+  area_name: "",
+};
 
 const AreasAdmin = () => {
-  const [areas, setAreas] = useState<Array<Areas>>([]);
-  const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+  const [areas, setAreas] = useState<Array<AreaProps>>([]);
+  const [form, setForm] = useState<FormProps>(initialForm);
+  const [row, setRow] = useState<AreaProps>(initialArea);
+
+  const [formUpdate, setFormUpdate] = useState(false);
 
   const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
+  const { isOpen, onClose, onOpen } = useDisclosure(false);
+
+  const confirm = useConfirm();
 
   useEffect(() => {
-    const excuteQueries = async () => {
+    const executeQueries = async () => {
       try {
         showLoading();
-
         const res_areas = await getAllAreas();
         setAreas(res_areas);
       } catch (err) {
@@ -80,52 +78,123 @@ const AreasAdmin = () => {
       }
     };
 
-    excuteQueries();
+    executeQueries();
   }, [hideLoading, showLoading]);
 
-  const handleRowEditStop: GridEventListener<"rowEditStop"> = (
-    params,
-    event
-  ) => {
-    if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-      event.defaultMuiPrevented = true;
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ): void => {
+    const { name, value } = e.target;
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
+  };
+
+  const onOpenUpdate = (row: AreaProps) => {
+    const { area_name } = row;
+
+    setRow(row);
+    setFormUpdate(true);
+    setForm((prevForm) => ({ ...prevForm, area_name }));
+
+    onOpen();
+  };
+
+  const createArea = async () => {
+    const { area_name } = form;
+
+    setFormUpdate(false);
+
+    try {
+      showLoading();
+
+      const res_areas = await createOneArea(area_name);
+
+      if (res_areas) {
+        setAreas(res_areas);
+      }
+
+      const message = "Area creada correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al crea el area";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+
+    setForm(initialForm);
+    onClose();
+  };
+
+  const queryArea = async () => {
+    try {
+      showLoading();
+      const res_area = await getAllAreas();
+      setAreas(res_area);
+
+      const message = "Area consultadas correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al consultar el area";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
     }
   };
 
-  const handleEditClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-  };
+  const updateArea = async () => {
+    const { area_name: new_area_name } = form;
 
-  const handleSaveClick = (id: GridRowId) => () => {
-    setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-  };
+    try {
+      showLoading();
 
-  const handleDeleteClick = (id: GridRowId) => () => {
-    setAreas(areas.filter((row) => row.id !== id));
-  };
+      const res_areas = await updateOneArea(row.id, new_area_name);
 
-  const handleCancelClick = (id: GridRowId) => () => {
-    setRowModesModel({
-      ...rowModesModel,
-      [id]: { mode: GridRowModes.View, ignoreModifications: true },
-    });
+      if (res_areas) {
+        setAreas(res_areas);
+      }
 
-    const editedRow = areas.find((row) => row.id === id);
-    if (editedRow?.isNew) {
-      setAreas(areas.filter((row) => row.id !== id));
+      const message = "Area actualizada correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al actualizar el area";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
     }
+
+    setForm(initialForm);
+    setFormUpdate(false);
+    onClose();
   };
 
-  const processRowUpdate = (newRow: GridRowModel) => {
-    const updatedRow: Areas = { id: newRow.id, area_name: newRow.area_name };
-    setAreas((prevAreas) =>
-      prevAreas.map((row) => (row.id === newRow.id ? updatedRow : row))
-    );
-    return updatedRow;
-  };
+  const deleteArea = async (row: AreaProps) => {
+    const { id, area_name } = row;
 
-  const handleRowModesModelChange = (newRowModesModel: GridRowModesModel) => {
-    setRowModesModel(newRowModesModel);
+    confirm({
+      title: "Confirmar eliminación",
+      description: `¿Seguro que deseas eliminar el área "${area_name}"? Esta acción no se puede deshacer.`,
+    })
+      .then(async () => {
+        try {
+          showLoading();
+          const res_areas = await deleteOneArea(id);
+          if (res_areas) {
+            setAreas(res_areas);
+          }
+          const message = "Area eliminada correctamente";
+          enqueueSnackbar(message, { variant: "success" });
+        } catch (err) {
+          const message = "Algo salio mal al eliminar el area";
+          enqueueSnackbar(message, { variant: "error" });
+          console.error(err);
+        } finally {
+          hideLoading();
+        }
+      })
+      .catch(() => {});
   };
 
   const columns: GridColDef[] = [
@@ -138,87 +207,94 @@ const AreasAdmin = () => {
     },
     {
       field: "actions",
-      type: "actions",
-      headerName: "Actions",
-      width: 100,
-      cellClassName: "actions",
-      getActions: ({ id }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-        if (isInEditMode) {
-          return [
-            <GridActionsCellItem
-              key={Math.random()}
-              icon={<SaveIcon />}
-              label="Save"
-              sx={{
-                color: "primary.main",
-              }}
-              onClick={handleSaveClick(id)}
-            />,
-            <GridActionsCellItem
-              key={Math.random()}
-              icon={<CancelIcon />}
-              label="Cancel"
-              className="textPrimary"
-              onClick={handleCancelClick(id)}
-              color="inherit"
-            />,
-          ];
-        }
-
-        return [
-          <GridActionsCellItem
-            key={Math.random()}
-            icon={<EditIcon />}
-            label="Edit"
-            className="textPrimary"
-            onClick={handleEditClick(id)}
-            color="inherit"
-          />,
-          <GridActionsCellItem
-            key={Math.random()}
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
-        ];
-      },
+      headerName: "Acciones",
+      flex: 1,
+      renderCell: ({ row }) =>
+        row.id ? (
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => onOpenUpdate(row)}
+              style={{ marginRight: 8 }}
+            >
+              Editar
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => deleteArea(row)}
+            >
+              Eliminar
+            </Button>
+          </div>
+        ) : null,
     },
   ];
 
   return (
     <div>
       {LoadingBackdrop}
-      <Box
-        sx={{
-          height: 500,
-          width: "75vw",
-          "& .actions": {
-            color: "text.secondary",
-          },
-          "& .textPrimary": {
-            color: "text.primary",
+      <Box sx={{ height: "75vh", width: "75vw" }}>
+        <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
+          <Button variant="contained" color="success" onClick={onOpen}>
+            Crear
+          </Button>
+          <Button variant="contained" onClick={queryArea}>
+            Consultar
+          </Button>
+        </Box>
+
+        {/* El condiconal es porque da error al borrar todas las areas */}
+
+        {areas.length > 0 ? (
+          <DataGrid columns={columns} rows={areas} />
+        ) : (
+          <div>No hay áreas disponibles</div> // Renderizamos un mensaje si no hay datos
+        )}
+      </Box>
+
+      <Dialog
+        open={isOpen}
+        PaperProps={{
+          component: "form",
+          onSubmit: (event: FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            if (formUpdate) {
+              updateArea();
+              return;
+            }
+            createArea();
           },
         }}
       >
-        <DataGrid
-          rows={areas}
-          columns={columns}
-          editMode="row"
-          rowModesModel={rowModesModel}
-          onRowModesModelChange={handleRowModesModelChange}
-          onRowEditStop={handleRowEditStop}
-          processRowUpdate={processRowUpdate}
-          slots={{
-            toolbar: EditToolbar as GridSlots["toolbar"],
-          }}
-          slotProps={{
-            toolbar: { setRows: setAreas, setRowModesModel },
-          }}
-        />
-      </Box>
+        <DialogTitle>Crear una asignación</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Ingresa los datos requeridos para crear la asignación
+          </DialogContentText>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            name="area_name"
+            label="Nombre de area"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={handleChange}
+            value={form.area_name}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button variant="contained" color="error" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button variant="contained" type="submit">
+            {formUpdate ? "Actualizar" : "Crear"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
