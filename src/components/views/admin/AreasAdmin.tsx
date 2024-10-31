@@ -131,7 +131,12 @@ const AreasAdmin = () => {
       showLoading();
       const res_area = await getAllAreas();
       setAreas(res_area);
+
+      const message = "Area consultadas correctamente";
+      enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
+      const message = "Algo salio mal al consultar el area";
+      enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
       hideLoading();
