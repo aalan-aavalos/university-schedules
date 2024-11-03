@@ -237,7 +237,14 @@ const AreasAdmin = () => {
       {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="success" onClick={onOpen}>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              onOpen();
+              setForm(initialForm);
+            }}
+          >
             Crear
           </Button>
           <Button variant="contained" onClick={queryArea}>
@@ -287,7 +294,14 @@ const AreasAdmin = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" color="error" onClick={onClose}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => {
+              setForm(initialForm);
+              onClose();
+            }}
+          >
             Cancelar
           </Button>
           <Button variant="contained" type="submit">

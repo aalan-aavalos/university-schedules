@@ -126,6 +126,7 @@ export const createStudent = /* GraphQL */ `mutation CreateStudent(
   createStudent(input: $input, condition: $condition) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt
@@ -144,6 +145,7 @@ export const updateStudent = /* GraphQL */ `mutation UpdateStudent(
   updateStudent(input: $input, condition: $condition) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt
@@ -162,6 +164,7 @@ export const deleteStudent = /* GraphQL */ `mutation DeleteStudent(
   deleteStudent(input: $input, condition: $condition) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt

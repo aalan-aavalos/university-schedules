@@ -124,6 +124,7 @@ const SingUpForm = () => {
       await createOneStudentWithAPIKey({
         id: form.id,
         student_name: form.preferred_username,
+        student_email: form.email,
         four_month_period: form.four_month_period,
         careerID: form.careerID,
       });

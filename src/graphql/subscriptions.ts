@@ -111,6 +111,7 @@ export const onCreateStudent = /* GraphQL */ `subscription OnCreateStudent($filt
   onCreateStudent(filter: $filter) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt
@@ -126,6 +127,7 @@ export const onUpdateStudent = /* GraphQL */ `subscription OnUpdateStudent($filt
   onUpdateStudent(filter: $filter) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt
@@ -141,6 +143,7 @@ export const onDeleteStudent = /* GraphQL */ `subscription OnDeleteStudent($filt
   onDeleteStudent(filter: $filter) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt

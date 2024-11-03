@@ -116,6 +116,7 @@ export const getStudent = /* GraphQL */ `query GetStudent($id: ID!) {
   getStudent(id: $id) {
     id
     student_name
+    student_email
     four_month_period
     careerID
     createdAt
@@ -136,6 +137,7 @@ export const listStudents = /* GraphQL */ `query ListStudents(
     items {
       id
       student_name
+      student_email
       four_month_period
       careerID
       createdAt
@@ -167,6 +169,7 @@ export const studentsByCareerID = /* GraphQL */ `query StudentsByCareerID(
     items {
       id
       student_name
+      student_email
       four_month_period
       careerID
       createdAt

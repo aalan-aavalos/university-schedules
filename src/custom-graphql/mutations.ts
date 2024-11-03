@@ -1,4 +1,5 @@
 import { createArea, createStudent, createTeacher, deleteArea, deleteTeacher, updateArea, updateTeacher } from '@/graphql/mutations';
+
 import { listAreas } from '@/graphql/queries';
 
 import { generateClient } from "aws-amplify/api";
@@ -80,6 +81,7 @@ export const deleteOneArea = async (id: string) => {
 export interface StudentProps {
     id: string | undefined;
     student_name: string;
+    student_email: string;
     four_month_period: string;
     careerID: string
 }
@@ -87,7 +89,7 @@ export interface StudentProps {
 
 export const createOneStudentWithAPIKey = async (data: StudentProps) => {
     console.log(data);
-    const { id, student_name, four_month_period, careerID } = data
+    const { id, student_name, student_email, four_month_period, careerID } = data
 
     const newStudent = await client.graphql({
         query: createStudent,
@@ -95,6 +97,7 @@ export const createOneStudentWithAPIKey = async (data: StudentProps) => {
             input: {
                 id,
                 student_name,
+                student_email,
                 "four_month_period": +four_month_period,
                 careerID
             }

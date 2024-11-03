@@ -13,6 +13,7 @@ type Teacher @model @auth(rules: [{allow: private}]) {
 type Student @model @auth(rules: [{allow: private}, {allow: public, operations: [create]}]) {
   id: ID!
   student_name: String!
+  student_email: AWSEmail!
   four_month_period: Int!
   careerID: ID! @index(name: "byCareer")
 }
