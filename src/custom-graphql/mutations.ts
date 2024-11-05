@@ -1,5 +1,10 @@
-import { createArea, createTeacher, deleteArea, deleteTeacher, updateArea, updateTeacher } from '@/graphql/mutations';
-import { listAreas } from '@/graphql/queries';
+import {
+    createArea, createCareer, createTeacher,
+    deleteArea, deleteCareer, deleteTeacher,
+    updateArea, updateCareer, updateTeacher
+}
+    from '@/graphql/mutations';
+import { listAreas, listCareers } from '@/graphql/queries';
 
 import { generateClient } from "aws-amplify/api";
 
@@ -34,7 +39,6 @@ export const updateOneTeacher = async (id: string, new_teacher_name: string) => 
 }
 
 /* Area actions */
-
 export const createOneArea = async (area_name: string) => {
     await client.graphql({
         query: createArea,
@@ -72,4 +76,51 @@ export const deleteOneArea = async (id: string) => {
     });
 
     return allAreas.data.listAreas.items
+}
+
+/* Career actions*/
+interface CareerProps { id?: string; career_name: string; level: string; four_month_periods: number; areaID: string; }
+
+export const createOneCareer = async (data: CareerProps) => {
+    const { career_name, level, four_month_periods, areaID } = data;
+
+    await client.graphql({
+        query: createCareer,
+        variables: { input: { career_name, level, four_month_periods, areaID} }
+    });
+
+    const allCareers = await client.graphql({
+        query: listCareers,
+    });
+
+    return allCareers.data.listCareers.items
+}
+
+export const updateOneCareer = async (data: CareerProps) => {
+    const { career_name, level, four_month_periods, areaID } = data;
+    const id = data.id as string;
+
+    await client.graphql({
+        query: updateCareer,
+        variables: { input: { id, career_name, level, four_month_periods, areaID } }
+    });
+
+    const allCareers = await client.graphql({
+        query: listCareers
+    });
+
+    return allCareers.data.listCareers.items
+}
+
+export const deleteOneCareer = async (id: string) => {
+    await client.graphql({
+        query: deleteCareer,
+        variables: { input: { id } }
+    });
+
+    const allCareers = await client.graphql({
+        query: listCareers,
+    });
+
+    return allCareers.data.listCareers.items
 }
