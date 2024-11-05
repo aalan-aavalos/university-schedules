@@ -23,14 +23,17 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type TeacherCreateFormInputValues = {
     teacher_name?: string;
+    teacher_email?: string;
 };
 export declare type TeacherCreateFormValidationValues = {
     teacher_name?: ValidationFunction<string>;
+    teacher_email?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type TeacherCreateFormOverridesProps = {
     TeacherCreateFormGrid?: PrimitiveOverrideProps<GridProps>;
     teacher_name?: PrimitiveOverrideProps<TextFieldProps>;
+    teacher_email?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type TeacherCreateFormProps = React.PropsWithChildren<{
     overrides?: TeacherCreateFormOverridesProps | undefined | null;

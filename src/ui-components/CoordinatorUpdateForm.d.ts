@@ -24,14 +24,17 @@ export declare type ValidationResponse = {
 export declare type ValidationFunction<T> = (value: T, validationResponse: ValidationResponse) => ValidationResponse | Promise<ValidationResponse>;
 export declare type CoordinatorUpdateFormInputValues = {
     coordinator_name?: string;
+    areaID?: string;
 };
 export declare type CoordinatorUpdateFormValidationValues = {
     coordinator_name?: ValidationFunction<string>;
+    areaID?: ValidationFunction<string>;
 };
 export declare type PrimitiveOverrideProps<T> = Partial<T> & React.DOMAttributes<HTMLDivElement>;
 export declare type CoordinatorUpdateFormOverridesProps = {
     CoordinatorUpdateFormGrid?: PrimitiveOverrideProps<GridProps>;
     coordinator_name?: PrimitiveOverrideProps<TextFieldProps>;
+    areaID?: PrimitiveOverrideProps<TextFieldProps>;
 } & EscapeHatchProps;
 export declare type CoordinatorUpdateFormProps = React.PropsWithChildren<{
     overrides?: CoordinatorUpdateFormOverridesProps | undefined | null;

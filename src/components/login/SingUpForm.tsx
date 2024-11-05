@@ -1,6 +1,18 @@
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 
-import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Backdrop,
+  Button,
+  CircularProgress,
+  TextField,
+} from "@mui/material";
 
 import {
   signUp,
@@ -16,28 +28,60 @@ import { enqueueSnackbar } from "notistack";
 
 import { useRouter } from "next/navigation";
 
+import { getAllCareersWihtAPIKey } from "@/custom-graphql/queries";
+
+import { createOneStudentWithAPIKey } from "@/custom-graphql/mutations";
+
 interface FormProps {
+  id: string | undefined;
   email: string;
   password: string;
   preferred_username: string;
+  careerID: string;
+  four_month_period: string;
   rol: string;
   verificationCode?: string;
 }
 
 const initialForm: FormProps = {
+  id: "",
   email: "",
   password: "",
   preferred_username: "",
+  careerID: "",
+  four_month_period: "",
   rol: "student",
   verificationCode: "",
 };
 
+interface CareerProps {
+  areaID: string;
+  career_name: string;
+  createdAt: string;
+  four_month_periods: number;
+  id: string;
+  level: string;
+  updatedAt: string;
+  __typename: string;
+}
+
 const SingUpForm = () => {
   const [form, setForm] = useState<FormProps>(initialForm);
+  const [careers, setCareers] = useState<Array<CareerProps>>([]);
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isVerificationStep, setIsVerificationStep] = useState<boolean>(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    const executeQueries = async () => {
+      const res_careers = await getAllCareersWihtAPIKey();
+      setCareers(res_careers);
+    };
+
+    executeQueries();
+  }, []);
 
   const signUpFunction = async ({ email, password }: FormProps) => {
     try {
@@ -50,11 +94,14 @@ const SingUpForm = () => {
           userAttributes: {
             email,
             "custom:rol": "student",
+            "custom:career": form.careerID,
+            "custom:four_month_period": form.four_month_period,
             preferred_username: form.preferred_username,
           },
         },
       });
       console.log("Sign-up successful: ", userId);
+      setForm((prevForm) => ({ ...prevForm, id: userId }));
       setIsVerificationStep(true);
       enqueueSnackbar(
         "Sign-up successful, please check your email for the verification code.",
@@ -74,6 +121,13 @@ const SingUpForm = () => {
     try {
       setIsLoading(true);
       await confirmSignUp({ username: email, confirmationCode: code });
+      await createOneStudentWithAPIKey({
+        id: form.id,
+        student_name: form.preferred_username,
+        student_email: form.email,
+        four_month_period: form.four_month_period,
+        careerID: form.careerID,
+      });
       await singInFunction({ username: form.email, password: form.password });
       enqueueSnackbar("Verification successful! You can now log in.", {
         variant: "success",
@@ -130,6 +184,16 @@ const SingUpForm = () => {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
+  const handleChangeCareer = (e: SyntheticEvent, value: CareerProps | null) => {
+    if (!value) {
+      setForm((prevForm) => ({ ...prevForm, careerID: "" }));
+      return;
+    }
+
+    const { id } = value as CareerProps;
+    setForm((prevForm) => ({ ...prevForm, careerID: id }));
+  };
+
   const onSubmit = (e: FormEvent): void => {
     e.preventDefault();
     if (isVerificationStep) {
@@ -138,6 +202,8 @@ const SingUpForm = () => {
       signUpFunction(form);
     }
   };
+
+  console.log(form);
 
   return (
     <>
@@ -179,24 +245,27 @@ const SingUpForm = () => {
               onChange={(e) => handleChange(e)}
               value={form.preferred_username}
             />
-            <TextField
-              required
-              type="text"
-              name=""
-              label="Carrera"
-              variant="outlined"
-              onChange={(e) => handleChange(e)}
-              // value={form.preferred_username}
+            <Autocomplete
+              disablePortal
+              fullWidth
+              options={careers}
+              getOptionLabel={(option) => option.career_name}
+              renderInput={(params) => (
+                <TextField required {...params} label="Carrera" />
+              )}
+              onChange={(e: SyntheticEvent, value: CareerProps | null) =>
+                handleChangeCareer(e, value)
+              }
             />
             <TextField
               required
               type="number"
               slotProps={{ htmlInput: { min: 1, max: 6 } }}
-              name=""
+              name="four_month_period"
               label="Cuatrimestre"
               variant="outlined"
               onChange={(e) => handleChange(e)}
-              // value={form.preferred_username}
+              value={form.four_month_period}
             />
             <Button variant="contained" type="submit">
               Sign Up

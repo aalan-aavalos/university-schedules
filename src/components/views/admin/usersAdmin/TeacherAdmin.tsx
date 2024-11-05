@@ -1,76 +1,94 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 
-/* Material UI */
+/* Custom GraphQL */
+import { getAllTeachers } from "@/custom-graphql/queries";
+import {
+  createOneTeacher,
+  deleteOneTeacher,
+  updateOneTeacher,
+} from "@/custom-graphql/mutations";
+
+/* MaterialUI */
 import {
   Box,
   Button,
+  Checkbox,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControlLabel,
+  MenuItem,
   TextField,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-
-/* Custom Queries */
-import { getAllAreas } from "@/custom-graphql/queries";
-import {
-  deleteOneArea,
-  createOneArea,
-  updateOneArea,
-} from "@/custom-graphql/mutations";
 
 /* Hooks */
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { useDisclosure } from "@/hooks/useDisclousure";
 
 /* Feedback */
-import { useConfirm } from "material-ui-confirm";
 import { enqueueSnackbar } from "notistack";
+import { useConfirm } from "material-ui-confirm";
 
-interface AreaProps {
+interface TeacherProps {
   id: string;
-  area_name: string;
-  createdAt: string;
-  updatedAt: string;
-  __typename: string;
+  teacher_name: string;
+  teacher_email: string;
 }
 
-const initialArea: AreaProps = {
-  id: "",
-  area_name: "",
-  createdAt: "",
-  updatedAt: "",
-  __typename: "",
-};
-
 interface FormProps {
-  area_name: string;
+  teacher_name: string;
+  teacher_email: string;
+  rol?: string;
+}
+
+interface RolesProps {
+  rol_name: string;
+  rol: string;
 }
 
 const initialForm: FormProps = {
-  area_name: "",
+  teacher_name: "",
+  teacher_email: "",
+  rol: "",
 };
 
-const AreasAdmin = () => {
-  const [areas, setAreas] = useState<Array<AreaProps>>([]);
+/* Roles */
+const Roles: Array<RolesProps> = [
+  {
+    rol_name: "Administrador",
+    rol: "admin",
+  },
+  {
+    rol_name: "Coordinador",
+    rol: "coordinator",
+  },
+  {
+    rol_name: "Estudiante",
+    rol: "student",
+  },
+];
+
+const TeacherAdmin = () => {
+  const [teachers, setTeachers] = useState<Array<TeacherProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
-  const [row, setRow] = useState<AreaProps>(initialArea);
+  const [checked, setChecked] = useState<boolean>(false);
 
   const [formUpdate, setFormUpdate] = useState(false);
 
-  const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
+  const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
   const { isOpen, onClose, onOpen } = useDisclosure(false);
 
   const confirm = useConfirm();
 
   useEffect(() => {
-    const executeQueries = async () => {
+    const excuteQueries = async () => {
       try {
         showLoading();
-        const res_areas = await getAllAreas();
-        setAreas(res_areas);
+        const res_teachears = await getAllTeachers();
+        setTeachers(res_teachears);
       } catch (err) {
         console.error(err);
       } finally {
@@ -78,7 +96,7 @@ const AreasAdmin = () => {
       }
     };
 
-    executeQueries();
+    excuteQueries();
   }, [hideLoading, showLoading]);
 
   const handleChange = (
@@ -88,32 +106,20 @@ const AreasAdmin = () => {
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const onOpenUpdate = (row: AreaProps) => {
-    const { area_name } = row;
-
-    setRow(row);
-    setFormUpdate(true);
-    setForm((prevForm) => ({ ...prevForm, area_name }));
-
-    onOpen();
-  };
-
   const createArea = async () => {
-    const { area_name } = form;
-
     try {
       showLoading();
 
-      const res_areas = await createOneArea(area_name);
+      const res_teachers = await createOneTeacher(form);
 
-      if (res_areas) {
-        setAreas(res_areas);
+      if (res_teachers) {
+        setTeachers(res_teachers);
       }
 
-      const message = "Area creada correctamente";
+      const message = "Maestro creado correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al crea el area";
+      const message = "Algo salio mal al crea el maestro";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -127,13 +133,13 @@ const AreasAdmin = () => {
   const queryArea = async () => {
     try {
       showLoading();
-      const res_area = await getAllAreas();
-      setAreas(res_area);
+      const res_teacher = await getAllTeachers();
+      setTeachers(res_teacher);
 
-      const message = "Area consultadas correctamente";
+      const message = "Maestros consultados correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al consultar el area";
+      const message = "Algo salio mal al consultar el maestros";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -142,50 +148,57 @@ const AreasAdmin = () => {
   };
 
   const updateArea = async () => {
-    const { area_name: new_area_name } = form;
-
     try {
       showLoading();
 
-      const res_areas = await updateOneArea(row.id, new_area_name);
-
-      if (res_areas) {
-        setAreas(res_areas);
+      if (checked) {
+        console.log("se actualizara el rol");
+        return;
       }
 
-      const message = "Area actualizada correctamente";
+      const res_teachers = await updateOneTeacher(form);
+
+      if (res_teachers) {
+        setTeachers(res_teachers);
+      }
+
+      const message = "Maestro actualizado correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al actualizar el area";
+      const message = "Algo salio mal al actualizar el maestro";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
       hideLoading();
     }
 
-    /* setForm(initialForm);
-    setFormUpdate(false); */
     onClose();
   };
 
-  const deleteArea = async (row: AreaProps) => {
-    const { id, area_name } = row;
+  const onOpenUpdate = (row: TeacherProps) => {
+    setFormUpdate(true);
+    setForm(row);
+    onOpen();
+  };
+
+  const deleteArea = async (row: TeacherProps) => {
+    const { id, teacher_name } = row;
 
     confirm({
       title: "Confirmar eliminación",
-      description: `¿Seguro que deseas eliminar el área "${area_name}"? Esta acción no se puede deshacer.`,
+      description: `¿Seguro que deseas eliminar al maestro "${teacher_name}"? Esta acción no se puede deshacer.`,
     })
       .then(async () => {
         try {
           showLoading();
-          const res_areas = await deleteOneArea(id);
-          if (res_areas) {
-            setAreas(res_areas);
+          const res_teachers = await deleteOneTeacher(id);
+          if (res_teachers) {
+            setTeachers(res_teachers);
           }
-          const message = "Area eliminada correctamente";
+          const message = "Maestro eliminado correctamente";
           enqueueSnackbar(message, { variant: "success" });
         } catch (err) {
-          const message = "Algo salio mal al eliminar el area";
+          const message = "Algo salio mal al eliminar el maestros";
           enqueueSnackbar(message, { variant: "error" });
           console.error(err);
         } finally {
@@ -196,11 +209,15 @@ const AreasAdmin = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", flex: 1 },
     {
-      field: "area_name",
-      headerName: "Nombre de Area",
-      flex: 2,
+      field: "teacher_name",
+      headerName: "Nombre del Profesor",
+      flex: 1,
+    },
+    {
+      field: "teacher_email",
+      headerName: "Email",
+      flex: 1,
     },
     {
       field: "actions",
@@ -229,11 +246,13 @@ const AreasAdmin = () => {
     },
   ];
 
+  console.log(form);
+
   return (
     <div>
       {LoadingBackdrop}
-      <Box sx={{ height: "75vh", width: "75vw" }}>
-        <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
+      <Box>
+        <Box sx={{ paddingBottom: 1, display: "flex", gap: 1 }}>
           <Button
             variant="contained"
             color="success"
@@ -252,8 +271,8 @@ const AreasAdmin = () => {
 
         {/* El condiconal es porque da error al borrar todas las areas */}
 
-        {areas.length > 0 ? (
-          <DataGrid columns={columns} rows={areas} />
+        {teachers.length > 0 ? (
+          <DataGrid columns={columns} rows={teachers} />
         ) : (
           <div>No hay datos disponibles</div> // Renderizamos un mensaje si no hay datos
         )}
@@ -274,33 +293,90 @@ const AreasAdmin = () => {
         }}
       >
         <DialogTitle>
-          {formUpdate ? "Actualizar" : "Crear"} una area
+          {formUpdate ? "Actualizar" : "Crear"} un Maestro
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para{" "}
-            {formUpdate ? "actualizar" : "crear"} el area
+            {formUpdate ? "actualizar" : "crear"} la maestro
           </DialogContentText>
           <TextField
             autoFocus
             required
             margin="dense"
-            name="area_name"
-            label="Nombre de area"
+            name="teacher_name"
+            label="Nombre de maestro"
             type="text"
             fullWidth
             variant="standard"
             onChange={handleChange}
-            value={form.area_name}
+            value={form.teacher_name}
           />
+          <TextField
+            required
+            margin="dense"
+            name="teacher_email"
+            label="Email"
+            type="email"
+            fullWidth
+            variant="standard"
+            onChange={handleChange}
+            value={form.teacher_email}
+          />
+          {formUpdate && (
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: "repeat(2,1fr)",
+                gap: 2,
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={checked}
+                    onChange={(e) => {
+                      setChecked(e.target.checked);
+
+                      if (!e.target.checked) {
+                        setForm((prevForm) => ({ ...prevForm, rol: "" }));
+                      }
+                    }}
+                  />
+                }
+                label="Actualizar rol"
+                labelPlacement="start"
+                sx={{ m: 1 }}
+              />
+
+              <TextField
+                disabled={!checked}
+                required={checked}
+                select
+                name="rol"
+                label="Rol"
+                variant="standard"
+                onChange={handleChange}
+                value={form.rol || ""}
+                fullWidth
+              >
+                {Roles.map(({ rol_name, rol }) => (
+                  <MenuItem key={rol} value={rol}>
+                    {rol_name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          )}
         </DialogContent>
         <DialogActions>
           <Button
             variant="contained"
             color="error"
             onClick={() => {
-              setForm(initialForm);
               onClose();
+              setForm(initialForm);
+              setChecked(false);
             }}
           >
             Cancelar
@@ -314,4 +390,4 @@ const AreasAdmin = () => {
   );
 };
 
-export { AreasAdmin };
+export { TeacherAdmin };

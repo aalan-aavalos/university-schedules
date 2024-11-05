@@ -24,17 +24,21 @@ export default function CoordinatorCreateForm(props) {
   } = props;
   const initialValues = {
     coordinator_name: "",
+    areaID: "",
   };
   const [coordinator_name, setCoordinator_name] = React.useState(
     initialValues.coordinator_name
   );
+  const [areaID, setAreaID] = React.useState(initialValues.areaID);
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
     setCoordinator_name(initialValues.coordinator_name);
+    setAreaID(initialValues.areaID);
     setErrors({});
   };
   const validations = {
     coordinator_name: [{ type: "Required" }],
+    areaID: [{ type: "Required" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -63,6 +67,7 @@ export default function CoordinatorCreateForm(props) {
         event.preventDefault();
         let modelFields = {
           coordinator_name,
+          areaID,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -126,6 +131,7 @@ export default function CoordinatorCreateForm(props) {
           if (onChange) {
             const modelFields = {
               coordinator_name: value,
+              areaID,
             };
             const result = onChange(modelFields);
             value = result?.coordinator_name ?? value;
@@ -139,6 +145,31 @@ export default function CoordinatorCreateForm(props) {
         errorMessage={errors.coordinator_name?.errorMessage}
         hasError={errors.coordinator_name?.hasError}
         {...getOverrideProps(overrides, "coordinator_name")}
+      ></TextField>
+      <TextField
+        label="Area id"
+        isRequired={true}
+        isReadOnly={false}
+        value={areaID}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              coordinator_name,
+              areaID: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.areaID ?? value;
+          }
+          if (errors.areaID?.hasError) {
+            runValidationTasks("areaID", value);
+          }
+          setAreaID(value);
+        }}
+        onBlur={() => runValidationTasks("areaID", areaID)}
+        errorMessage={errors.areaID?.errorMessage}
+        hasError={errors.areaID?.hasError}
+        {...getOverrideProps(overrides, "areaID")}
       ></TextField>
       <Flex
         justifyContent="space-between"
