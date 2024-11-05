@@ -1,37 +1,69 @@
 import { createArea, createStudent, createTeacher, deleteArea, deleteTeacher, updateArea, updateTeacher } from '@/graphql/mutations';
 
-import { listAreas } from '@/graphql/queries';
+import { listAreas, listTeachers } from '@/graphql/queries';
 
 import { generateClient } from "aws-amplify/api";
 
 const client = generateClient()
 
+interface StudentProps {
+    id: string;
+    student_name: string;
+    student_email: string;
+    four_month_period: string;
+    careerID: string
+}
+
+interface TeacherProps {
+    id?: string;
+    teacher_name: string;
+    teacher_email: string;
+}
+
 /* Teacher actions */
-export const createOneTeacher = async (teacher_name: string) => {
-    const newTeacher = await client.graphql({
+export const createOneTeacher = async (data: TeacherProps) => {
+    const { teacher_name, teacher_email } = data
+
+    await client.graphql({
         query: createTeacher,
-        variables: { input: { "teacher_name": teacher_name, } }
+        variables: { input: { teacher_name, teacher_email } }
     });
 
-    console.log(newTeacher)
+    const allTeachers = await client.graphql({
+        query: listTeachers
+    });
+
+    return allTeachers.data.listTeachers.items
 }
 
 export const deleteOneTeacher = async (id_teacher: string) => {
-    const deletedTeacher = await client.graphql({
+    await client.graphql({
         query: deleteTeacher,
         variables: { input: { id: id_teacher } }
     });
 
-    console.log(deletedTeacher)
-}
-
-export const updateOneTeacher = async (id: string, new_teacher_name: string) => {
-    const updatedTeacher = await client.graphql({
-        query: updateTeacher,
-        variables: { input: { id, "teacher_name": new_teacher_name, } }
+    const allTeachers = await client.graphql({
+        query: listTeachers
     });
 
-    console.log(updatedTeacher)
+    return allTeachers.data.listTeachers.items
+}
+
+export const updateOneTeacher = async (data: TeacherProps) => {
+    const { teacher_name, teacher_email } = data
+
+    const id = data.id as string
+
+    await client.graphql({
+        query: updateTeacher,
+        variables: { input: { id, teacher_name, teacher_email } }
+    });
+
+    const allTeachers = await client.graphql({
+        query: listTeachers
+    });
+
+    return allTeachers.data.listTeachers.items
 }
 
 /* Area actions */
@@ -77,15 +109,6 @@ export const deleteOneArea = async (id: string) => {
 
 
 /* Students */
-
-export interface StudentProps {
-    id: string | undefined;
-    student_name: string;
-    student_email: string;
-    four_month_period: string;
-    careerID: string
-}
-
 
 export const createOneStudentWithAPIKey = async (data: StudentProps) => {
     console.log(data);

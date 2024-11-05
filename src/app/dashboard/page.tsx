@@ -28,7 +28,6 @@ import { useDemoRouter } from "@toolpad/core/internal";
 import { Start } from "@/components/views/Start";
 
 // Administrator
-
 import { AreasAdmin } from "@/components/views/admin/AreasAdmin";
 import { CareerAdmin } from "@/components/views/admin/CareerAdmin";
 import { SubjectsAdmin } from "@/components/views/admin/SubjectsAdmin";
@@ -157,7 +156,6 @@ const Page = () => {
   const routerMUI = useDemoRouter("/dashboard");
 
   const { isAuthenticated, user, loading } = useAuth();
-  console.log(user);
 
   if (loading) {
     return <div>Loading...</div>;

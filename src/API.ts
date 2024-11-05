@@ -2,18 +2,22 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateCoordinatorInput = {
+export type CreateCareerInput = {
   id?: string | null,
-  coordinator_name: string,
+  career_name: string,
+  level: string,
+  four_month_periods: number,
   areaID: string,
 };
 
-export type ModelCoordinatorConditionInput = {
-  coordinator_name?: ModelStringInput | null,
+export type ModelCareerConditionInput = {
+  career_name?: ModelStringInput | null,
+  level?: ModelStringInput | null,
+  four_month_periods?: ModelIntInput | null,
   areaID?: ModelIDInput | null,
-  and?: Array< ModelCoordinatorConditionInput | null > | null,
-  or?: Array< ModelCoordinatorConditionInput | null > | null,
-  not?: ModelCoordinatorConditionInput | null,
+  and?: Array< ModelCareerConditionInput | null > | null,
+  or?: Array< ModelCareerConditionInput | null > | null,
+  not?: ModelCareerConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
 };
@@ -58,6 +62,18 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
+export type ModelIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  attributeExists?: boolean | null,
+  attributeType?: ModelAttributeTypes | null,
+};
+
 export type ModelIDInput = {
   ne?: string | null,
   eq?: string | null,
@@ -74,44 +90,15 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type Coordinator = {
-  __typename: "Coordinator",
+export type Career = {
+  __typename: "Career",
   id: string,
-  coordinator_name: string,
+  career_name: string,
+  level: string,
+  four_month_periods: number,
+  subject?: ModelSubjectConnection | null,
+  student?: ModelStudentConnection | null,
   areaID: string,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type UpdateCoordinatorInput = {
-  id: string,
-  coordinator_name?: string | null,
-  areaID?: string | null,
-};
-
-export type DeleteCoordinatorInput = {
-  id: string,
-};
-
-export type CreateTeacherInput = {
-  id?: string | null,
-  teacher_name: string,
-};
-
-export type ModelTeacherConditionInput = {
-  teacher_name?: ModelStringInput | null,
-  and?: Array< ModelTeacherConditionInput | null > | null,
-  or?: Array< ModelTeacherConditionInput | null > | null,
-  not?: ModelTeacherConditionInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-};
-
-export type Teacher = {
-  __typename: "Teacher",
-  id: string,
-  teacher_name: string,
-  subjects?: ModelSubjectConnection | null,
   createdAt: string,
   updatedAt: string,
 };
@@ -126,20 +113,130 @@ export type Subject = {
   __typename: "Subject",
   id: string,
   subject_name: string,
-  schedule?: Array< string > | null,
+  schedule?: string | null,
   four_month_period: number,
-  careerID: string,
   teacherID: string,
+  careerID: string,
   createdAt: string,
   updatedAt: string,
 };
 
-export type UpdateTeacherInput = {
-  id: string,
-  teacher_name?: string | null,
+export type ModelStudentConnection = {
+  __typename: "ModelStudentConnection",
+  items:  Array<Student | null >,
+  nextToken?: string | null,
 };
 
-export type DeleteTeacherInput = {
+export type Student = {
+  __typename: "Student",
+  id: string,
+  student_name: string,
+  student_email: string,
+  four_month_period: number,
+  careerID: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateCareerInput = {
+  id: string,
+  career_name?: string | null,
+  level?: string | null,
+  four_month_periods?: number | null,
+  areaID?: string | null,
+};
+
+export type DeleteCareerInput = {
+  id: string,
+};
+
+export type CreateAreaInput = {
+  id?: string | null,
+  area_name: string,
+};
+
+export type ModelAreaConditionInput = {
+  area_name?: ModelStringInput | null,
+  and?: Array< ModelAreaConditionInput | null > | null,
+  or?: Array< ModelAreaConditionInput | null > | null,
+  not?: ModelAreaConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type Area = {
+  __typename: "Area",
+  id: string,
+  area_name: string,
+  careers?: ModelCareerConnection | null,
+  coordinators?: ModelCoordinatorConnection | null,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type ModelCareerConnection = {
+  __typename: "ModelCareerConnection",
+  items:  Array<Career | null >,
+  nextToken?: string | null,
+};
+
+export type ModelCoordinatorConnection = {
+  __typename: "ModelCoordinatorConnection",
+  items:  Array<Coordinator | null >,
+  nextToken?: string | null,
+};
+
+export type Coordinator = {
+  __typename: "Coordinator",
+  id: string,
+  coordinator_name: string,
+  coordinator_email: string,
+  areaID: string,
+  createdAt: string,
+  updatedAt: string,
+};
+
+export type UpdateAreaInput = {
+  id: string,
+  area_name?: string | null,
+};
+
+export type DeleteAreaInput = {
+  id: string,
+};
+
+export type CreateSubjectInput = {
+  id?: string | null,
+  subject_name: string,
+  schedule?: string | null,
+  four_month_period: number,
+  teacherID: string,
+  careerID: string,
+};
+
+export type ModelSubjectConditionInput = {
+  subject_name?: ModelStringInput | null,
+  schedule?: ModelStringInput | null,
+  four_month_period?: ModelIntInput | null,
+  teacherID?: ModelIDInput | null,
+  careerID?: ModelIDInput | null,
+  and?: Array< ModelSubjectConditionInput | null > | null,
+  or?: Array< ModelSubjectConditionInput | null > | null,
+  not?: ModelSubjectConditionInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+};
+
+export type UpdateSubjectInput = {
+  id: string,
+  subject_name?: string | null,
+  schedule?: string | null,
+  four_month_period?: number | null,
+  teacherID?: string | null,
+  careerID?: string | null,
+};
+
+export type DeleteSubjectInput = {
   id: string,
 };
 
@@ -163,29 +260,6 @@ export type ModelStudentConditionInput = {
   updatedAt?: ModelStringInput | null,
 };
 
-export type ModelIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  attributeExists?: boolean | null,
-  attributeType?: ModelAttributeTypes | null,
-};
-
-export type Student = {
-  __typename: "Student",
-  id: string,
-  student_name: string,
-  student_email: string,
-  four_month_period: number,
-  careerID: string,
-  createdAt: string,
-  updatedAt: string,
-};
-
 export type UpdateStudentInput = {
   id: string,
   student_name?: string | null,
@@ -198,146 +272,82 @@ export type DeleteStudentInput = {
   id: string,
 };
 
-export type CreateSubjectInput = {
+export type CreateTeacherInput = {
   id?: string | null,
-  subject_name: string,
-  schedule?: Array< string > | null,
-  four_month_period: number,
-  careerID: string,
-  teacherID: string,
+  teacher_name: string,
+  teacher_email: string,
 };
 
-export type ModelSubjectConditionInput = {
-  subject_name?: ModelStringInput | null,
-  schedule?: ModelStringInput | null,
-  four_month_period?: ModelIntInput | null,
-  careerID?: ModelIDInput | null,
-  teacherID?: ModelIDInput | null,
-  and?: Array< ModelSubjectConditionInput | null > | null,
-  or?: Array< ModelSubjectConditionInput | null > | null,
-  not?: ModelSubjectConditionInput | null,
+export type ModelTeacherConditionInput = {
+  teacher_name?: ModelStringInput | null,
+  teacher_email?: ModelStringInput | null,
+  and?: Array< ModelTeacherConditionInput | null > | null,
+  or?: Array< ModelTeacherConditionInput | null > | null,
+  not?: ModelTeacherConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
 };
 
-export type UpdateSubjectInput = {
+export type Teacher = {
+  __typename: "Teacher",
   id: string,
-  subject_name?: string | null,
-  schedule?: Array< string > | null,
-  four_month_period?: number | null,
-  careerID?: string | null,
-  teacherID?: string | null,
+  teacher_name: string,
+  teacher_email: string,
+  subjects?: ModelSubjectConnection | null,
+  createdAt: string,
+  updatedAt: string,
 };
 
-export type DeleteSubjectInput = {
+export type UpdateTeacherInput = {
+  id: string,
+  teacher_name?: string | null,
+  teacher_email?: string | null,
+};
+
+export type DeleteTeacherInput = {
   id: string,
 };
 
-export type CreateAreaInput = {
+export type CreateCoordinatorInput = {
   id?: string | null,
-  area_name: string,
+  coordinator_name: string,
+  coordinator_email: string,
+  areaID: string,
 };
 
-export type ModelAreaConditionInput = {
-  area_name?: ModelStringInput | null,
-  and?: Array< ModelAreaConditionInput | null > | null,
-  or?: Array< ModelAreaConditionInput | null > | null,
-  not?: ModelAreaConditionInput | null,
+export type ModelCoordinatorConditionInput = {
+  coordinator_name?: ModelStringInput | null,
+  coordinator_email?: ModelStringInput | null,
+  areaID?: ModelIDInput | null,
+  and?: Array< ModelCoordinatorConditionInput | null > | null,
+  or?: Array< ModelCoordinatorConditionInput | null > | null,
+  not?: ModelCoordinatorConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
 };
 
-export type Area = {
-  __typename: "Area",
+export type UpdateCoordinatorInput = {
   id: string,
-  area_name: string,
-  careers?: ModelCareerConnection | null,
-  coordinators?: ModelCareerConnection | null,
-  createdAt: string,
-  updatedAt: string,
+  coordinator_name?: string | null,
+  coordinator_email?: string | null,
+  areaID?: string | null,
 };
 
-export type ModelCareerConnection = {
-  __typename: "ModelCareerConnection",
-  items:  Array<Career | null >,
-  nextToken?: string | null,
-};
-
-export type Career = {
-  __typename: "Career",
-  id: string,
-  career_name: string,
-  level: string,
-  four_month_periods: number,
-  areaID: string,
-  subjects?: ModelStudentConnection | null,
-  students?: ModelStudentConnection | null,
-  createdAt: string,
-  updatedAt: string,
-};
-
-export type ModelStudentConnection = {
-  __typename: "ModelStudentConnection",
-  items:  Array<Student | null >,
-  nextToken?: string | null,
-};
-
-export type UpdateAreaInput = {
-  id: string,
-  area_name?: string | null,
-};
-
-export type DeleteAreaInput = {
+export type DeleteCoordinatorInput = {
   id: string,
 };
 
-export type CreateCareerInput = {
-  id?: string | null,
-  career_name: string,
-  level: string,
-  four_month_periods: number,
-  areaID: string,
-};
-
-export type ModelCareerConditionInput = {
+export type ModelCareerFilterInput = {
+  id?: ModelIDInput | null,
   career_name?: ModelStringInput | null,
   level?: ModelStringInput | null,
   four_month_periods?: ModelIntInput | null,
   areaID?: ModelIDInput | null,
-  and?: Array< ModelCareerConditionInput | null > | null,
-  or?: Array< ModelCareerConditionInput | null > | null,
-  not?: ModelCareerConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-};
-
-export type UpdateCareerInput = {
-  id: string,
-  career_name?: string | null,
-  level?: string | null,
-  four_month_periods?: number | null,
-  areaID?: string | null,
-};
-
-export type DeleteCareerInput = {
-  id: string,
-};
-
-export type ModelCoordinatorFilterInput = {
-  id?: ModelIDInput | null,
-  coordinator_name?: ModelStringInput | null,
-  areaID?: ModelIDInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelCoordinatorFilterInput | null > | null,
-  or?: Array< ModelCoordinatorFilterInput | null > | null,
-  not?: ModelCoordinatorFilterInput | null,
-};
-
-export type ModelCoordinatorConnection = {
-  __typename: "ModelCoordinatorConnection",
-  items:  Array<Coordinator | null >,
-  nextToken?: string | null,
+  and?: Array< ModelCareerFilterInput | null > | null,
+  or?: Array< ModelCareerFilterInput | null > | null,
+  not?: ModelCareerFilterInput | null,
 };
 
 export enum ModelSortDirection {
@@ -345,49 +355,6 @@ export enum ModelSortDirection {
   DESC = "DESC",
 }
 
-
-export type ModelTeacherFilterInput = {
-  id?: ModelIDInput | null,
-  teacher_name?: ModelStringInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelTeacherFilterInput | null > | null,
-  or?: Array< ModelTeacherFilterInput | null > | null,
-  not?: ModelTeacherFilterInput | null,
-};
-
-export type ModelTeacherConnection = {
-  __typename: "ModelTeacherConnection",
-  items:  Array<Teacher | null >,
-  nextToken?: string | null,
-};
-
-export type ModelStudentFilterInput = {
-  id?: ModelIDInput | null,
-  student_name?: ModelStringInput | null,
-  student_email?: ModelStringInput | null,
-  four_month_period?: ModelIntInput | null,
-  careerID?: ModelIDInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelStudentFilterInput | null > | null,
-  or?: Array< ModelStudentFilterInput | null > | null,
-  not?: ModelStudentFilterInput | null,
-};
-
-export type ModelSubjectFilterInput = {
-  id?: ModelIDInput | null,
-  subject_name?: ModelStringInput | null,
-  schedule?: ModelStringInput | null,
-  four_month_period?: ModelIntInput | null,
-  careerID?: ModelIDInput | null,
-  teacherID?: ModelIDInput | null,
-  createdAt?: ModelStringInput | null,
-  updatedAt?: ModelStringInput | null,
-  and?: Array< ModelSubjectFilterInput | null > | null,
-  or?: Array< ModelSubjectFilterInput | null > | null,
-  not?: ModelSubjectFilterInput | null,
-};
 
 export type ModelAreaFilterInput = {
   id?: ModelIDInput | null,
@@ -405,27 +372,72 @@ export type ModelAreaConnection = {
   nextToken?: string | null,
 };
 
-export type ModelCareerFilterInput = {
+export type ModelSubjectFilterInput = {
   id?: ModelIDInput | null,
-  career_name?: ModelStringInput | null,
-  level?: ModelStringInput | null,
-  four_month_periods?: ModelIntInput | null,
+  subject_name?: ModelStringInput | null,
+  schedule?: ModelStringInput | null,
+  four_month_period?: ModelIntInput | null,
+  teacherID?: ModelIDInput | null,
+  careerID?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelSubjectFilterInput | null > | null,
+  or?: Array< ModelSubjectFilterInput | null > | null,
+  not?: ModelSubjectFilterInput | null,
+};
+
+export type ModelStudentFilterInput = {
+  id?: ModelIDInput | null,
+  student_name?: ModelStringInput | null,
+  student_email?: ModelStringInput | null,
+  four_month_period?: ModelIntInput | null,
+  careerID?: ModelIDInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelStudentFilterInput | null > | null,
+  or?: Array< ModelStudentFilterInput | null > | null,
+  not?: ModelStudentFilterInput | null,
+};
+
+export type ModelTeacherFilterInput = {
+  id?: ModelIDInput | null,
+  teacher_name?: ModelStringInput | null,
+  teacher_email?: ModelStringInput | null,
+  createdAt?: ModelStringInput | null,
+  updatedAt?: ModelStringInput | null,
+  and?: Array< ModelTeacherFilterInput | null > | null,
+  or?: Array< ModelTeacherFilterInput | null > | null,
+  not?: ModelTeacherFilterInput | null,
+};
+
+export type ModelTeacherConnection = {
+  __typename: "ModelTeacherConnection",
+  items:  Array<Teacher | null >,
+  nextToken?: string | null,
+};
+
+export type ModelCoordinatorFilterInput = {
+  id?: ModelIDInput | null,
+  coordinator_name?: ModelStringInput | null,
+  coordinator_email?: ModelStringInput | null,
   areaID?: ModelIDInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelCareerFilterInput | null > | null,
-  or?: Array< ModelCareerFilterInput | null > | null,
-  not?: ModelCareerFilterInput | null,
+  and?: Array< ModelCoordinatorFilterInput | null > | null,
+  or?: Array< ModelCoordinatorFilterInput | null > | null,
+  not?: ModelCoordinatorFilterInput | null,
 };
 
-export type ModelSubscriptionCoordinatorFilterInput = {
+export type ModelSubscriptionCareerFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  coordinator_name?: ModelSubscriptionStringInput | null,
+  career_name?: ModelSubscriptionStringInput | null,
+  level?: ModelSubscriptionStringInput | null,
+  four_month_periods?: ModelSubscriptionIntInput | null,
   areaID?: ModelSubscriptionIDInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionCoordinatorFilterInput | null > | null,
-  or?: Array< ModelSubscriptionCoordinatorFilterInput | null > | null,
+  and?: Array< ModelSubscriptionCareerFilterInput | null > | null,
+  or?: Array< ModelSubscriptionCareerFilterInput | null > | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -458,13 +470,38 @@ export type ModelSubscriptionStringInput = {
   notIn?: Array< string | null > | null,
 };
 
-export type ModelSubscriptionTeacherFilterInput = {
+export type ModelSubscriptionIntInput = {
+  ne?: number | null,
+  eq?: number | null,
+  le?: number | null,
+  lt?: number | null,
+  ge?: number | null,
+  gt?: number | null,
+  between?: Array< number | null > | null,
+  in?: Array< number | null > | null,
+  notIn?: Array< number | null > | null,
+};
+
+export type ModelSubscriptionAreaFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  teacher_name?: ModelSubscriptionStringInput | null,
+  area_name?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionTeacherFilterInput | null > | null,
-  or?: Array< ModelSubscriptionTeacherFilterInput | null > | null,
+  and?: Array< ModelSubscriptionAreaFilterInput | null > | null,
+  or?: Array< ModelSubscriptionAreaFilterInput | null > | null,
+};
+
+export type ModelSubscriptionSubjectFilterInput = {
+  id?: ModelSubscriptionIDInput | null,
+  subject_name?: ModelSubscriptionStringInput | null,
+  schedule?: ModelSubscriptionStringInput | null,
+  four_month_period?: ModelSubscriptionIntInput | null,
+  teacherID?: ModelSubscriptionIDInput | null,
+  careerID?: ModelSubscriptionIDInput | null,
+  createdAt?: ModelSubscriptionStringInput | null,
+  updatedAt?: ModelSubscriptionStringInput | null,
+  and?: Array< ModelSubscriptionSubjectFilterInput | null > | null,
+  or?: Array< ModelSubscriptionSubjectFilterInput | null > | null,
 };
 
 export type ModelSubscriptionStudentFilterInput = {
@@ -479,112 +516,121 @@ export type ModelSubscriptionStudentFilterInput = {
   or?: Array< ModelSubscriptionStudentFilterInput | null > | null,
 };
 
-export type ModelSubscriptionIntInput = {
-  ne?: number | null,
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-  in?: Array< number | null > | null,
-  notIn?: Array< number | null > | null,
-};
-
-export type ModelSubscriptionSubjectFilterInput = {
+export type ModelSubscriptionTeacherFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  subject_name?: ModelSubscriptionStringInput | null,
-  schedule?: ModelSubscriptionStringInput | null,
-  four_month_period?: ModelSubscriptionIntInput | null,
-  careerID?: ModelSubscriptionIDInput | null,
-  teacherID?: ModelSubscriptionIDInput | null,
+  teacher_name?: ModelSubscriptionStringInput | null,
+  teacher_email?: ModelSubscriptionStringInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionSubjectFilterInput | null > | null,
-  or?: Array< ModelSubscriptionSubjectFilterInput | null > | null,
+  and?: Array< ModelSubscriptionTeacherFilterInput | null > | null,
+  or?: Array< ModelSubscriptionTeacherFilterInput | null > | null,
 };
 
-export type ModelSubscriptionAreaFilterInput = {
+export type ModelSubscriptionCoordinatorFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  area_name?: ModelSubscriptionStringInput | null,
-  createdAt?: ModelSubscriptionStringInput | null,
-  updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionAreaFilterInput | null > | null,
-  or?: Array< ModelSubscriptionAreaFilterInput | null > | null,
-};
-
-export type ModelSubscriptionCareerFilterInput = {
-  id?: ModelSubscriptionIDInput | null,
-  career_name?: ModelSubscriptionStringInput | null,
-  level?: ModelSubscriptionStringInput | null,
-  four_month_periods?: ModelSubscriptionIntInput | null,
+  coordinator_name?: ModelSubscriptionStringInput | null,
+  coordinator_email?: ModelSubscriptionStringInput | null,
   areaID?: ModelSubscriptionIDInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionCareerFilterInput | null > | null,
-  or?: Array< ModelSubscriptionCareerFilterInput | null > | null,
+  and?: Array< ModelSubscriptionCoordinatorFilterInput | null > | null,
+  or?: Array< ModelSubscriptionCoordinatorFilterInput | null > | null,
 };
 
-export type CreateCoordinatorMutationVariables = {
-  input: CreateCoordinatorInput,
-  condition?: ModelCoordinatorConditionInput | null,
+export type CreateCareerMutationVariables = {
+  input: CreateCareerInput,
+  condition?: ModelCareerConditionInput | null,
 };
 
-export type CreateCoordinatorMutation = {
-  createCoordinator?:  {
-    __typename: "Coordinator",
+export type CreateCareerMutation = {
+  createCareer?:  {
+    __typename: "Career",
     id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateCoordinatorMutationVariables = {
-  input: UpdateCoordinatorInput,
-  condition?: ModelCoordinatorConditionInput | null,
-};
-
-export type UpdateCoordinatorMutation = {
-  updateCoordinator?:  {
-    __typename: "Coordinator",
-    id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteCoordinatorMutationVariables = {
-  input: DeleteCoordinatorInput,
-  condition?: ModelCoordinatorConditionInput | null,
-};
-
-export type DeleteCoordinatorMutation = {
-  deleteCoordinator?:  {
-    __typename: "Coordinator",
-    id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateTeacherMutationVariables = {
-  input: CreateTeacherInput,
-  condition?: ModelTeacherConditionInput | null,
-};
-
-export type CreateTeacherMutation = {
-  createTeacher?:  {
-    __typename: "Teacher",
-    id: string,
-    teacher_name: string,
-    subjects?:  {
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
       __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateCareerMutationVariables = {
+  input: UpdateCareerInput,
+  condition?: ModelCareerConditionInput | null,
+};
+
+export type UpdateCareerMutation = {
+  updateCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteCareerMutationVariables = {
+  input: DeleteCareerInput,
+  condition?: ModelCareerConditionInput | null,
+};
+
+export type DeleteCareerMutation = {
+  deleteCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateAreaMutationVariables = {
+  input: CreateAreaInput,
+  condition?: ModelAreaConditionInput | null,
+};
+
+export type CreateAreaMutation = {
+  createArea?:  {
+    __typename: "Area",
+    id: string,
+    area_name: string,
+    careers?:  {
+      __typename: "ModelCareerConnection",
+      nextToken?: string | null,
+    } | null,
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -592,18 +638,22 @@ export type CreateTeacherMutation = {
   } | null,
 };
 
-export type UpdateTeacherMutationVariables = {
-  input: UpdateTeacherInput,
-  condition?: ModelTeacherConditionInput | null,
+export type UpdateAreaMutationVariables = {
+  input: UpdateAreaInput,
+  condition?: ModelAreaConditionInput | null,
 };
 
-export type UpdateTeacherMutation = {
-  updateTeacher?:  {
-    __typename: "Teacher",
+export type UpdateAreaMutation = {
+  updateArea?:  {
+    __typename: "Area",
     id: string,
-    teacher_name: string,
-    subjects?:  {
-      __typename: "ModelSubjectConnection",
+    area_name: string,
+    careers?:  {
+      __typename: "ModelCareerConnection",
+      nextToken?: string | null,
+    } | null,
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -611,20 +661,81 @@ export type UpdateTeacherMutation = {
   } | null,
 };
 
-export type DeleteTeacherMutationVariables = {
-  input: DeleteTeacherInput,
-  condition?: ModelTeacherConditionInput | null,
+export type DeleteAreaMutationVariables = {
+  input: DeleteAreaInput,
+  condition?: ModelAreaConditionInput | null,
 };
 
-export type DeleteTeacherMutation = {
-  deleteTeacher?:  {
-    __typename: "Teacher",
+export type DeleteAreaMutation = {
+  deleteArea?:  {
+    __typename: "Area",
     id: string,
-    teacher_name: string,
-    subjects?:  {
-      __typename: "ModelSubjectConnection",
+    area_name: string,
+    careers?:  {
+      __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateSubjectMutationVariables = {
+  input: CreateSubjectInput,
+  condition?: ModelSubjectConditionInput | null,
+};
+
+export type CreateSubjectMutation = {
+  createSubject?:  {
+    __typename: "Subject",
+    id: string,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateSubjectMutationVariables = {
+  input: UpdateSubjectInput,
+  condition?: ModelSubjectConditionInput | null,
+};
+
+export type UpdateSubjectMutation = {
+  updateSubject?:  {
+    __typename: "Subject",
+    id: string,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteSubjectMutationVariables = {
+  input: DeleteSubjectInput,
+  condition?: ModelSubjectConditionInput | null,
+};
+
+export type DeleteSubjectMutation = {
+  deleteSubject?:  {
+    __typename: "Subject",
+    id: string,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -684,278 +795,17 @@ export type DeleteStudentMutation = {
   } | null,
 };
 
-export type CreateSubjectMutationVariables = {
-  input: CreateSubjectInput,
-  condition?: ModelSubjectConditionInput | null,
+export type CreateTeacherMutationVariables = {
+  input: CreateTeacherInput,
+  condition?: ModelTeacherConditionInput | null,
 };
 
-export type CreateSubjectMutation = {
-  createSubject?:  {
-    __typename: "Subject",
-    id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateSubjectMutationVariables = {
-  input: UpdateSubjectInput,
-  condition?: ModelSubjectConditionInput | null,
-};
-
-export type UpdateSubjectMutation = {
-  updateSubject?:  {
-    __typename: "Subject",
-    id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteSubjectMutationVariables = {
-  input: DeleteSubjectInput,
-  condition?: ModelSubjectConditionInput | null,
-};
-
-export type DeleteSubjectMutation = {
-  deleteSubject?:  {
-    __typename: "Subject",
-    id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateAreaMutationVariables = {
-  input: CreateAreaInput,
-  condition?: ModelAreaConditionInput | null,
-};
-
-export type CreateAreaMutation = {
-  createArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateAreaMutationVariables = {
-  input: UpdateAreaInput,
-  condition?: ModelAreaConditionInput | null,
-};
-
-export type UpdateAreaMutation = {
-  updateArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteAreaMutationVariables = {
-  input: DeleteAreaInput,
-  condition?: ModelAreaConditionInput | null,
-};
-
-export type DeleteAreaMutation = {
-  deleteArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type CreateCareerMutationVariables = {
-  input: CreateCareerInput,
-  condition?: ModelCareerConditionInput | null,
-};
-
-export type CreateCareerMutation = {
-  createCareer?:  {
-    __typename: "Career",
-    id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
-    subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type UpdateCareerMutationVariables = {
-  input: UpdateCareerInput,
-  condition?: ModelCareerConditionInput | null,
-};
-
-export type UpdateCareerMutation = {
-  updateCareer?:  {
-    __typename: "Career",
-    id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
-    subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type DeleteCareerMutationVariables = {
-  input: DeleteCareerInput,
-  condition?: ModelCareerConditionInput | null,
-};
-
-export type DeleteCareerMutation = {
-  deleteCareer?:  {
-    __typename: "Career",
-    id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
-    subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type GetCoordinatorQueryVariables = {
-  id: string,
-};
-
-export type GetCoordinatorQuery = {
-  getCoordinator?:  {
-    __typename: "Coordinator",
-    id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListCoordinatorsQueryVariables = {
-  filter?: ModelCoordinatorFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListCoordinatorsQuery = {
-  listCoordinators?:  {
-    __typename: "ModelCoordinatorConnection",
-    items:  Array< {
-      __typename: "Coordinator",
-      id: string,
-      coordinator_name: string,
-      areaID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type CoordinatorsByAreaIDQueryVariables = {
-  areaID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelCoordinatorFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type CoordinatorsByAreaIDQuery = {
-  coordinatorsByAreaID?:  {
-    __typename: "ModelCoordinatorConnection",
-    items:  Array< {
-      __typename: "Coordinator",
-      id: string,
-      coordinator_name: string,
-      areaID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetTeacherQueryVariables = {
-  id: string,
-};
-
-export type GetTeacherQuery = {
-  getTeacher?:  {
+export type CreateTeacherMutation = {
+  createTeacher?:  {
     __typename: "Teacher",
     id: string,
     teacher_name: string,
+    teacher_email: string,
     subjects?:  {
       __typename: "ModelSubjectConnection",
       nextToken?: string | null,
@@ -965,19 +815,299 @@ export type GetTeacherQuery = {
   } | null,
 };
 
-export type ListTeachersQueryVariables = {
-  filter?: ModelTeacherFilterInput | null,
+export type UpdateTeacherMutationVariables = {
+  input: UpdateTeacherInput,
+  condition?: ModelTeacherConditionInput | null,
+};
+
+export type UpdateTeacherMutation = {
+  updateTeacher?:  {
+    __typename: "Teacher",
+    id: string,
+    teacher_name: string,
+    teacher_email: string,
+    subjects?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteTeacherMutationVariables = {
+  input: DeleteTeacherInput,
+  condition?: ModelTeacherConditionInput | null,
+};
+
+export type DeleteTeacherMutation = {
+  deleteTeacher?:  {
+    __typename: "Teacher",
+    id: string,
+    teacher_name: string,
+    teacher_email: string,
+    subjects?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type CreateCoordinatorMutationVariables = {
+  input: CreateCoordinatorInput,
+  condition?: ModelCoordinatorConditionInput | null,
+};
+
+export type CreateCoordinatorMutation = {
+  createCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateCoordinatorMutationVariables = {
+  input: UpdateCoordinatorInput,
+  condition?: ModelCoordinatorConditionInput | null,
+};
+
+export type UpdateCoordinatorMutation = {
+  updateCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteCoordinatorMutationVariables = {
+  input: DeleteCoordinatorInput,
+  condition?: ModelCoordinatorConditionInput | null,
+};
+
+export type DeleteCoordinatorMutation = {
+  deleteCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetCareerQueryVariables = {
+  id: string,
+};
+
+export type GetCareerQuery = {
+  getCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListCareersQueryVariables = {
+  filter?: ModelCareerFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListTeachersQuery = {
-  listTeachers?:  {
-    __typename: "ModelTeacherConnection",
+export type ListCareersQuery = {
+  listCareers?:  {
+    __typename: "ModelCareerConnection",
     items:  Array< {
-      __typename: "Teacher",
+      __typename: "Career",
       id: string,
-      teacher_name: string,
+      career_name: string,
+      level: string,
+      four_month_periods: number,
+      areaID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type CareersByAreaIDQueryVariables = {
+  areaID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelCareerFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type CareersByAreaIDQuery = {
+  careersByAreaID?:  {
+    __typename: "ModelCareerConnection",
+    items:  Array< {
+      __typename: "Career",
+      id: string,
+      career_name: string,
+      level: string,
+      four_month_periods: number,
+      areaID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetAreaQueryVariables = {
+  id: string,
+};
+
+export type GetAreaQuery = {
+  getArea?:  {
+    __typename: "Area",
+    id: string,
+    area_name: string,
+    careers?:  {
+      __typename: "ModelCareerConnection",
+      nextToken?: string | null,
+    } | null,
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListAreasQueryVariables = {
+  filter?: ModelAreaFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListAreasQuery = {
+  listAreas?:  {
+    __typename: "ModelAreaConnection",
+    items:  Array< {
+      __typename: "Area",
+      id: string,
+      area_name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type GetSubjectQueryVariables = {
+  id: string,
+};
+
+export type GetSubjectQuery = {
+  getSubject?:  {
+    __typename: "Subject",
+    id: string,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListSubjectsQueryVariables = {
+  filter?: ModelSubjectFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListSubjectsQuery = {
+  listSubjects?:  {
+    __typename: "ModelSubjectConnection",
+    items:  Array< {
+      __typename: "Subject",
+      id: string,
+      subject_name: string,
+      schedule?: string | null,
+      four_month_period: number,
+      teacherID: string,
+      careerID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type SubjectsByTeacherIDQueryVariables = {
+  teacherID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelSubjectFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type SubjectsByTeacherIDQuery = {
+  subjectsByTeacherID?:  {
+    __typename: "ModelSubjectConnection",
+    items:  Array< {
+      __typename: "Subject",
+      id: string,
+      subject_name: string,
+      schedule?: string | null,
+      four_month_period: number,
+      teacherID: string,
+      careerID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type SubjectsByCareerIDQueryVariables = {
+  careerID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelSubjectFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type SubjectsByCareerIDQuery = {
+  subjectsByCareerID?:  {
+    __typename: "ModelSubjectConnection",
+    items:  Array< {
+      __typename: "Subject",
+      id: string,
+      subject_name: string,
+      schedule?: string | null,
+      four_month_period: number,
+      teacherID: string,
+      careerID: string,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1050,41 +1180,39 @@ export type StudentsByCareerIDQuery = {
   } | null,
 };
 
-export type GetSubjectQueryVariables = {
+export type GetTeacherQueryVariables = {
   id: string,
 };
 
-export type GetSubjectQuery = {
-  getSubject?:  {
-    __typename: "Subject",
+export type GetTeacherQuery = {
+  getTeacher?:  {
+    __typename: "Teacher",
     id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
+    teacher_name: string,
+    teacher_email: string,
+    subjects?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type ListSubjectsQueryVariables = {
-  filter?: ModelSubjectFilterInput | null,
+export type ListTeachersQueryVariables = {
+  filter?: ModelTeacherFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListSubjectsQuery = {
-  listSubjects?:  {
-    __typename: "ModelSubjectConnection",
+export type ListTeachersQuery = {
+  listTeachers?:  {
+    __typename: "ModelTeacherConnection",
     items:  Array< {
-      __typename: "Subject",
+      __typename: "Teacher",
       id: string,
-      subject_name: string,
-      schedule?: Array< string > | null,
-      four_month_period: number,
-      careerID: string,
-      teacherID: string,
+      teacher_name: string,
+      teacher_email: string,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -1092,64 +1220,149 @@ export type ListSubjectsQuery = {
   } | null,
 };
 
-export type SubjectsByCareerIDQueryVariables = {
-  careerID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelSubjectFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type SubjectsByCareerIDQuery = {
-  subjectsByCareerID?:  {
-    __typename: "ModelSubjectConnection",
-    items:  Array< {
-      __typename: "Subject",
-      id: string,
-      subject_name: string,
-      schedule?: Array< string > | null,
-      four_month_period: number,
-      careerID: string,
-      teacherID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type SubjectsByTeacherIDQueryVariables = {
-  teacherID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelSubjectFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type SubjectsByTeacherIDQuery = {
-  subjectsByTeacherID?:  {
-    __typename: "ModelSubjectConnection",
-    items:  Array< {
-      __typename: "Subject",
-      id: string,
-      subject_name: string,
-      schedule?: Array< string > | null,
-      four_month_period: number,
-      careerID: string,
-      teacherID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetAreaQueryVariables = {
+export type GetCoordinatorQueryVariables = {
   id: string,
 };
 
-export type GetAreaQuery = {
-  getArea?:  {
+export type GetCoordinatorQuery = {
+  getCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListCoordinatorsQueryVariables = {
+  filter?: ModelCoordinatorFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListCoordinatorsQuery = {
+  listCoordinators?:  {
+    __typename: "ModelCoordinatorConnection",
+    items:  Array< {
+      __typename: "Coordinator",
+      id: string,
+      coordinator_name: string,
+      coordinator_email: string,
+      areaID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type CoordinatorsByAreaIDQueryVariables = {
+  areaID: string,
+  sortDirection?: ModelSortDirection | null,
+  filter?: ModelCoordinatorFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type CoordinatorsByAreaIDQuery = {
+  coordinatorsByAreaID?:  {
+    __typename: "ModelCoordinatorConnection",
+    items:  Array< {
+      __typename: "Coordinator",
+      id: string,
+      coordinator_name: string,
+      coordinator_email: string,
+      areaID: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null >,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type OnCreateCareerSubscriptionVariables = {
+  filter?: ModelSubscriptionCareerFilterInput | null,
+};
+
+export type OnCreateCareerSubscription = {
+  onCreateCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateCareerSubscriptionVariables = {
+  filter?: ModelSubscriptionCareerFilterInput | null,
+};
+
+export type OnUpdateCareerSubscription = {
+  onUpdateCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteCareerSubscriptionVariables = {
+  filter?: ModelSubscriptionCareerFilterInput | null,
+};
+
+export type OnDeleteCareerSubscription = {
+  onDeleteCareer?:  {
+    __typename: "Career",
+    id: string,
+    career_name: string,
+    level: string,
+    four_month_periods: number,
+    subject?:  {
+      __typename: "ModelSubjectConnection",
+      nextToken?: string | null,
+    } | null,
+    student?:  {
+      __typename: "ModelStudentConnection",
+      nextToken?: string | null,
+    } | null,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateAreaSubscriptionVariables = {
+  filter?: ModelSubscriptionAreaFilterInput | null,
+};
+
+export type OnCreateAreaSubscription = {
+  onCreateArea?:  {
     __typename: "Area",
     id: string,
     area_name: string,
@@ -1158,52 +1371,29 @@ export type GetAreaQuery = {
       nextToken?: string | null,
     } | null,
     coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateAreaSubscriptionVariables = {
+  filter?: ModelSubscriptionAreaFilterInput | null,
+};
+
+export type OnUpdateAreaSubscription = {
+  onUpdateArea?:  {
+    __typename: "Area",
+    id: string,
+    area_name: string,
+    careers?:  {
       __typename: "ModelCareerConnection",
       nextToken?: string | null,
     } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type ListAreasQueryVariables = {
-  filter?: ModelAreaFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListAreasQuery = {
-  listAreas?:  {
-    __typename: "ModelAreaConnection",
-    items:  Array< {
-      __typename: "Area",
-      id: string,
-      area_name: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type GetCareerQueryVariables = {
-  id: string,
-};
-
-export type GetCareerQuery = {
-  getCareer?:  {
-    __typename: "Career",
-    id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
-    subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1211,110 +1401,21 @@ export type GetCareerQuery = {
   } | null,
 };
 
-export type ListCareersQueryVariables = {
-  filter?: ModelCareerFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
+export type OnDeleteAreaSubscriptionVariables = {
+  filter?: ModelSubscriptionAreaFilterInput | null,
 };
 
-export type ListCareersQuery = {
-  listCareers?:  {
-    __typename: "ModelCareerConnection",
-    items:  Array< {
-      __typename: "Career",
-      id: string,
-      career_name: string,
-      level: string,
-      four_month_periods: number,
-      areaID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type CareersByAreaIDQueryVariables = {
-  areaID: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelCareerFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type CareersByAreaIDQuery = {
-  careersByAreaID?:  {
-    __typename: "ModelCareerConnection",
-    items:  Array< {
-      __typename: "Career",
-      id: string,
-      career_name: string,
-      level: string,
-      four_month_periods: number,
-      areaID: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type OnCreateCoordinatorSubscriptionVariables = {
-  filter?: ModelSubscriptionCoordinatorFilterInput | null,
-};
-
-export type OnCreateCoordinatorSubscription = {
-  onCreateCoordinator?:  {
-    __typename: "Coordinator",
+export type OnDeleteAreaSubscription = {
+  onDeleteArea?:  {
+    __typename: "Area",
     id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateCoordinatorSubscriptionVariables = {
-  filter?: ModelSubscriptionCoordinatorFilterInput | null,
-};
-
-export type OnUpdateCoordinatorSubscription = {
-  onUpdateCoordinator?:  {
-    __typename: "Coordinator",
-    id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteCoordinatorSubscriptionVariables = {
-  filter?: ModelSubscriptionCoordinatorFilterInput | null,
-};
-
-export type OnDeleteCoordinatorSubscription = {
-  onDeleteCoordinator?:  {
-    __typename: "Coordinator",
-    id: string,
-    coordinator_name: string,
-    areaID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateTeacherSubscriptionVariables = {
-  filter?: ModelSubscriptionTeacherFilterInput | null,
-};
-
-export type OnCreateTeacherSubscription = {
-  onCreateTeacher?:  {
-    __typename: "Teacher",
-    id: string,
-    teacher_name: string,
-    subjects?:  {
-      __typename: "ModelSubjectConnection",
+    area_name: string,
+    careers?:  {
+      __typename: "ModelCareerConnection",
+      nextToken?: string | null,
+    } | null,
+    coordinators?:  {
+      __typename: "ModelCoordinatorConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1322,37 +1423,55 @@ export type OnCreateTeacherSubscription = {
   } | null,
 };
 
-export type OnUpdateTeacherSubscriptionVariables = {
-  filter?: ModelSubscriptionTeacherFilterInput | null,
+export type OnCreateSubjectSubscriptionVariables = {
+  filter?: ModelSubscriptionSubjectFilterInput | null,
 };
 
-export type OnUpdateTeacherSubscription = {
-  onUpdateTeacher?:  {
-    __typename: "Teacher",
+export type OnCreateSubjectSubscription = {
+  onCreateSubject?:  {
+    __typename: "Subject",
     id: string,
-    teacher_name: string,
-    subjects?:  {
-      __typename: "ModelSubjectConnection",
-      nextToken?: string | null,
-    } | null,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnDeleteTeacherSubscriptionVariables = {
-  filter?: ModelSubscriptionTeacherFilterInput | null,
+export type OnUpdateSubjectSubscriptionVariables = {
+  filter?: ModelSubscriptionSubjectFilterInput | null,
 };
 
-export type OnDeleteTeacherSubscription = {
-  onDeleteTeacher?:  {
-    __typename: "Teacher",
+export type OnUpdateSubjectSubscription = {
+  onUpdateSubject?:  {
+    __typename: "Subject",
     id: string,
-    teacher_name: string,
-    subjects?:  {
-      __typename: "ModelSubjectConnection",
-      nextToken?: string | null,
-    } | null,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteSubjectSubscriptionVariables = {
+  filter?: ModelSubscriptionSubjectFilterInput | null,
+};
+
+export type OnDeleteSubjectSubscription = {
+  onDeleteSubject?:  {
+    __typename: "Subject",
+    id: string,
+    subject_name: string,
+    schedule?: string | null,
+    four_month_period: number,
+    teacherID: string,
+    careerID: string,
     createdAt: string,
     updatedAt: string,
   } | null,
@@ -1409,144 +1528,18 @@ export type OnDeleteStudentSubscription = {
   } | null,
 };
 
-export type OnCreateSubjectSubscriptionVariables = {
-  filter?: ModelSubscriptionSubjectFilterInput | null,
+export type OnCreateTeacherSubscriptionVariables = {
+  filter?: ModelSubscriptionTeacherFilterInput | null,
 };
 
-export type OnCreateSubjectSubscription = {
-  onCreateSubject?:  {
-    __typename: "Subject",
+export type OnCreateTeacherSubscription = {
+  onCreateTeacher?:  {
+    __typename: "Teacher",
     id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateSubjectSubscriptionVariables = {
-  filter?: ModelSubscriptionSubjectFilterInput | null,
-};
-
-export type OnUpdateSubjectSubscription = {
-  onUpdateSubject?:  {
-    __typename: "Subject",
-    id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteSubjectSubscriptionVariables = {
-  filter?: ModelSubscriptionSubjectFilterInput | null,
-};
-
-export type OnDeleteSubjectSubscription = {
-  onDeleteSubject?:  {
-    __typename: "Subject",
-    id: string,
-    subject_name: string,
-    schedule?: Array< string > | null,
-    four_month_period: number,
-    careerID: string,
-    teacherID: string,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateAreaSubscriptionVariables = {
-  filter?: ModelSubscriptionAreaFilterInput | null,
-};
-
-export type OnCreateAreaSubscription = {
-  onCreateArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnUpdateAreaSubscriptionVariables = {
-  filter?: ModelSubscriptionAreaFilterInput | null,
-};
-
-export type OnUpdateAreaSubscription = {
-  onUpdateArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnDeleteAreaSubscriptionVariables = {
-  filter?: ModelSubscriptionAreaFilterInput | null,
-};
-
-export type OnDeleteAreaSubscription = {
-  onDeleteArea?:  {
-    __typename: "Area",
-    id: string,
-    area_name: string,
-    careers?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    coordinators?:  {
-      __typename: "ModelCareerConnection",
-      nextToken?: string | null,
-    } | null,
-    createdAt: string,
-    updatedAt: string,
-  } | null,
-};
-
-export type OnCreateCareerSubscriptionVariables = {
-  filter?: ModelSubscriptionCareerFilterInput | null,
-};
-
-export type OnCreateCareerSubscription = {
-  onCreateCareer?:  {
-    __typename: "Career",
-    id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
+    teacher_name: string,
+    teacher_email: string,
     subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
+      __typename: "ModelSubjectConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1554,24 +1547,18 @@ export type OnCreateCareerSubscription = {
   } | null,
 };
 
-export type OnUpdateCareerSubscriptionVariables = {
-  filter?: ModelSubscriptionCareerFilterInput | null,
+export type OnUpdateTeacherSubscriptionVariables = {
+  filter?: ModelSubscriptionTeacherFilterInput | null,
 };
 
-export type OnUpdateCareerSubscription = {
-  onUpdateCareer?:  {
-    __typename: "Career",
+export type OnUpdateTeacherSubscription = {
+  onUpdateTeacher?:  {
+    __typename: "Teacher",
     id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
+    teacher_name: string,
+    teacher_email: string,
     subjects?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
+      __typename: "ModelSubjectConnection",
       nextToken?: string | null,
     } | null,
     createdAt: string,
@@ -1579,26 +1566,68 @@ export type OnUpdateCareerSubscription = {
   } | null,
 };
 
-export type OnDeleteCareerSubscriptionVariables = {
-  filter?: ModelSubscriptionCareerFilterInput | null,
+export type OnDeleteTeacherSubscriptionVariables = {
+  filter?: ModelSubscriptionTeacherFilterInput | null,
 };
 
-export type OnDeleteCareerSubscription = {
-  onDeleteCareer?:  {
-    __typename: "Career",
+export type OnDeleteTeacherSubscription = {
+  onDeleteTeacher?:  {
+    __typename: "Teacher",
     id: string,
-    career_name: string,
-    level: string,
-    four_month_periods: number,
-    areaID: string,
+    teacher_name: string,
+    teacher_email: string,
     subjects?:  {
-      __typename: "ModelStudentConnection",
+      __typename: "ModelSubjectConnection",
       nextToken?: string | null,
     } | null,
-    students?:  {
-      __typename: "ModelStudentConnection",
-      nextToken?: string | null,
-    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnCreateCoordinatorSubscriptionVariables = {
+  filter?: ModelSubscriptionCoordinatorFilterInput | null,
+};
+
+export type OnCreateCoordinatorSubscription = {
+  onCreateCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateCoordinatorSubscriptionVariables = {
+  filter?: ModelSubscriptionCoordinatorFilterInput | null,
+};
+
+export type OnUpdateCoordinatorSubscription = {
+  onUpdateCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteCoordinatorSubscriptionVariables = {
+  filter?: ModelSubscriptionCoordinatorFilterInput | null,
+};
+
+export type OnDeleteCoordinatorSubscription = {
+  onDeleteCoordinator?:  {
+    __typename: "Coordinator",
+    id: string,
+    coordinator_name: string,
+    coordinator_email: string,
+    areaID: string,
     createdAt: string,
     updatedAt: string,
   } | null,
