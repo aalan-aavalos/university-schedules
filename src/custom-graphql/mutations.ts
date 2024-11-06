@@ -158,8 +158,8 @@ export const deleteOneCareer = async (id: string) => {
 
     return allCareers.data.listCareers.items
 }
-/* Students */
 
+/* Students */
 export const createOneStudentWithAPIKey = async (data: StudentProps) => {
     console.log(data);
     const { id, student_name, student_email, four_month_period, careerID } = data
@@ -177,7 +177,7 @@ export const createOneStudentWithAPIKey = async (data: StudentProps) => {
         },
         authMode: "apiKey"
     });
-
-
     console.log(newStudent);
 }
+
+/* Subjects actions */
