@@ -26,9 +26,13 @@ export default function TeacherUpdateForm(props) {
   } = props;
   const initialValues = {
     teacher_name: "",
+    teacher_email: "",
   };
   const [teacher_name, setTeacher_name] = React.useState(
     initialValues.teacher_name
+  );
+  const [teacher_email, setTeacher_email] = React.useState(
+    initialValues.teacher_email
   );
   const [errors, setErrors] = React.useState({});
   const resetStateValues = () => {
@@ -36,6 +40,7 @@ export default function TeacherUpdateForm(props) {
       ? { ...initialValues, ...teacherRecord }
       : initialValues;
     setTeacher_name(cleanValues.teacher_name);
+    setTeacher_email(cleanValues.teacher_email);
     setErrors({});
   };
   const [teacherRecord, setTeacherRecord] = React.useState(teacherModelProp);
@@ -56,6 +61,7 @@ export default function TeacherUpdateForm(props) {
   React.useEffect(resetStateValues, [teacherRecord]);
   const validations = {
     teacher_name: [{ type: "Required" }],
+    teacher_email: [{ type: "Required" }, { type: "Email" }],
   };
   const runValidationTasks = async (
     fieldName,
@@ -84,6 +90,7 @@ export default function TeacherUpdateForm(props) {
         event.preventDefault();
         let modelFields = {
           teacher_name,
+          teacher_email,
         };
         const validationResponses = await Promise.all(
           Object.keys(validations).reduce((promises, fieldName) => {
@@ -145,6 +152,7 @@ export default function TeacherUpdateForm(props) {
           if (onChange) {
             const modelFields = {
               teacher_name: value,
+              teacher_email,
             };
             const result = onChange(modelFields);
             value = result?.teacher_name ?? value;
@@ -158,6 +166,31 @@ export default function TeacherUpdateForm(props) {
         errorMessage={errors.teacher_name?.errorMessage}
         hasError={errors.teacher_name?.hasError}
         {...getOverrideProps(overrides, "teacher_name")}
+      ></TextField>
+      <TextField
+        label="Teacher email"
+        isRequired={true}
+        isReadOnly={false}
+        value={teacher_email}
+        onChange={(e) => {
+          let { value } = e.target;
+          if (onChange) {
+            const modelFields = {
+              teacher_name,
+              teacher_email: value,
+            };
+            const result = onChange(modelFields);
+            value = result?.teacher_email ?? value;
+          }
+          if (errors.teacher_email?.hasError) {
+            runValidationTasks("teacher_email", value);
+          }
+          setTeacher_email(value);
+        }}
+        onBlur={() => runValidationTasks("teacher_email", teacher_email)}
+        errorMessage={errors.teacher_email?.errorMessage}
+        hasError={errors.teacher_email?.hasError}
+        {...getOverrideProps(overrides, "teacher_email")}
       ></TextField>
       <Flex
         justifyContent="space-between"

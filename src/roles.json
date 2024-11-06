@@ -1,0 +1,18 @@
+[
+    {
+        "rol_name": "Administrador",
+        "rol": "admin"
+    },
+    {
+        "rol_name": "Coordinador",
+        "rol": "coordinator"
+    },
+    {
+        "rol_name": "Maestro",
+        "rol": "teacher"
+    },
+    {
+        "rol_name": "Estudiante",
+        "rol": "student"
+    }
+]

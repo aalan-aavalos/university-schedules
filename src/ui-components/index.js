@@ -6,8 +6,6 @@
 
 export { default as AreaCreateForm } from "./AreaCreateForm";
 export { default as AreaUpdateForm } from "./AreaUpdateForm";
-export { default as CoordinatorCreateForm } from "./CoordinatorCreateForm";
-export { default as CoordinatorUpdateForm } from "./CoordinatorUpdateForm";
 export { default as TeacherCreateForm } from "./TeacherCreateForm";
 export { default as TeacherUpdateForm } from "./TeacherUpdateForm";
 export { default as studioTheme } from "./studioTheme";
