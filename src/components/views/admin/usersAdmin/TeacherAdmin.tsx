@@ -103,7 +103,6 @@ const TeacherAdmin = () => {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     const { name, value } = e.target;
-    
 
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
 
@@ -367,14 +366,11 @@ const TeacherAdmin = () => {
                 value={form.rol || ""}
                 fullWidth
               >
-                <MenuItem value="TSU">TSU</MenuItem>
-                <MenuItem value="ING/LIC">ING/LIC</MenuItem>
-
-                {/* {Roles.map(({ rol_name, rol }) => ( */}
-                {/* <MenuItem key={rol} value={rol}>
+                {Roles.map(({ rol_name, rol }) => (
+                  <MenuItem key={rol} value={rol}>
                     {rol_name}
-                  </MenuItem> */}
-                {/* ))} */}
+                  </MenuItem>
+                ))}
               </TextField>
             </Box>
           )}
