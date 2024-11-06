@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  MenuItem,
   TextField,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -89,8 +90,17 @@ const CareerAdmin = () => {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     const { name, value } = e.target;
-    setForm((prevForm) => ({ ...prevForm, [name]: value }));
+
+    if (name === "level") {
+      const fourMonthPeriods = value === "TSU" ? 6 : 5;
+      setForm((prevForm) => ({
+        ...prevForm,
+        four_month_periods: fourMonthPeriods,
+      }));
+    }
+      setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
+
 
   const onOpenUpdate = (row: CareerProps) => {
 
@@ -190,7 +200,7 @@ const CareerAdmin = () => {
           hideLoading();
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   };
 
   const columns: GridColDef[] = [
@@ -247,7 +257,12 @@ const CareerAdmin = () => {
       {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="success" onClick={onOpen}>
+          <Button variant="contained" color="success" onClick={() => {
+            setForm(initialForm);
+            setFormUpdate(false);
+            onOpen();
+          }
+          }>
             Crear
           </Button>
           <Button variant="contained" onClick={queryCareer}>
@@ -295,6 +310,7 @@ const CareerAdmin = () => {
           />
           <TextField
             required
+            select
             margin="dense"
             name="level"
             label="Nivel"
@@ -303,16 +319,18 @@ const CareerAdmin = () => {
             variant="standard"
             onChange={handleChange}
             value={form.level}
-          />
+          >
+            <MenuItem value="TSU">TSU</MenuItem>
+            <MenuItem value="ING/LIC">ING/LIC</MenuItem>
+          </TextField>
           <TextField
-            required
+            disabled
             margin="dense"
             name="four_month_periods"
             label="Cuatrimestres"
             type="number"
             fullWidth
             variant="standard"
-            onChange={handleChange}
             value={form.four_month_periods}
           />
           <TextField
@@ -338,4 +356,4 @@ const CareerAdmin = () => {
   );
 };
 
-export {CareerAdmin};
+export { CareerAdmin };
