@@ -345,8 +345,12 @@ const CoordinatorAdmin = () => {
     },
     {
       field: "areaID",
-      headerName: "ID de Area",
+      headerName: "Área",
       flex: 1,
+      renderCell: (params) => {
+        const area = areas.find((area) => area.id === params.value);
+        return area ? area.area_name : "Desconocido";
+      },
     },
     {
       field: "actions",
@@ -374,6 +378,7 @@ const CoordinatorAdmin = () => {
         ) : null,
     },
   ];
+  
 
   return (
     <div>
