@@ -90,7 +90,7 @@ const SingInForm = () => {
         component="form"
         onSubmit={onSubmit}
         sx={{
-          width: 700,
+          width: 600,
           margin: "auto",
           mt: 2,
           p: 4,
