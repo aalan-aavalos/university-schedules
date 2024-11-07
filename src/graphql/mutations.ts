@@ -8,13 +8,23 @@ type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationOutput: OutputType;
 };
 
-export const createCoordinator = /* GraphQL */ `mutation CreateCoordinator(
-  $input: CreateCoordinatorInput!
-  $condition: ModelCoordinatorConditionInput
+export const createCareer = /* GraphQL */ `mutation CreateCareer(
+  $input: CreateCareerInput!
+  $condition: ModelCareerConditionInput
 ) {
-  createCoordinator(input: $input, condition: $condition) {
+  createCareer(input: $input, condition: $condition) {
     id
-    coordinator_name
+    career_name
+    level
+    four_month_periods
+    subject {
+      nextToken
+      __typename
+    }
+    student {
+      nextToken
+      __typename
+    }
     areaID
     createdAt
     updatedAt
@@ -22,16 +32,26 @@ export const createCoordinator = /* GraphQL */ `mutation CreateCoordinator(
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateCoordinatorMutationVariables,
-  APITypes.CreateCoordinatorMutation
+  APITypes.CreateCareerMutationVariables,
+  APITypes.CreateCareerMutation
 >;
-export const updateCoordinator = /* GraphQL */ `mutation UpdateCoordinator(
-  $input: UpdateCoordinatorInput!
-  $condition: ModelCoordinatorConditionInput
+export const updateCareer = /* GraphQL */ `mutation UpdateCareer(
+  $input: UpdateCareerInput!
+  $condition: ModelCareerConditionInput
 ) {
-  updateCoordinator(input: $input, condition: $condition) {
+  updateCareer(input: $input, condition: $condition) {
     id
-    coordinator_name
+    career_name
+    level
+    four_month_periods
+    subject {
+      nextToken
+      __typename
+    }
+    student {
+      nextToken
+      __typename
+    }
     areaID
     createdAt
     updatedAt
@@ -39,16 +59,26 @@ export const updateCoordinator = /* GraphQL */ `mutation UpdateCoordinator(
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateCoordinatorMutationVariables,
-  APITypes.UpdateCoordinatorMutation
+  APITypes.UpdateCareerMutationVariables,
+  APITypes.UpdateCareerMutation
 >;
-export const deleteCoordinator = /* GraphQL */ `mutation DeleteCoordinator(
-  $input: DeleteCoordinatorInput!
-  $condition: ModelCoordinatorConditionInput
+export const deleteCareer = /* GraphQL */ `mutation DeleteCareer(
+  $input: DeleteCareerInput!
+  $condition: ModelCareerConditionInput
 ) {
-  deleteCoordinator(input: $input, condition: $condition) {
+  deleteCareer(input: $input, condition: $condition) {
     id
-    coordinator_name
+    career_name
+    level
+    four_month_periods
+    subject {
+      nextToken
+      __typename
+    }
+    student {
+      nextToken
+      __typename
+    }
     areaID
     createdAt
     updatedAt
@@ -56,185 +86,8 @@ export const deleteCoordinator = /* GraphQL */ `mutation DeleteCoordinator(
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteCoordinatorMutationVariables,
-  APITypes.DeleteCoordinatorMutation
->;
-export const createTeacher = /* GraphQL */ `mutation CreateTeacher(
-  $input: CreateTeacherInput!
-  $condition: ModelTeacherConditionInput
-) {
-  createTeacher(input: $input, condition: $condition) {
-    id
-    teacher_name
-    subjects {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreateTeacherMutationVariables,
-  APITypes.CreateTeacherMutation
->;
-export const updateTeacher = /* GraphQL */ `mutation UpdateTeacher(
-  $input: UpdateTeacherInput!
-  $condition: ModelTeacherConditionInput
-) {
-  updateTeacher(input: $input, condition: $condition) {
-    id
-    teacher_name
-    subjects {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdateTeacherMutationVariables,
-  APITypes.UpdateTeacherMutation
->;
-export const deleteTeacher = /* GraphQL */ `mutation DeleteTeacher(
-  $input: DeleteTeacherInput!
-  $condition: ModelTeacherConditionInput
-) {
-  deleteTeacher(input: $input, condition: $condition) {
-    id
-    teacher_name
-    subjects {
-      nextToken
-      __typename
-    }
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteTeacherMutationVariables,
-  APITypes.DeleteTeacherMutation
->;
-export const createStudent = /* GraphQL */ `mutation CreateStudent(
-  $input: CreateStudentInput!
-  $condition: ModelStudentConditionInput
-) {
-  createStudent(input: $input, condition: $condition) {
-    id
-    student_name
-    student_email
-    four_month_period
-    careerID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreateStudentMutationVariables,
-  APITypes.CreateStudentMutation
->;
-export const updateStudent = /* GraphQL */ `mutation UpdateStudent(
-  $input: UpdateStudentInput!
-  $condition: ModelStudentConditionInput
-) {
-  updateStudent(input: $input, condition: $condition) {
-    id
-    student_name
-    student_email
-    four_month_period
-    careerID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdateStudentMutationVariables,
-  APITypes.UpdateStudentMutation
->;
-export const deleteStudent = /* GraphQL */ `mutation DeleteStudent(
-  $input: DeleteStudentInput!
-  $condition: ModelStudentConditionInput
-) {
-  deleteStudent(input: $input, condition: $condition) {
-    id
-    student_name
-    student_email
-    four_month_period
-    careerID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteStudentMutationVariables,
-  APITypes.DeleteStudentMutation
->;
-export const createSubject = /* GraphQL */ `mutation CreateSubject(
-  $input: CreateSubjectInput!
-  $condition: ModelSubjectConditionInput
-) {
-  createSubject(input: $input, condition: $condition) {
-    id
-    subject_name
-    schedule
-    four_month_period
-    careerID
-    teacherID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.CreateSubjectMutationVariables,
-  APITypes.CreateSubjectMutation
->;
-export const updateSubject = /* GraphQL */ `mutation UpdateSubject(
-  $input: UpdateSubjectInput!
-  $condition: ModelSubjectConditionInput
-) {
-  updateSubject(input: $input, condition: $condition) {
-    id
-    subject_name
-    schedule
-    four_month_period
-    careerID
-    teacherID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.UpdateSubjectMutationVariables,
-  APITypes.UpdateSubjectMutation
->;
-export const deleteSubject = /* GraphQL */ `mutation DeleteSubject(
-  $input: DeleteSubjectInput!
-  $condition: ModelSubjectConditionInput
-) {
-  deleteSubject(input: $input, condition: $condition) {
-    id
-    subject_name
-    schedule
-    four_month_period
-    careerID
-    teacherID
-    createdAt
-    updatedAt
-    __typename
-  }
-}
-` as GeneratedMutation<
-  APITypes.DeleteSubjectMutationVariables,
-  APITypes.DeleteSubjectMutation
+  APITypes.DeleteCareerMutationVariables,
+  APITypes.DeleteCareerMutation
 >;
 export const createArea = /* GraphQL */ `mutation CreateArea(
   $input: CreateAreaInput!
@@ -308,75 +161,138 @@ export const deleteArea = /* GraphQL */ `mutation DeleteArea(
   APITypes.DeleteAreaMutationVariables,
   APITypes.DeleteAreaMutation
 >;
-export const createCareer = /* GraphQL */ `mutation CreateCareer(
-  $input: CreateCareerInput!
-  $condition: ModelCareerConditionInput
+export const createSubject = /* GraphQL */ `mutation CreateSubject(
+  $input: CreateSubjectInput!
+  $condition: ModelSubjectConditionInput
 ) {
-  createCareer(input: $input, condition: $condition) {
+  createSubject(input: $input, condition: $condition) {
     id
-    career_name
-    level
-    four_month_periods
-    areaID
-    subjects {
-      nextToken
-      __typename
-    }
-    students {
-      nextToken
-      __typename
-    }
+    subject_name
+    schedule
+    four_month_period
+    hours_per_teacher
+    hours_per_student
+    teacherID
+    careerID
     createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateCareerMutationVariables,
-  APITypes.CreateCareerMutation
+  APITypes.CreateSubjectMutationVariables,
+  APITypes.CreateSubjectMutation
 >;
-export const updateCareer = /* GraphQL */ `mutation UpdateCareer(
-  $input: UpdateCareerInput!
-  $condition: ModelCareerConditionInput
+export const updateSubject = /* GraphQL */ `mutation UpdateSubject(
+  $input: UpdateSubjectInput!
+  $condition: ModelSubjectConditionInput
 ) {
-  updateCareer(input: $input, condition: $condition) {
+  updateSubject(input: $input, condition: $condition) {
     id
-    career_name
-    level
-    four_month_periods
-    areaID
-    subjects {
-      nextToken
-      __typename
-    }
-    students {
-      nextToken
-      __typename
-    }
+    subject_name
+    schedule
+    four_month_period
+    hours_per_teacher
+    hours_per_student
+    teacherID
+    careerID
     createdAt
     updatedAt
     __typename
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateCareerMutationVariables,
-  APITypes.UpdateCareerMutation
+  APITypes.UpdateSubjectMutationVariables,
+  APITypes.UpdateSubjectMutation
 >;
-export const deleteCareer = /* GraphQL */ `mutation DeleteCareer(
-  $input: DeleteCareerInput!
-  $condition: ModelCareerConditionInput
+export const deleteSubject = /* GraphQL */ `mutation DeleteSubject(
+  $input: DeleteSubjectInput!
+  $condition: ModelSubjectConditionInput
 ) {
-  deleteCareer(input: $input, condition: $condition) {
+  deleteSubject(input: $input, condition: $condition) {
     id
-    career_name
-    level
-    four_month_periods
-    areaID
+    subject_name
+    schedule
+    four_month_period
+    hours_per_teacher
+    hours_per_student
+    teacherID
+    careerID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteSubjectMutationVariables,
+  APITypes.DeleteSubjectMutation
+>;
+export const createStudent = /* GraphQL */ `mutation CreateStudent(
+  $input: CreateStudentInput!
+  $condition: ModelStudentConditionInput
+) {
+  createStudent(input: $input, condition: $condition) {
+    id
+    student_name
+    student_email
+    four_month_period
+    careerID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateStudentMutationVariables,
+  APITypes.CreateStudentMutation
+>;
+export const updateStudent = /* GraphQL */ `mutation UpdateStudent(
+  $input: UpdateStudentInput!
+  $condition: ModelStudentConditionInput
+) {
+  updateStudent(input: $input, condition: $condition) {
+    id
+    student_name
+    student_email
+    four_month_period
+    careerID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateStudentMutationVariables,
+  APITypes.UpdateStudentMutation
+>;
+export const deleteStudent = /* GraphQL */ `mutation DeleteStudent(
+  $input: DeleteStudentInput!
+  $condition: ModelStudentConditionInput
+) {
+  deleteStudent(input: $input, condition: $condition) {
+    id
+    student_name
+    student_email
+    four_month_period
+    careerID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteStudentMutationVariables,
+  APITypes.DeleteStudentMutation
+>;
+export const createTeacher = /* GraphQL */ `mutation CreateTeacher(
+  $input: CreateTeacherInput!
+  $condition: ModelTeacherConditionInput
+) {
+  createTeacher(input: $input, condition: $condition) {
+    id
+    teacher_name
+    teacher_email
     subjects {
-      nextToken
-      __typename
-    }
-    students {
       nextToken
       __typename
     }
@@ -386,6 +302,102 @@ export const deleteCareer = /* GraphQL */ `mutation DeleteCareer(
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteCareerMutationVariables,
-  APITypes.DeleteCareerMutation
+  APITypes.CreateTeacherMutationVariables,
+  APITypes.CreateTeacherMutation
+>;
+export const updateTeacher = /* GraphQL */ `mutation UpdateTeacher(
+  $input: UpdateTeacherInput!
+  $condition: ModelTeacherConditionInput
+) {
+  updateTeacher(input: $input, condition: $condition) {
+    id
+    teacher_name
+    teacher_email
+    subjects {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateTeacherMutationVariables,
+  APITypes.UpdateTeacherMutation
+>;
+export const deleteTeacher = /* GraphQL */ `mutation DeleteTeacher(
+  $input: DeleteTeacherInput!
+  $condition: ModelTeacherConditionInput
+) {
+  deleteTeacher(input: $input, condition: $condition) {
+    id
+    teacher_name
+    teacher_email
+    subjects {
+      nextToken
+      __typename
+    }
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteTeacherMutationVariables,
+  APITypes.DeleteTeacherMutation
+>;
+export const createCoordinator = /* GraphQL */ `mutation CreateCoordinator(
+  $input: CreateCoordinatorInput!
+  $condition: ModelCoordinatorConditionInput
+) {
+  createCoordinator(input: $input, condition: $condition) {
+    id
+    coordinator_name
+    coordinator_email
+    areaID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.CreateCoordinatorMutationVariables,
+  APITypes.CreateCoordinatorMutation
+>;
+export const updateCoordinator = /* GraphQL */ `mutation UpdateCoordinator(
+  $input: UpdateCoordinatorInput!
+  $condition: ModelCoordinatorConditionInput
+) {
+  updateCoordinator(input: $input, condition: $condition) {
+    id
+    coordinator_name
+    coordinator_email
+    areaID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.UpdateCoordinatorMutationVariables,
+  APITypes.UpdateCoordinatorMutation
+>;
+export const deleteCoordinator = /* GraphQL */ `mutation DeleteCoordinator(
+  $input: DeleteCoordinatorInput!
+  $condition: ModelCoordinatorConditionInput
+) {
+  deleteCoordinator(input: $input, condition: $condition) {
+    id
+    coordinator_name
+    coordinator_email
+    areaID
+    createdAt
+    updatedAt
+    __typename
+  }
+}
+` as GeneratedMutation<
+  APITypes.DeleteCoordinatorMutationVariables,
+  APITypes.DeleteCoordinatorMutation
 >;

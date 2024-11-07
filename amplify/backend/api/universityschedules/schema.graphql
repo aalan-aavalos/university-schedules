@@ -1,13 +1,29 @@
-type Coordinator @model @auth(rules: [{allow: private}]) {
+type Career @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
   id: ID!
-  coordinator_name: String!
+  career_name: String!
+  level: String!
+  four_month_periods: Int!
+  subject: [Subject] @hasMany(indexName: "byCareer", fields: ["id"])
+  student: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
   areaID: ID! @index(name: "byArea")
 }
 
-type Teacher @model @auth(rules: [{allow: private}]) {
+type Area @model @auth(rules: [{allow: private}]) {
   id: ID!
-  teacher_name: String!
-  subjects: [Subject] @hasMany(indexName: "byTeacher", fields: ["id"])
+  area_name: String!
+  careers: [Career] @hasMany(indexName: "byArea", fields: ["id"])
+  coordinators: [Coordinator] @hasMany(indexName: "byArea", fields: ["id"])
+}
+
+type Subject @model @auth(rules: [{allow: private}]) {
+  id: ID!
+  subject_name: String!
+  schedule: AWSJSON
+  four_month_period: Int!
+  hours_per_teacher: Int!
+  hours_per_student: Int!
+  teacherID: ID! @index(name: "byTeacher")
+  careerID: ID! @index(name: "byCareer")
 }
 
 type Student @model @auth(rules: [{allow: private}, {allow: public, operations: [create]}]) {
@@ -18,29 +34,17 @@ type Student @model @auth(rules: [{allow: private}, {allow: public, operations: 
   careerID: ID! @index(name: "byCareer")
 }
 
-type Subject @model @auth(rules: [{allow: private}]) {
+type Teacher @model @auth(rules: [{allow: private}]) {
   id: ID!
-  subject_name: String!
-  schedule: [AWSJSON!]
-  four_month_period: Int!
-  careerID: ID! @index(name: "byCareer")
-  teacherID: ID! @index(name: "byTeacher")
+  teacher_name: String!
+  teacher_email: AWSEmail!
+  subjects: [Subject] @hasMany(indexName: "byTeacher", fields: ["id"])
 }
 
-type Area @model @auth(rules: [{allow: private}]) {
+type Coordinator @model @auth(rules: [{allow: private}]) {
   id: ID!
-  area_name: String!
-  careers: [Career] @hasMany(indexName: "byArea", fields: ["id"])
-  coordinators: [Career] @hasMany(indexName: "byArea", fields: ["id"])
-}
-
-type Career @model @auth(rules: [{allow: private}, {allow: public, operations: [read]}]) {
-  id: ID!
-  career_name: String!
-  level: String!
-  four_month_periods: Int!
+  coordinator_name: String!
+  coordinator_email: AWSEmail!
   areaID: ID! @index(name: "byArea")
-  subjects: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
-  students: [Student] @hasMany(indexName: "byCareer", fields: ["id"])
 }
  
