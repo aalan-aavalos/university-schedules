@@ -1,15 +1,35 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEvent,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 
 /* Custom GraphQL */
-import { getAllTeachers } from "@/custom-graphql/queries";
 import {
+  getAllAreas,
+  getAllCareers,
+  getAllTeachers,
+} from "@/custom-graphql/queries";
+import {
+  createOneCoordinator,
+  createOneStudent,
   createOneTeacher,
   deleteOneTeacher,
   updateOneTeacher,
 } from "@/custom-graphql/mutations";
 
+/* SDK Cognito CRUD */
+import {
+  deleteUser,
+  createUser,
+  updateUserAttributes,
+} from "@/aws-sdk/cognito_crud";
+
 /* MaterialUI */
 import {
+  Autocomplete,
   Box,
   Button,
   Checkbox,
@@ -36,12 +56,20 @@ interface TeacherProps {
   id: string;
   teacher_name: string;
   teacher_email: string;
+  rol?: string;
+  areaID?: string;
+  careerID?: string;
+  four_month_period?: number;
 }
 
 interface FormProps {
+  id: string;
   teacher_name: string;
   teacher_email: string;
   rol?: string;
+  areaID?: string;
+  careerID?: string;
+  four_month_period?: number;
 }
 
 interface RolesProps {
@@ -49,30 +77,55 @@ interface RolesProps {
   rol: string;
 }
 
+interface AreaProps {
+  id: string;
+  area_name: string;
+  createdAt: string;
+  updatedAt: string;
+  __typename: string;
+}
+
+interface CareerProps {
+  areaID: string;
+  career_name: string;
+  createdAt: string;
+  four_month_periods: number;
+  id: string;
+  level: string;
+  updatedAt: string;
+  __typename: string;
+}
+
 const initialForm: FormProps = {
+  id: "",
   teacher_name: "",
   teacher_email: "",
-  rol: "",
+  rol: "teacher",
+  areaID: "",
+  careerID: "",
+  four_month_period: 1,
 };
-
 /* Roles */
 const Roles: Array<RolesProps> = [
   {
-    rol_name: "Administrador",
-    rol: "admin",
+    rol_name: "Estudiante",
+    rol: "student",
   },
   {
     rol_name: "Coordinador",
     rol: "coordinator",
   },
   {
-    rol_name: "Estudiante",
-    rol: "student",
+    rol_name: "Administrador",
+    rol: "admin",
   },
 ];
 
 const TeacherAdmin = () => {
   const [teachers, setTeachers] = useState<Array<TeacherProps>>([]);
+  const [areas, setAreas] = useState<Array<AreaProps>>([]);
+  const [careers, setCareers] = useState<Array<CareerProps>>([]);
+
   const [form, setForm] = useState<FormProps>(initialForm);
   const [checked, setChecked] = useState<boolean>(false);
 
@@ -89,6 +142,12 @@ const TeacherAdmin = () => {
         showLoading();
         const res_teachears = await getAllTeachers();
         setTeachers(res_teachears);
+
+        const res_careers = await getAllCareers();
+        setCareers(res_careers);
+
+        const res_areas = await getAllAreas();
+        setAreas(res_areas);
       } catch (err) {
         console.error(err);
       } finally {
@@ -105,18 +164,36 @@ const TeacherAdmin = () => {
     const { name, value } = e.target;
 
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
+  };
 
-    if (name === "level") {
-      const count = value === "tsu" ? 6 : 5;
-      setForm((prevForm) => ({ ...prevForm, for: count }));
+  const handleChangeCareer = (e: SyntheticEvent, value: CareerProps | null) => {
+    if (!value) {
+      setForm((prevForm) => ({ ...prevForm, careerID: "" }));
+      return;
     }
+
+    const { id } = value as CareerProps;
+    setForm((prevForm) => ({ ...prevForm, careerID: id }));
+  };
+
+  const handleChangeArea = (e: SyntheticEvent, value: AreaProps | null) => {
+    if (!value) {
+      setForm((prevForm) => ({ ...prevForm, areaID: "" }));
+      return;
+    }
+
+    const { id } = value as AreaProps;
+    setForm((prevForm) => ({ ...prevForm, areaID: id }));
   };
 
   const createTeacher = async () => {
     try {
       showLoading();
 
-      const res_teachers = await createOneTeacher(form);
+      const { teacher_email: email, teacher_name: preferred_username } = form;
+      const id = await createUser({ ...form, preferred_username, email });
+
+      const res_teachers = await createOneTeacher({ ...form, id });
 
       if (res_teachers) {
         setTeachers(res_teachers);
@@ -136,7 +213,7 @@ const TeacherAdmin = () => {
     onClose();
   };
 
-  const queryArea = async () => {
+  const queryTeacher = async () => {
     try {
       showLoading();
       const res_teacher = await getAllTeachers();
@@ -153,12 +230,57 @@ const TeacherAdmin = () => {
     }
   };
 
-  const updateArea = async () => {
+  const updateTeacher = async () => {
     try {
       showLoading();
 
+      const { teacher_email: email, teacher_name: preferred_username } = form;
+      await updateUserAttributes({ ...form, preferred_username, email });
+
       if (checked) {
-        console.log("se actualizara el rol");
+        const id = form.id;
+        switch (form.rol) {
+          case "coordinator":
+            const {
+              teacher_name: coordinator_name,
+              teacher_email: coordinator_email,
+            } = form;
+
+            const areaID = form.areaID as string;
+
+            createOneCoordinator({
+              id,
+              coordinator_email,
+              coordinator_name,
+              areaID,
+            });
+            console.log("Rol actualizado a Coordinador");
+            break;
+          case "student":
+            const { teacher_name: student_name, teacher_email: student_email } =
+              form;
+            const four_month_period = form.four_month_period as number;
+            const careerID = form.careerID as string;
+            createOneStudent({
+              id,
+              student_email,
+              student_name,
+              four_month_period,
+              careerID,
+            });
+            console.log("Rol actualizado a estudiante");
+            break;
+          default:
+            console.log("Lo que tenia que salir mal salio ayuda");
+        }
+
+        const res_teachers = await deleteOneTeacher(form.id);
+
+        if (res_teachers) {
+          setTeachers(res_teachers);
+        }
+
+        onClose();
         return;
       }
 
@@ -183,11 +305,11 @@ const TeacherAdmin = () => {
 
   const onOpenUpdate = (row: TeacherProps) => {
     setFormUpdate(true);
-    setForm(row);
+    setForm({ ...row, rol: "teacher" });
     onOpen();
   };
 
-  const deleteArea = async (row: TeacherProps) => {
+  const deleteTeacher = async (row: TeacherProps) => {
     const { id, teacher_name } = row;
 
     confirm({
@@ -198,6 +320,9 @@ const TeacherAdmin = () => {
         try {
           showLoading();
           const res_teachers = await deleteOneTeacher(id);
+
+          await deleteUser(id);
+
           if (res_teachers) {
             setTeachers(res_teachers);
           }
@@ -243,7 +368,7 @@ const TeacherAdmin = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => deleteArea(row)}
+              onClick={() => deleteTeacher(row)}
             >
               Eliminar
             </Button>
@@ -251,8 +376,6 @@ const TeacherAdmin = () => {
         ) : null,
     },
   ];
-
-  console.log(form);
 
   return (
     <div>
@@ -270,7 +393,7 @@ const TeacherAdmin = () => {
           >
             Crear
           </Button>
-          <Button variant="contained" onClick={queryArea}>
+          <Button variant="contained" onClick={queryTeacher}>
             Consultar
           </Button>
         </Box>
@@ -291,7 +414,7 @@ const TeacherAdmin = () => {
           onSubmit: (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             if (formUpdate) {
-              updateArea();
+              updateTeacher();
               return;
             }
             createTeacher();
@@ -303,7 +426,7 @@ const TeacherAdmin = () => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ingresa los datos requeridos para{" "}
+            Ingresa los datos requeridos para
             {formUpdate ? "actualizar" : "crear"} la maestro
           </DialogContentText>
           <TextField
@@ -319,7 +442,8 @@ const TeacherAdmin = () => {
             value={form.teacher_name}
           />
           <TextField
-            required
+            required={!formUpdate}
+            disabled={formUpdate}
             margin="dense"
             name="teacher_email"
             label="Email"
@@ -345,7 +469,10 @@ const TeacherAdmin = () => {
                       setChecked(e.target.checked);
 
                       if (!e.target.checked) {
-                        setForm((prevForm) => ({ ...prevForm, rol: "" }));
+                        setForm((prevForm) => ({
+                          ...prevForm,
+                          rol: "teacher",
+                        }));
                       }
                     }}
                   />
@@ -373,6 +500,57 @@ const TeacherAdmin = () => {
                 ))}
               </TextField>
             </Box>
+          )}
+          {form.rol === "coordinator" && (
+            <Autocomplete
+              disablePortal
+              fullWidth
+              options={areas}
+              getOptionLabel={(option) => option.area_name}
+              renderInput={(params) => (
+                <TextField
+                  required
+                  variant="standard"
+                  {...params}
+                  label="Areas"
+                />
+              )}
+              onChange={(e: SyntheticEvent, value: AreaProps | null) =>
+                handleChangeArea(e, value)
+              }
+            />
+          )}
+          {form.rol === "student" && (
+            <>
+              <Autocomplete
+                disablePortal
+                fullWidth
+                options={careers}
+                getOptionLabel={(option) => option.career_name}
+                renderInput={(params) => (
+                  <TextField
+                    required
+                    variant="standard"
+                    {...params}
+                    label="Carrera"
+                  />
+                )}
+                onChange={(e: SyntheticEvent, value: CareerProps | null) =>
+                  handleChangeCareer(e, value)
+                }
+              />
+              <TextField
+                required
+                fullWidth
+                type="number"
+                variant="standard"
+                slotProps={{ htmlInput: { min: 1, max: 6 } }}
+                name="four_month_period"
+                label="Cuatrimestre"
+                onChange={(e) => handleChange(e)}
+                value={form.four_month_period}
+              />
+            </>
           )}
         </DialogContent>
         <DialogActions>

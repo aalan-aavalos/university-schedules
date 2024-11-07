@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { getAllCareers } from "@/custom-graphql/queries";
+import { getAllAreas } from "@/custom-graphql/queries";
 import {
   deleteOneCareer,
   createOneCareer,
@@ -33,7 +34,7 @@ interface CareerProps {
   __typename: string;
 }
 
-const initialCareer: CareerProps = {
+/* const initialCareer: CareerProps = {
   id: "",
   career_name: "",
   level: "",
@@ -42,7 +43,15 @@ const initialCareer: CareerProps = {
   createdAt: "",
   updatedAt: "",
   __typename: "",
-};
+}; */
+
+interface AreaProps {
+  id: string;
+  area_name: string;
+  createdAt: string;
+  updatedAt: string;
+  __typename: string;
+}
 
 interface FormProps {
   career_name: string;
@@ -60,8 +69,8 @@ const initialForm: FormProps = {
 
 const CareerAdmin = () => {
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
+  const [areas, setAreas] = useState<Array<AreaProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
-  const [row, setRow] = useState<CareerProps>(initialCareer);
 
   const [formUpdate, setFormUpdate] = useState(false);
 
@@ -75,7 +84,9 @@ const CareerAdmin = () => {
       try {
         showLoading();
         const res_careers = await getAllCareers();
+        const res_areas = await getAllAreas(); // Cargar áreas
         setCareers(res_careers);
+        setAreas(res_areas); // Guardar áreas en el estado
       } catch (err) {
         console.error(err);
       } finally {
@@ -98,12 +109,10 @@ const CareerAdmin = () => {
         four_month_periods: fourMonthPeriods,
       }));
     }
-      setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-
   const onOpenUpdate = (row: CareerProps) => {
-
     setFormUpdate(true);
     setForm(row);
 
@@ -118,7 +127,12 @@ const CareerAdmin = () => {
     try {
       showLoading();
 
-      const res_careers = await createOneCareer({ career_name, level, four_month_periods, areaID });
+      const res_careers = await createOneCareer({
+        career_name,
+        level,
+        four_month_periods,
+        areaID,
+      });
 
       if (res_careers) {
         setCareers(res_careers);
@@ -144,10 +158,10 @@ const CareerAdmin = () => {
       const res_careers = await getAllCareers();
       setCareers(res_careers);
 
-      const message = "Area consultadas correctamente";
+      const message = "Carreras consultadas correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al consultar el area";
+      const message = "Algo salio mal al consultar la carrera";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -190,17 +204,17 @@ const CareerAdmin = () => {
           if (res_careers) {
             setCareers(res_careers);
           }
-          const message = "Area eliminada correctamente";
+          const message = "Carrera eliminada correctamente";
           enqueueSnackbar(message, { variant: "success" });
         } catch (err) {
-          const message = "Algo salio mal al eliminar el area";
+          const message = "Algo salio mal al eliminar el carrera";
           enqueueSnackbar(message, { variant: "error" });
           console.error(err);
         } finally {
           hideLoading();
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const columns: GridColDef[] = [
@@ -257,12 +271,15 @@ const CareerAdmin = () => {
       {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="success" onClick={() => {
-            setForm(initialForm);
-            setFormUpdate(false);
-            onOpen();
-          }
-          }>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              setForm(initialForm);
+              setFormUpdate(false);
+              onOpen();
+            }}
+          >
             Crear
           </Button>
           <Button variant="contained" onClick={queryCareer}>
@@ -291,7 +308,9 @@ const CareerAdmin = () => {
           },
         }}
       >
-        <DialogTitle>{formUpdate ? "Actualizar Carrera" : "Crear Carrera"}</DialogTitle>
+        <DialogTitle>
+          {formUpdate ? "Actualizar Carrera" : "Crear Carrera"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para la carrera
@@ -335,21 +354,25 @@ const CareerAdmin = () => {
           />
           <TextField
             required
+            select
             margin="dense"
             name="areaID"
             label="ID de Área"
-            type="text"
             fullWidth
             variant="standard"
             onChange={handleChange}
             value={form.areaID}
-          />
+          >
+            {areas.map((area) => (
+              <MenuItem key={area.id} value={area.id}>
+                {area.area_name} {/* Muestra el nombre del área */}
+              </MenuItem>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancelar</Button>
-          <Button type="submit">
-            {formUpdate ? "Actualizar" : "Crear"}
-          </Button>
+          <Button type="submit">{formUpdate ? "Actualizar" : "Crear"}</Button>
         </DialogActions>
       </Dialog>
     </div>
