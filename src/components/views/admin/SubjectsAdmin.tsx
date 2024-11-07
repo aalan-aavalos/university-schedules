@@ -248,8 +248,12 @@ const SubjectsAdmin = () => {
     },
     {
       field: "careerID",
-      headerName: "ID Carrera",
+      headerName: "Carrera",
       flex: 1,
+      renderCell: (params) => {
+        const career = careers.find((career) => career.id === params.value);
+        return career ? career.career_name : "Desconocido";
+      },
     },
     {
       field: "actions",

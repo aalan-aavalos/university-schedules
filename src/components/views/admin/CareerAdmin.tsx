@@ -236,8 +236,12 @@ const CareerAdmin = () => {
     },
     {
       field: "areaID",
-      headerName: "ID Área",
+      headerName: "Área", // Cambiado para reflejar el nombre del área
       flex: 1,
+      renderCell: (params) => {
+        const area = areas.find((area) => area.id === params.value);
+        return area ? area.area_name : "Desconocido";
+      },
     },
     {
       field: "actions",
