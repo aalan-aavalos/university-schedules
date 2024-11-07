@@ -58,6 +58,7 @@ interface StudentProps {
   student_email: string;
   four_month_period: number;
   careerID: string;
+  rol?: string;
 }
 interface AreaProps {
   id: string;
@@ -158,11 +159,6 @@ const StudentesAdmin = () => {
     const { name, value } = e.target;
 
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
-
-    if (name === "level") {
-      const count = value === "tsu" ? 6 : 5;
-      setForm((prevForm) => ({ ...prevForm, for: count }));
-    }
   };
 
   const handleChangeCareer = (e: SyntheticEvent, value: CareerProps | null) => {
@@ -234,6 +230,7 @@ const StudentesAdmin = () => {
       showLoading();
 
       const { student_email: email, student_name: preferred_username } = form;
+      console.log(form);
       await updateUserAttributes({ ...form, preferred_username, email });
 
       if (checked) {
@@ -275,10 +272,10 @@ const StudentesAdmin = () => {
         return;
       }
 
-      const res_teachers = await updateOneStudent(form);
+      const res_students = await updateOneStudent(form);
 
-      if (res_teachers) {
-        setStudents(res_teachers);
+      if (res_students) {
+        setStudents(res_students);
       }
 
       const message = "Estdiante actualizado correctamente";
@@ -296,7 +293,7 @@ const StudentesAdmin = () => {
 
   const onOpenUpdate = (row: StudentProps) => {
     setFormUpdate(true);
-    setForm(row);
+    setForm({ ...row, rol: "student" });
     onOpen();
   };
 
@@ -510,7 +507,10 @@ const StudentesAdmin = () => {
                       setChecked(e.target.checked);
 
                       if (!e.target.checked) {
-                        setForm((prevForm) => ({ ...prevForm, rol: "" }));
+                        setForm((prevForm) => ({
+                          ...prevForm,
+                          rol: "student",
+                        }));
                       }
                     }}
                   />

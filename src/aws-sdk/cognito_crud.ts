@@ -44,7 +44,7 @@ export async function createUser(data: UserProps) {
                 { Name: "custom:rol", Value: rol || "" },
                 { Name: "custom:area", Value: areaID || "" },
                 { Name: "custom:career", Value: careerID || "" },
-                { Name: "custom:four_month_period", Value: String(four_month_period) || "" },
+                { Name: "custom:four_month_period", Value: four_month_period ? String(four_month_period) : "1" },
 
             ],
             MessageAction: "SUPPRESS", // Opcional: suprime el correo de bienvenida
@@ -74,7 +74,7 @@ export async function updateUserAttributes(data: UserProps) {
                 { Name: "custom:rol", Value: rol || "" },
                 { Name: "custom:area", Value: areaID || "" },
                 { Name: "custom:career", Value: careerID || "" },
-                { Name: "custom:four_month_period", Value: String(four_month_period) || "" },
+                { Name: "custom:four_month_period", Value: four_month_period ? String(four_month_period) : "1" },
 
             ],
         });
