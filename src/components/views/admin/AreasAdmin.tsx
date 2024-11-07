@@ -101,8 +101,6 @@ const AreasAdmin = () => {
   const createArea = async () => {
     const { area_name } = form;
 
-    setFormUpdate(false);
-
     try {
       showLoading();
 
@@ -165,8 +163,8 @@ const AreasAdmin = () => {
       hideLoading();
     }
 
-    setForm(initialForm);
-    setFormUpdate(false);
+    /* setForm(initialForm);
+    setFormUpdate(false); */
     onClose();
   };
 
@@ -203,7 +201,6 @@ const AreasAdmin = () => {
       field: "area_name",
       headerName: "Nombre de Area",
       flex: 2,
-      editable: true,
     },
     {
       field: "actions",
@@ -241,8 +238,9 @@ const AreasAdmin = () => {
             variant="contained"
             color="success"
             onClick={() => {
-              onOpen();
               setForm(initialForm);
+              setFormUpdate(false);
+              onOpen();
             }}
           >
             Crear
@@ -257,7 +255,7 @@ const AreasAdmin = () => {
         {areas.length > 0 ? (
           <DataGrid columns={columns} rows={areas} />
         ) : (
-          <div>No hay áreas disponibles</div> // Renderizamos un mensaje si no hay datos
+          <div>No hay datos disponibles</div> // Renderizamos un mensaje si no hay datos
         )}
       </Box>
 
@@ -275,10 +273,13 @@ const AreasAdmin = () => {
           },
         }}
       >
-        <DialogTitle>Crear una asignación</DialogTitle>
+        <DialogTitle>
+          {formUpdate ? "Actualizar" : "Crear"} una area
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ingresa los datos requeridos para crear la asignación
+            Ingresa los datos requeridos para{" "}
+            {formUpdate ? "actualizar" : "crear"} el area
           </DialogContentText>
           <TextField
             autoFocus

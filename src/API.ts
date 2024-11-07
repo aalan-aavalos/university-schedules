@@ -115,8 +115,11 @@ export type Subject = {
   subject_name: string,
   schedule?: string | null,
   four_month_period: number,
+<<<<<<< HEAD
   hours_per_teacher: number,
   hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID: string,
   careerID: string,
   createdAt: string,
@@ -212,8 +215,11 @@ export type CreateSubjectInput = {
   subject_name: string,
   schedule?: string | null,
   four_month_period: number,
+<<<<<<< HEAD
   hours_per_teacher: number,
   hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID: string,
   careerID: string,
 };
@@ -222,8 +228,11 @@ export type ModelSubjectConditionInput = {
   subject_name?: ModelStringInput | null,
   schedule?: ModelStringInput | null,
   four_month_period?: ModelIntInput | null,
+<<<<<<< HEAD
   hours_per_teacher?: ModelIntInput | null,
   hours_per_student?: ModelIntInput | null,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID?: ModelIDInput | null,
   careerID?: ModelIDInput | null,
   and?: Array< ModelSubjectConditionInput | null > | null,
@@ -238,8 +247,11 @@ export type UpdateSubjectInput = {
   subject_name?: string | null,
   schedule?: string | null,
   four_month_period?: number | null,
+<<<<<<< HEAD
   hours_per_teacher?: number | null,
   hours_per_student?: number | null,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID?: string | null,
   careerID?: string | null,
 };
@@ -385,8 +397,11 @@ export type ModelSubjectFilterInput = {
   subject_name?: ModelStringInput | null,
   schedule?: ModelStringInput | null,
   four_month_period?: ModelIntInput | null,
+<<<<<<< HEAD
   hours_per_teacher?: ModelIntInput | null,
   hours_per_student?: ModelIntInput | null,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID?: ModelIDInput | null,
   careerID?: ModelIDInput | null,
   createdAt?: ModelStringInput | null,
@@ -506,8 +521,11 @@ export type ModelSubscriptionSubjectFilterInput = {
   subject_name?: ModelSubscriptionStringInput | null,
   schedule?: ModelSubscriptionStringInput | null,
   four_month_period?: ModelSubscriptionIntInput | null,
+<<<<<<< HEAD
   hours_per_teacher?: ModelSubscriptionIntInput | null,
   hours_per_student?: ModelSubscriptionIntInput | null,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
   teacherID?: ModelSubscriptionIDInput | null,
   careerID?: ModelSubscriptionIDInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
@@ -708,8 +726,11 @@ export type CreateSubjectMutation = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -729,8 +750,11 @@ export type UpdateSubjectMutation = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -750,8 +774,11 @@ export type DeleteSubjectMutation = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -1050,8 +1077,11 @@ export type GetSubjectQuery = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -1074,8 +1104,11 @@ export type ListSubjectsQuery = {
       subject_name: string,
       schedule?: string | null,
       four_month_period: number,
+<<<<<<< HEAD
       hours_per_teacher: number,
       hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
       teacherID: string,
       careerID: string,
       createdAt: string,
@@ -1102,8 +1135,11 @@ export type SubjectsByTeacherIDQuery = {
       subject_name: string,
       schedule?: string | null,
       four_month_period: number,
+<<<<<<< HEAD
       hours_per_teacher: number,
       hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
       teacherID: string,
       careerID: string,
       createdAt: string,
@@ -1130,8 +1166,11 @@ export type SubjectsByCareerIDQuery = {
       subject_name: string,
       schedule?: string | null,
       four_month_period: number,
+<<<<<<< HEAD
       hours_per_teacher: number,
       hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
       teacherID: string,
       careerID: string,
       createdAt: string,
@@ -1460,8 +1499,11 @@ export type OnCreateSubjectSubscription = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -1480,8 +1522,11 @@ export type OnUpdateSubjectSubscription = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,
@@ -1500,8 +1545,11 @@ export type OnDeleteSubjectSubscription = {
     subject_name: string,
     schedule?: string | null,
     four_month_period: number,
+<<<<<<< HEAD
     hours_per_teacher: number,
     hours_per_student: number,
+=======
+>>>>>>> b0ee0cf2a312a82706b7bf70ef81cb16296c06ab
     teacherID: string,
     careerID: string,
     createdAt: string,

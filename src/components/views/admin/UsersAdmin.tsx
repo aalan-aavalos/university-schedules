@@ -1,55 +1,66 @@
-import React, { useEffect, useState } from "react";
-
-/* Custom GraphQL */
-import { getAllTeachers } from "@/custom-graphql/queries";
-import {
-  createOneTeacher,
-  deleteOneTeacher,
-  updateOneTeacher,
-} from "@/custom-graphql/mutations";
+import React, { SyntheticEvent, useState } from "react";
 
 /* Material UI */
-import { Button } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Typography,
+} from "@mui/material";
+import { ExpandMore } from "@mui/icons-material";
 
-interface Teachers {
-  id: string;
-  teacher_name: string;
-}
+/* Admins */
+import { CoordinatorAdmin } from "@/components/views/admin/usersAdmin/CoordinatorAdmin";
+import { TeacherAdmin } from "@/components/views/admin/usersAdmin/TeacherAdmin";
+import { StudentesAdmin } from "@/components/views/admin/usersAdmin/StudentesAdmin";
 
 const UsersAdmin = () => {
-  const [teachers, setTeachers] = useState<Array<Teachers>>([]);
+  const [expanded, setExpanded] = useState<string | false>(false);
 
-  useEffect(() => {
-    const excuteQueries = async () => {
-      const res_teachears = await getAllTeachers();
-      setTeachers(res_teachears);
+  const handleChangeExpanded =
+    (panel: string) => (event: SyntheticEvent, isExpanded: boolean) => {
+      setExpanded(isExpanded ? panel : false);
     };
-
-    excuteQueries();
-  }, []);
 
   return (
     <div>
-      UsersAdmin
-      <Button onClick={() => console.log("tus maestros son:", teachers)}>
-        Ver maestros
-      </Button>
-      <Button onClick={() => createOneTeacher("Josue 2")}>Crear maestro</Button>
-      <Button
-        onClick={() => deleteOneTeacher("3d9f707c-b0d4-4774-9557-8ad830bb6e45")}
-      >
-        Elminar maestro
-      </Button>
-      <Button
-        onClick={() =>
-          updateOneTeacher(
-            "d93873ab-8164-4295-9c57-24d10f0dccff",
-            "Josue Miguel Ortiz Meza Y Hidalgo Y Costilla"
-          )
-        }
-      >
-        Actualizar maestro
-      </Button>
+      <Box sx={{ /* height: "75vh", */ width: "75vw" }}>
+        <Accordion
+          expanded={expanded === "panel1"}
+          onChange={handleChangeExpanded("panel1")}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography>Coordinadores</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {expanded === "panel1" && <CoordinatorAdmin />}
+          </AccordionDetails>
+        </Accordion>
+
+        <Accordion
+          expanded={expanded === "panel2"}
+          onChange={handleChangeExpanded("panel2")}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography>Maestros</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {expanded === "panel2" && <TeacherAdmin />}
+          </AccordionDetails>
+        </Accordion>
+        <Accordion
+          expanded={expanded === "panel3"}
+          onChange={handleChangeExpanded("panel3")}
+        >
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography>Estudiantes</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            {expanded === "panel3" && <StudentesAdmin />}
+          </AccordionDetails>
+        </Accordion>
+      </Box>
     </div>
   );
 };

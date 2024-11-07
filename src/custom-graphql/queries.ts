@@ -1,8 +1,10 @@
-import { listAreas, listTeachers, listCareers } from "@/graphql/queries";
+import { listSubjects } from "@/graphql/queries";
+import { listAreas, listTeachers, listCareers, listStudents, listCoordinators } from "@/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 
 const client = generateClient()
 
+/* Areas */
 export const getAllAreas = async () => {
     const allAreas = await client.graphql({
         query: listAreas
@@ -11,6 +13,7 @@ export const getAllAreas = async () => {
     return allAreas.data.listAreas.items
 }
 
+/* Teachers  */
 export const getAllTeachers = async () => {
     const allTeachers = await client.graphql({
         query: listTeachers
@@ -19,6 +22,15 @@ export const getAllTeachers = async () => {
     return allTeachers.data.listTeachers.items
 }
 
+/* Career */
+export const getAllCareers = async () => {
+    const allCareers = await client.graphql({
+        query: listCareers
+    });
+    return allCareers.data.listCareers.items
+}
+
+/* Students */
 export const getAllCareersWihtAPIKey = async () => {
     const allCareers = await client.graphql({
         query: listCareers,
@@ -26,4 +38,30 @@ export const getAllCareersWihtAPIKey = async () => {
     });
 
     return allCareers.data.listCareers.items
+}
+
+/* Subjects */
+export const getAllSubjects = async () => {
+    const allSubjects = await client.graphql({
+        query: listSubjects
+    });
+
+    return allSubjects.data.listSubjects.items
+}
+
+export const getAllStudents = async () => {
+    const allStudents = await client.graphql({
+        query: listStudents
+    });
+
+    return allStudents.data.listStudents.items
+}
+
+export const getAllCoordinators = async () => {
+
+    const allCoordinators = await client.graphql({
+        query: listCoordinators
+    });
+
+    return allCoordinators.data.listCoordinators.items
 }
