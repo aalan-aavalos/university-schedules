@@ -26,6 +26,7 @@
     "@types/vis": "^4.21.27",
     "aws-amplify": "^6.6.5",
     "aws-sdk": "^2.1691.0",
+    "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
     "material-ui-confirm": "^3.0.16",
     "moment": "^2.30.1",
@@ -33,6 +34,8 @@
     "notistack": "^3.0.1",
     "react": "^18",
     "react-big-calendar": "^1.15.0",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
     "vis-timeline": "^7.7.3"
   },

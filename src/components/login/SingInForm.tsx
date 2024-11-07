@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, ChangeEvent } from "react";
 
-import { Backdrop, Button, CircularProgress, TextField } from "@mui/material";
+import { Backdrop, Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 import {
   signIn,
@@ -86,7 +86,26 @@ const SingInForm = () => {
         <CircularProgress color="inherit"></CircularProgress>
       </Backdrop>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <Box
+        component="form"
+        onSubmit={onSubmit}
+        sx={{
+          width: 600,
+          margin: "auto",
+          mt: 2,
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+          borderRadius: 2,
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          bgcolor: "background.paper",
+        }}
+      >
+        <Typography variant="h4" align="center" gutterBottom>
+          Iniciar Sesión
+        </Typography>
+
         <TextField
           required
           type="email"
@@ -96,6 +115,7 @@ const SingInForm = () => {
           autoComplete="email"
           onChange={handleChange}
           value={form.email}
+          fullWidth
         />
         <TextField
           required
@@ -106,11 +126,19 @@ const SingInForm = () => {
           autoComplete="current-password"
           onChange={handleChange}
           value={form.password}
+          fullWidth
         />
-        <Button variant="contained" type="submit">
-          Sing In
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          size="large"
+          sx={{ mt: 2 }}
+        >
+          Iniciar Sesión
         </Button>
-      </form>
+      </Box>
     </>
   );
 };
