@@ -22,31 +22,30 @@ import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { useDisclosure } from "@/hooks/useDisclousure";
 import { useConfirm } from "material-ui-confirm";
 import { enqueueSnackbar } from "notistack";
-import { createSubject } from "@/graphql/mutations";
 
 interface SubjectProps {
   id: string;
   subject_name: string;
-  four_month_period: number; 
-  hours_per_teacher: number; 
-  hours_per_student: number; 
+  four_month_period: number;
+  hours_per_teacher: number;
+  hours_per_student: number;
   careerID: string;
   createdAt: string;
   updatedAt: string;
   __typename: string;
 }
 
-const initialSubject: SubjectProps = {
+/* const initialSubject: SubjectProps = {
   id: "",
   subject_name: "",
   four_month_period: 0,
-  hours_per_teacher: 0, 
-  hours_per_student: 0, 
+  hours_per_teacher: 0,
+  hours_per_student: 0,
   careerID: "",
   createdAt: "",
   updatedAt: "",
-  __typename: ""
-};
+  __typename: "",
+}; */
 
 interface CareerProps {
   id: string;
@@ -61,25 +60,24 @@ interface CareerProps {
 
 interface FormProps {
   subject_name: string;
-  four_month_period: number; 
-  hours_per_teacher: number; 
-  hours_per_student: number; 
+  four_month_period: number;
+  hours_per_teacher: number;
+  hours_per_student: number;
   careerID: string;
 }
 
 const initialForm: FormProps = {
   subject_name: "",
   four_month_period: 0,
-  hours_per_teacher: 0, 
-  hours_per_student: 0, 
-  careerID: ""
+  hours_per_teacher: 0,
+  hours_per_student: 0,
+  careerID: "",
 };
 
 const SubjectsAdmin = () => {
   const [subjects, setSubjects] = useState<Array<SubjectProps>>([]);
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
-  const [row, setRow] = useState<SubjectProps>(initialSubject);
 
   const [formUpdate, setFormUpdate] = useState(false);
 
@@ -102,7 +100,7 @@ const SubjectsAdmin = () => {
         hideLoading();
       }
     };
-  
+
     executeQueries();
   }, [hideLoading, showLoading]);
 
@@ -111,12 +109,10 @@ const SubjectsAdmin = () => {
   ): void => {
     const { name, value } = e.target;
 
-      setForm((prevForm) => ({ ...prevForm, [name]: value }));
+    setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-
   const onOpenUpdate = (row: SubjectProps) => {
-
     setFormUpdate(true);
     setForm(row);
 
@@ -124,14 +120,26 @@ const SubjectsAdmin = () => {
   };
 
   const createSubject = async () => {
-    const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } = form;
+    const {
+      subject_name,
+      four_month_period,
+      hours_per_teacher,
+      hours_per_student,
+      careerID,
+    } = form;
 
     setFormUpdate(false);
 
     try {
       showLoading();
 
-      const res_subjects = await createOneSubject({ subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID });
+      const res_subjects = await createOneSubject({
+        subject_name,
+        four_month_period,
+        hours_per_teacher,
+        hours_per_student,
+        careerID,
+      });
 
       if (res_subjects) {
         setSubjects(res_subjects);
@@ -213,7 +221,7 @@ const SubjectsAdmin = () => {
           hideLoading();
         }
       })
-      .catch(() => { });
+      .catch(() => {});
   };
 
   const columns: GridColDef[] = [
@@ -275,12 +283,15 @@ const SubjectsAdmin = () => {
       {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button variant="contained" color="success" onClick={() => {
-            setForm(initialForm);
-            setFormUpdate(false);
-            onOpen();
-          }
-          }>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              setForm(initialForm);
+              setFormUpdate(false);
+              onOpen();
+            }}
+          >
             Crear
           </Button>
           <Button variant="contained" onClick={querySubject}>
@@ -309,7 +320,9 @@ const SubjectsAdmin = () => {
           },
         }}
       >
-        <DialogTitle>{formUpdate ? "Actualizar Materia" : "Crear Materia"}</DialogTitle>
+        <DialogTitle>
+          {formUpdate ? "Actualizar Materia" : "Crear Materia"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para la materia.
@@ -357,29 +370,26 @@ const SubjectsAdmin = () => {
             value={form.hours_per_student}
           />
           <TextField
-  required
-  select
-  margin="dense"
-  name="careerID"
-  label="ID de Carrera"
-  fullWidth
-  variant="standard"
-  onChange={handleChange}
-  value={form.careerID}
->
-  {careers.map((career) => (
-    <MenuItem key={career.id} value={career.id}>
-      {career.career_name} {/* Muestra el nombre de la carrera */}
-    </MenuItem>
-  ))}
-</TextField>
-
+            required
+            select
+            margin="dense"
+            name="careerID"
+            label="ID de Carrera"
+            fullWidth
+            variant="standard"
+            onChange={handleChange}
+            value={form.careerID}
+          >
+            {careers.map((career) => (
+              <MenuItem key={career.id} value={career.id}>
+                {career.career_name} {/* Muestra el nombre de la carrera */}
+              </MenuItem>
+            ))}
+          </TextField>
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancelar</Button>
-          <Button type="submit">
-            {formUpdate ? "Actualizar" : "Crear"}
-          </Button>
+          <Button type="submit">{formUpdate ? "Actualizar" : "Crear"}</Button>
         </DialogActions>
       </Dialog>
     </div>

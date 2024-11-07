@@ -34,7 +34,7 @@ interface CareerProps {
   __typename: string;
 }
 
-const initialCareer: CareerProps = {
+/* const initialCareer: CareerProps = {
   id: "",
   career_name: "",
   level: "",
@@ -43,7 +43,7 @@ const initialCareer: CareerProps = {
   createdAt: "",
   updatedAt: "",
   __typename: "",
-};
+}; */
 
 interface AreaProps {
   id: string;
@@ -71,7 +71,6 @@ const CareerAdmin = () => {
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
   const [areas, setAreas] = useState<Array<AreaProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
-  const [row, setRow] = useState<CareerProps>(initialCareer);
 
   const [formUpdate, setFormUpdate] = useState(false);
 
@@ -370,7 +369,6 @@ const CareerAdmin = () => {
               </MenuItem>
             ))}
           </TextField>
-          
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancelar</Button>
