@@ -20,6 +20,8 @@ type Subject @model @auth(rules: [{allow: private}]) {
   subject_name: String!
   schedule: AWSJSON
   four_month_period: Int!
+  hours_per_teacher: Int!
+  hours_per_student: Int!
   teacherID: ID! @index(name: "byTeacher")
   careerID: ID! @index(name: "byCareer")
 }
