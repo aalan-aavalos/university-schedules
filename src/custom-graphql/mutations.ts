@@ -1,10 +1,11 @@
 import {
     createArea, createCareer, createStudent, createTeacher,
     deleteArea, deleteCareer, deleteTeacher,
-    updateArea, updateCareer, updateTeacher
+    updateArea, updateCareer, updateTeacher,
+    createSubject, updateSubject, deleteSubject
 }
     from '@/graphql/mutations';
-import { listCareers } from '@/graphql/queries';
+import { listCareers, listSubjects } from '@/graphql/queries';
 
 import { listAreas, listTeachers } from '@/graphql/queries';
 
@@ -181,3 +182,48 @@ export const createOneStudentWithAPIKey = async (data: StudentProps) => {
 }
 
 /* Subjects actions */
+interface SubjectProps { id?: string; subject_name: string; four_month_period: number; hours_per_teacher: number; hours_per_student: number; careerID: string }
+
+export const createOneSubject = async (data: SubjectProps) => {
+    const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } = data;
+
+    await client.graphql({
+        query: createSubject,
+        variables: { input: { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } }
+    });
+
+    const allSubjects = await client.graphql({
+        query: listSubjects,
+    });
+
+    return allSubjects.data.listSubjects.items
+}
+
+export const updateOneSubject = async (data: SubjectProps) => {
+    const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } = data;
+    const id = data.id as string;
+
+    await client.graphql({
+        query: updateSubject,
+        variables: { input: { id, subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } }
+    });
+
+    const allSubjects = await client.graphql({
+        query: listSubjects
+    });
+
+    return allSubjects.data.listSubjects.items
+}
+
+export const deleteOneSubject = async (id: string) => {
+    await client.graphql({
+        query: deleteSubject,
+        variables: { input: { id } }
+    });
+
+    const allSubjects = await client.graphql({
+        query: listSubjects,
+    });
+
+    return allSubjects.data.listSubjects.items
+}
