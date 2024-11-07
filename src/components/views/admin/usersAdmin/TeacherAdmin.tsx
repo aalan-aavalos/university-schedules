@@ -136,7 +136,7 @@ const TeacherAdmin = () => {
     onClose();
   };
 
-  const queryArea = async () => {
+  const queryTeacher = async () => {
     try {
       showLoading();
       const res_teacher = await getAllTeachers();
@@ -153,7 +153,7 @@ const TeacherAdmin = () => {
     }
   };
 
-  const updateArea = async () => {
+  const updateTeacher = async () => {
     try {
       showLoading();
 
@@ -187,7 +187,7 @@ const TeacherAdmin = () => {
     onOpen();
   };
 
-  const deleteArea = async (row: TeacherProps) => {
+  const deleteTeacher = async (row: TeacherProps) => {
     const { id, teacher_name } = row;
 
     confirm({
@@ -243,7 +243,7 @@ const TeacherAdmin = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => deleteArea(row)}
+              onClick={() => deleteTeacher(row)}
             >
               Eliminar
             </Button>
@@ -270,7 +270,7 @@ const TeacherAdmin = () => {
           >
             Crear
           </Button>
-          <Button variant="contained" onClick={queryArea}>
+          <Button variant="contained" onClick={queryTeacher}>
             Consultar
           </Button>
         </Box>
@@ -291,7 +291,7 @@ const TeacherAdmin = () => {
           onSubmit: (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             if (formUpdate) {
-              updateArea();
+              updateTeacher();
               return;
             }
             createTeacher();
@@ -303,7 +303,7 @@ const TeacherAdmin = () => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ingresa los datos requeridos para{" "}
+            Ingresa los datos requeridos para
             {formUpdate ? "actualizar" : "crear"} la maestro
           </DialogContentText>
           <TextField

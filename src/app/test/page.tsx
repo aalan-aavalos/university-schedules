@@ -12,7 +12,16 @@ const page = () => {
   };
 
   const createUserOne = async () => {
-    await createUser("alangamer00185@gmail.com");
+    const userID = await createUser({
+      "custom:area": "",
+      "custom:career": "abff032d-f05d-4923-8e93-b1d2b18255a9",
+      "custom:four_month_period": "4",
+      "custom:rol": "student",
+      email: "alangamer00185@gmail.com",
+      preferred_username: "lAlanGamerl",
+    });
+
+    console.log(userID);
   };
   return (
     <div>

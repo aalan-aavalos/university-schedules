@@ -2,23 +2,22 @@
 import { cognitoClient } from "@/libs/aws";
 import { ListUsersCommand, AdminCreateUserCommand, AdminUpdateUserAttributesCommand, AdminDeleteUserCommand, AdminSetUserPasswordCommand } from "@aws-sdk/client-cognito-identity-provider";
 
-/* interface UserProps {
-    sub: string;
+interface UserProps {
+    id?: string;
     email: string;
     preferred_username: string;
-    "custom:area": string;
-    "custom:career": string;
-    "custom:four_month_period": number;
-    "custom:rol": string
-} */
+    rol?: string
+    areaID?: string;
+    careerID?: string;
+    four_month_period?: number;
+
+}
 
 export async function listUsers() {
     try {
         const command = new ListUsersCommand({
             UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID as string,
-
             Limit: 10,
-
         });
 
         const result = await cognitoClient.send(command);
@@ -30,7 +29,9 @@ export async function listUsers() {
     }
 }
 
-export async function createUser(email: string): Promise<void> {
+export async function createUser(data: UserProps) {
+    const { email, preferred_username, areaID, careerID, four_month_period, rol } = data
+
     try {
         const command = new AdminCreateUserCommand({
             UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID as string,
@@ -39,49 +40,60 @@ export async function createUser(email: string): Promise<void> {
             UserAttributes: [
                 { Name: "email", Value: email },
                 { Name: "email_verified", Value: "true" },
-                { Name: "custom:rol", Value: "admin" },
-                /* { Name: "email", Value: email },
-                { Name: "email", Value: email },
-                { Name: "email", Value: email },
-                { Name: "email", Value: email }, */
+                { Name: "preferred_username", Value: preferred_username },
+                { Name: "custom:rol", Value: rol || "" },
+                { Name: "custom:area", Value: areaID || "" },
+                { Name: "custom:career", Value: careerID || "" },
+                { Name: "custom:four_month_period", Value: String(four_month_period) || "" },
+
             ],
             MessageAction: "SUPPRESS", // Opcional: suprime el correo de bienvenida
         });
 
-        await cognitoClient.send(command);
-        console.log("Usuario creado:", email);
+        const res = await cognitoClient.send(command);
+
 
         await setUserPassword(email, "12345678");
+
+        return res.User?.Username
     } catch (error) {
         console.error("Error al crear usuario:", error);
     }
 }
 
 
-export async function updateUserAttributes(username: string, attributes: { Name: string; Value: string }[]): Promise<void> {
+export async function updateUserAttributes(data: UserProps) {
+    const { id, preferred_username, areaID, careerID, four_month_period, rol } = data
+
     try {
         const command = new AdminUpdateUserAttributesCommand({
             UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID as string,
-            Username: username,
-            UserAttributes: attributes,
+            Username: id,
+            UserAttributes: [
+                { Name: "preferred_username", Value: preferred_username },
+                { Name: "custom:rol", Value: rol || "" },
+                { Name: "custom:area", Value: areaID || "" },
+                { Name: "custom:career", Value: careerID || "" },
+                { Name: "custom:four_month_period", Value: String(four_month_period) || "" },
+
+            ],
         });
 
         await cognitoClient.send(command);
-        console.log("Atributos actualizados para el usuario:", username);
     } catch (error) {
         console.error("Error al actualizar atributos del usuario:", error);
     }
 }
 
-export async function deleteUser(username: string): Promise<void> {
+export async function deleteUser(id: string): Promise<void> {
     try {
         const command = new AdminDeleteUserCommand({
             UserPoolId: process.env.NEXT_PUBLIC_USER_POOL_ID as string,
-            Username: username,
+            Username: id,
         });
 
         await cognitoClient.send(command);
-        console.log("Usuario eliminado:", username);
+        console.log("Usuario eliminado:", id);
     } catch (error) {
         console.error("Error al eliminar usuario:", error);
     }

@@ -149,6 +149,8 @@ export const onCreateSubject = /* GraphQL */ `subscription OnCreateSubject($filt
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
@@ -166,6 +168,8 @@ export const onUpdateSubject = /* GraphQL */ `subscription OnUpdateSubject($filt
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
@@ -183,6 +187,8 @@ export const onDeleteSubject = /* GraphQL */ `subscription OnDeleteSubject($filt
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt

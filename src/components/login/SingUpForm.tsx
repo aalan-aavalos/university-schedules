@@ -33,7 +33,7 @@ import { getAllCareersWihtAPIKey } from "@/custom-graphql/queries";
 import { createOneStudentWithAPIKey } from "@/custom-graphql/mutations";
 
 interface FormProps {
-  id: string | undefined;
+  id?: string;
   email: string;
   password: string;
   preferred_username: string;
@@ -118,14 +118,15 @@ const SingUpForm = () => {
   };
 
   const verificationCode = async (email: string, code: string) => {
+    const id = form.id as string;
     try {
       setIsLoading(true);
       await confirmSignUp({ username: email, confirmationCode: code });
       await createOneStudentWithAPIKey({
-        id: form.id,
+        id,
         student_name: form.preferred_username,
         student_email: form.email,
-        four_month_period: form.four_month_period,
+        four_month_period: +form.four_month_period,
         careerID: form.careerID,
       });
       await singInFunction({ username: form.email, password: form.password });

@@ -127,6 +127,8 @@ export const getSubject = /* GraphQL */ `query GetSubject($id: ID!) {
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
@@ -149,6 +151,8 @@ export const listSubjects = /* GraphQL */ `query ListSubjects(
       subject_name
       schedule
       four_month_period
+      hours_per_teacher
+      hours_per_student
       teacherID
       careerID
       createdAt
@@ -182,6 +186,8 @@ export const subjectsByTeacherID = /* GraphQL */ `query SubjectsByTeacherID(
       subject_name
       schedule
       four_month_period
+      hours_per_teacher
+      hours_per_student
       teacherID
       careerID
       createdAt
@@ -215,6 +221,8 @@ export const subjectsByCareerID = /* GraphQL */ `query SubjectsByCareerID(
       subject_name
       schedule
       four_month_period
+      hours_per_teacher
+      hours_per_student
       teacherID
       careerID
       createdAt

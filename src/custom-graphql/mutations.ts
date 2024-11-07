@@ -1,10 +1,10 @@
 import {
-    createArea, createCareer, createStudent, createTeacher,
-    deleteArea, deleteCareer, deleteTeacher,
-    updateArea, updateCareer, updateTeacher
+    createArea, createCareer, createCoordinator, createStudent, createTeacher,
+    deleteArea, deleteCareer, deleteCoordinator, deleteStudent, deleteTeacher,
+    updateArea, updateCareer, updateCoordinator, updateStudent, updateTeacher
 }
     from '@/graphql/mutations';
-import { listCareers } from '@/graphql/queries';
+import { listCareers, listCoordinators, listStudents } from '@/graphql/queries';
 
 import { listAreas, listTeachers } from '@/graphql/queries';
 
@@ -13,10 +13,10 @@ import { generateClient } from "aws-amplify/api";
 const client = generateClient()
 
 interface StudentProps {
-    id: string;
+    id?: string;
     student_name: string;
     student_email: string;
-    four_month_period: string;
+    four_month_period: number;
     careerID: string
 }
 
@@ -26,13 +26,22 @@ interface TeacherProps {
     teacher_email: string;
 }
 
+interface CoordinatorProps {
+    id?: string;
+    coordinator_name: string;
+    coordinator_email: string;
+    areaID: string
+}
+
 /* Teacher actions */
 export const createOneTeacher = async (data: TeacherProps) => {
     const { teacher_name, teacher_email } = data
 
+    const id = data.id as string
+
     await client.graphql({
         query: createTeacher,
-        variables: { input: { teacher_name, teacher_email } }
+        variables: { input: { id, teacher_name, teacher_email } }
     });
 
     const allTeachers = await client.graphql({
@@ -161,23 +170,111 @@ export const deleteOneCareer = async (id: string) => {
 
 /* Students */
 export const createOneStudentWithAPIKey = async (data: StudentProps) => {
-    console.log(data);
     const { id, student_name, student_email, four_month_period, careerID } = data
 
-    const newStudent = await client.graphql({
+    await client.graphql({
         query: createStudent,
         variables: {
-            input: {
-                id,
-                student_name,
-                student_email,
-                "four_month_period": +four_month_period,
-                careerID
-            }
+            input: { id, student_name, student_email, "four_month_period": +four_month_period, careerID }
         },
         authMode: "apiKey"
     });
-    console.log(newStudent);
 }
 
-/* Subjects actions */
+export const createOneStudent = async (data: StudentProps) => {
+    const { student_name, student_email, four_month_period, careerID } = data
+    const id = data.id as string
+
+    await client.graphql({
+        query: createStudent,
+        variables: {
+            input: { id, student_name, student_email, four_month_period, careerID }
+        },
+    });
+
+    const allStudents = await client.graphql({
+        query: listStudents,
+    });
+
+    return allStudents.data.listStudents.items
+}
+
+export const updateOneStudent = async (data: StudentProps) => {
+    const { student_email, student_name, four_month_period, careerID } = data
+
+    const id = data.id as string
+
+    await client.graphql({
+        query: updateStudent,
+        variables: { input: { id, student_email, student_name, four_month_period, careerID } }
+    });
+
+    const allStudents = await client.graphql({
+        query: listStudents
+    });
+
+    return allStudents.data.listStudents.items
+}
+
+export const deleteOneStudent = async (id: string) => {
+    await client.graphql({
+        query: deleteStudent,
+        variables: { input: { id } }
+    });
+
+    const allStudents = await client.graphql({
+        query: listStudents,
+    });
+
+    return allStudents.data.listStudents.items
+}
+
+/* Coordinators */
+export const createOneCoordinator = async (data: CoordinatorProps) => {
+    const { coordinator_email, coordinator_name, areaID } = data
+
+    const id = data.id as string
+
+    await client.graphql({
+        query: createCoordinator,
+        variables: {
+            input: { id, coordinator_email, coordinator_name, areaID }
+        },
+    });
+
+    const allCoordinators = await client.graphql({
+        query: listCoordinators
+    });
+
+    return allCoordinators.data.listCoordinators.items
+}
+
+export const updateOneCoordinator = async (data: CoordinatorProps) => {
+    const { coordinator_email, coordinator_name, areaID } = data
+
+    const id = data.id as string
+
+    await client.graphql({
+        query: updateCoordinator,
+        variables: { input: { id, coordinator_email, coordinator_name, areaID } }
+    });
+
+    const allCoordinators = await client.graphql({
+        query: listCoordinators
+    });
+
+    return allCoordinators.data.listCoordinators.items
+}
+
+export const deleteOneCoordinator = async (id: string) => {
+    await client.graphql({
+        query: deleteCoordinator,
+        variables: { input: { id } }
+    });
+
+    const allCoordinators = await client.graphql({
+        query: listCoordinators
+    });
+
+    return allCoordinators.data.listCoordinators.items
+}
