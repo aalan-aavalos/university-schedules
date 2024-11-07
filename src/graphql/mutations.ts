@@ -170,6 +170,8 @@ export const createSubject = /* GraphQL */ `mutation CreateSubject(
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
@@ -190,6 +192,8 @@ export const updateSubject = /* GraphQL */ `mutation UpdateSubject(
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
@@ -210,6 +214,8 @@ export const deleteSubject = /* GraphQL */ `mutation DeleteSubject(
     subject_name
     schedule
     four_month_period
+    hours_per_teacher
+    hours_per_student
     teacherID
     careerID
     createdAt
