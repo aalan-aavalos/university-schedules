@@ -40,6 +40,7 @@ const CalendarComponent = () => {
     [setEvents]
   );
 
+  // Añadir nuevos eventos
   const newEvent = useCallback(
     (event) => {
       setEvents((prevEvents) => [

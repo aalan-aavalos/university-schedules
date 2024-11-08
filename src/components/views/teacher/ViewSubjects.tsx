@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getAllSubjectsByTeacherID } from "@/custom-graphql/queries";
+import {
+  getAllCareers,
+  getAllSubjectsByTeacherID,
+} from "@/custom-graphql/queries";
 import { Box, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
@@ -17,8 +20,20 @@ interface SubjectByTeacherProps {
   updatedAt: string;
 }
 
+interface CareerProps {
+  id: string;
+  career_name: string;
+  level: string;
+  four_month_periods: number;
+  areaID: string;
+  createdAt: string;
+  updatedAt: string;
+  __typename: string;
+}
+
 const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
   const [subjects, setSubjects] = useState<Array<SubjectByTeacherProps>>([]);
+  const [careers, setCareers] = useState<Array<CareerProps>>([]);
 
   const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
 
@@ -29,6 +44,9 @@ const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
         if (!teacharID) return;
         const res = await getAllSubjectsByTeacherID(teacharID);
         setSubjects(res);
+
+        const res_careers = await getAllCareers();
+        setCareers(res_careers);
       } catch (err) {
         console.error(err);
       } finally {
@@ -45,6 +63,9 @@ const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
       if (!teacharID) return;
       const res = await getAllSubjectsByTeacherID(teacharID);
       setSubjects(res);
+
+      const res_careers = await getAllCareers();
+      setCareers(res_careers);
     } catch (err) {
       console.error(err);
     } finally {
@@ -60,13 +81,22 @@ const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
       editable: true,
     },
     {
+      field: "careerID",
+      headerName: "Carrera",
+      flex: 1,
+      renderCell: (params) => {
+        const career = careers.find((career) => career.id === params.value);
+        return career ? career.career_name : "Desconocido";
+      },
+    },
+    {
       field: "four_month_period",
       headerName: "Cuatrimestre",
       flex: 1,
     },
     {
       field: "hours_per_teacher",
-      headerName: "Horas por profesor",
+      headerName: "Horas",
       flex: 1,
     },
     /* {
@@ -76,15 +106,6 @@ const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
       renderCell: (params) => {
         const teacher = teachers.find((teacher) => teacher.id === params.value);
         return teacher ? teacher.teacher_name : "No asignado";
-      },
-    }, */
-    /* {
-      field: "careerID",
-      headerName: "Carrera",
-      flex: 1,
-      renderCell: (params) => {
-        const career = careers.find((career) => career.id === params.value);
-        return career ? career.career_name : "Desconocido";
       },
     }, */
   ];
