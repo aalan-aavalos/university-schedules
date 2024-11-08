@@ -1,31 +1,56 @@
 import React, { useEffect, useState } from "react";
 import { getAllSubjectsByTeacherID } from "@/custom-graphql/queries";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 
 interface SubjectByTeacherProps {
   id: string;
   subject_name: string;
-  schedule?: string;
+  schedule?: string | null;
   four_month_period: number;
   hours_per_teacher: number;
   hours_per_student: number;
-  teacherID: string;
+  teacherID?: string | null;
   careerID: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
   const [subjects, setSubjects] = useState<Array<SubjectByTeacherProps>>([]);
 
+  const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
+
   useEffect(() => {
     const excuteQuieries = async () => {
-      if (!teacharID) return;
-      const res = await getAllSubjectsByTeacherID(teacharID);
-      setSubjects(res);
+      try {
+        showLoading();
+        if (!teacharID) return;
+        const res = await getAllSubjectsByTeacherID(teacharID);
+        setSubjects(res);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        hideLoading();
+      }
     };
 
     excuteQuieries();
-  }, [teacharID]);
+  }, [hideLoading, showLoading, teacharID]);
+
+  const querySubjectsById = async () => {
+    try {
+      showLoading();
+      if (!teacharID) return;
+      const res = await getAllSubjectsByTeacherID(teacharID);
+      setSubjects(res);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -66,7 +91,13 @@ const ViewSubjects = ({ teacharID }: { teacharID: string | undefined }) => {
 
   return (
     <div>
+      {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
+        <Box sx={{ paddingBottom: 1, display: "flex", gap: 1 }}>
+          <Button variant="contained" onClick={querySubjectsById}>
+            Consultar
+          </Button>
+        </Box>
         {subjects.length > 0 ? (
           <DataGrid columns={columns} rows={subjects} />
         ) : (

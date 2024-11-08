@@ -33,7 +33,6 @@ import { useRouter } from "next/navigation";
 import { getAllCareersWihtAPIKey } from "@/custom-graphql/queries";
 
 import { createOneStudentWithAPIKey } from "@/custom-graphql/mutations";
-import { Login } from "@mui/icons-material";
 
 interface FormProps {
   id?: string;
@@ -232,7 +231,6 @@ const SingUpForm = () => {
           bgcolor: "background.paper",
         }}
       >
-
         <Typography variant="h4" align="center" gutterBottom>
           {isVerificationStep ? "Verificación de Código" : "Registro"}
         </Typography>

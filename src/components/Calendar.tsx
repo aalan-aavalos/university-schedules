@@ -40,7 +40,6 @@ const CalendarComponent = () => {
     [setEvents]
   );
 
-  // Añadir nuevos eventos
   const newEvent = useCallback(
     (event) => {
       setEvents((prevEvents) => [
@@ -55,7 +54,6 @@ const CalendarComponent = () => {
 
   return (
     <div style={{ height: "600px" }}>
-      <h2>Calendario de Eventos</h2>
       <DragAndDropCalendar
         localizer={localizer}
         events={events}
