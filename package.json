@@ -22,7 +22,7 @@
     "@mui/material-nextjs": "^6.1.4",
     "@mui/x-data-grid": "^7.22.0",
     "@toolpad/core": "^0.8.1",
-    "@types/react-big-calendar": "^1.8.12",
+    "@types/react-big-calendar": "^1.15.0",
     "@types/vis": "^4.21.27",
     "aws-amplify": "^6.6.5",
     "aws-sdk": "^2.1691.0",
