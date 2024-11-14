@@ -1,4 +1,4 @@
-import { listSubjects } from "@/graphql/queries";
+import { listSubjects, subjectsByTeacherID } from "@/graphql/queries";
 import { listAreas, listTeachers, listCareers, listStudents, listCoordinators } from "@/graphql/queries";
 import { generateClient } from "aws-amplify/api";
 
@@ -64,4 +64,10 @@ export const getAllCoordinators = async () => {
     });
 
     return allCoordinators.data.listCoordinators.items
+}
+
+export const getAllSubjectsByTeacherID = async (teacherID: string) => {
+    const allSubjects = await client.graphql({ query: subjectsByTeacherID, variables: { teacherID } })
+
+    return allSubjects.data.subjectsByTeacherID.items
 }

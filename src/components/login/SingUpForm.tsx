@@ -9,9 +9,11 @@ import React, {
 import {
   Autocomplete,
   Backdrop,
+  Box,
   Button,
   CircularProgress,
   TextField,
+  Typography,
 } from "@mui/material";
 
 import {
@@ -213,7 +215,26 @@ const SingUpForm = () => {
         <CircularProgress color="inherit"></CircularProgress>
       </Backdrop>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <Box
+        component="form"
+        onSubmit={onSubmit}
+        sx={{
+          width: 600,
+          margin: "auto",
+          mt: 2,
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+          borderRadius: 2,
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+          bgcolor: "background.paper",
+        }}
+      >
+        <Typography variant="h4" align="center" gutterBottom>
+          {isVerificationStep ? "Verificación de Código" : "Registro"}
+        </Typography>
+
         {!isVerificationStep ? (
           <>
             <TextField
@@ -225,6 +246,7 @@ const SingUpForm = () => {
               autoComplete="email"
               onChange={(e) => handleChange(e)}
               value={form.email}
+              fullWidth
             />
             <TextField
               required
@@ -235,6 +257,7 @@ const SingUpForm = () => {
               autoComplete="current-password"
               onChange={(e) => handleChange(e)}
               value={form.password}
+              fullWidth
             />
             <TextField
               required
@@ -267,9 +290,10 @@ const SingUpForm = () => {
               variant="outlined"
               onChange={(e) => handleChange(e)}
               value={form.four_month_period}
+              fullWidth
             />
-            <Button variant="contained" type="submit">
-              Sign Up
+            <Button variant="contained" type="submit" fullWidth sx={{ mt: 2 }}>
+              Registrarse
             </Button>
           </>
         ) : (
@@ -282,13 +306,14 @@ const SingUpForm = () => {
               variant="outlined"
               onChange={(e) => handleChange(e)}
               value={form.verificationCode}
+              fullWidth
             />
             <Button variant="contained" type="submit">
               Verify
             </Button>
           </>
         )}
-      </form>
+      </Box>
     </>
   );
 };

@@ -207,6 +207,7 @@ export const onCreateStudent = /* GraphQL */ `subscription OnCreateStudent($filt
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename
@@ -223,6 +224,7 @@ export const onUpdateStudent = /* GraphQL */ `subscription OnUpdateStudent($filt
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename
@@ -239,6 +241,7 @@ export const onDeleteStudent = /* GraphQL */ `subscription OnDeleteStudent($filt
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename

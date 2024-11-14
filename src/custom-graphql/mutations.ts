@@ -183,7 +183,7 @@ export const createOneStudentWithAPIKey = async (data: StudentProps) => {
 }
 
 /* Subjects actions */
-interface SubjectProps { id?: string; subject_name: string; four_month_period: number; hours_per_teacher: number; hours_per_student: number; careerID: string }
+interface SubjectProps { id?: string; subject_name: string; four_month_period: number; hours_per_teacher: number; hours_per_student: number; careerID: string, teacherID?: string }
 
 export const createOneSubject = async (data: SubjectProps) => {
     const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } = data;
@@ -201,12 +201,12 @@ export const createOneSubject = async (data: SubjectProps) => {
 }
 
 export const updateOneSubject = async (data: SubjectProps) => {
-    const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } = data;
+    const { subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID, teacherID } = data;
     const id = data.id as string;
 
     await client.graphql({
         query: updateSubject,
-        variables: { input: { id, subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID } }
+        variables: { input: { id, subject_name, four_month_period, hours_per_teacher, hours_per_student, careerID, teacherID } }
     });
 
     const allSubjects = await client.graphql({

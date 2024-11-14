@@ -8,16 +8,16 @@ import React, {
 
 /* Custom GraphQL */
 import {
-  getAllAreas,
   getAllCareers,
-  getAllCoordinators,
+  getAllStudents,
+  getAllAreas,
 } from "@/custom-graphql/queries";
 import {
   createOneCoordinator,
   createOneStudent,
   createOneTeacher,
-  deleteOneCoordinator,
-  updateOneCoordinator,
+  deleteOneStudent,
+  updateOneStudent,
 } from "@/custom-graphql/mutations";
 
 /* SDK Cognito CRUD */
@@ -52,14 +52,14 @@ import { useDisclosure } from "@/hooks/useDisclousure";
 import { enqueueSnackbar } from "notistack";
 import { useConfirm } from "material-ui-confirm";
 
-interface CoordinatorProps {
+interface StudentProps {
   id: string;
-  coordinator_name: string;
-  coordinator_email: string;
-  areaID: string;
+  student_name: string;
+  student_email: string;
+  four_month_period: number;
+  careerID: string;
   rol?: string;
 }
-
 interface AreaProps {
   id: string;
   area_name: string;
@@ -69,11 +69,11 @@ interface AreaProps {
 }
 interface FormProps {
   id: string;
-  coordinator_name: string;
-  coordinator_email: string;
-  four_month_period?: number;
-  areaID: string;
-  careerID?: string;
+  student_name: string;
+  student_email: string;
+  four_month_period: number;
+  careerID: string;
+  areaID?: string;
   rol?: string;
 }
 interface RolesProps {
@@ -90,11 +90,10 @@ interface CareerProps {
   updatedAt: string;
   __typename: string;
 }
-
 const initialForm: FormProps = {
   id: "",
-  coordinator_name: "",
-  coordinator_email: "",
+  student_name: "",
+  student_email: "",
   four_month_period: 1,
   careerID: "",
   areaID: "",
@@ -104,12 +103,12 @@ const initialForm: FormProps = {
 /* Roles */
 const Roles: Array<RolesProps> = [
   {
-    rol_name: "Estudiante",
-    rol: "student",
-  },
-  {
     rol_name: "Maestro",
     rol: "teacher",
+  },
+  {
+    rol_name: "Coordinador",
+    rol: "coordinator",
   },
   {
     rol_name: "Administrador",
@@ -117,8 +116,8 @@ const Roles: Array<RolesProps> = [
   },
 ];
 
-const CoordinatorAdmin = () => {
-  const [coordinators, setCoordinators] = useState<Array<CoordinatorProps>>([]);
+const StudentesAdmin = () => {
+  const [students, setStudents] = useState<Array<StudentProps>>([]);
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
   const [areas, setAreas] = useState<Array<AreaProps>>([]);
 
@@ -136,8 +135,8 @@ const CoordinatorAdmin = () => {
     const excuteQueries = async () => {
       try {
         showLoading();
-        const res_coordinators = await getAllCoordinators();
-        setCoordinators(res_coordinators);
+        const res_students = await getAllStudents();
+        setStudents(res_students);
 
         const res_careers = await getAllCareers();
         setCareers(res_careers);
@@ -182,24 +181,23 @@ const CoordinatorAdmin = () => {
     setForm((prevForm) => ({ ...prevForm, areaID: id }));
   };
 
-  const createCoordinator = async () => {
+  const createStudent = async () => {
     try {
       showLoading();
 
-      const { coordinator_email: email, coordinator_name: preferred_username } =
-        form;
+      const { student_email: email, student_name: preferred_username } = form;
       const id = await createUser({ ...form, preferred_username, email });
 
-      const res_coordinators = await createOneCoordinator({ ...form, id });
+      const res_students = await createOneStudent({ ...form, id });
 
-      if (res_coordinators) {
-        setCoordinators(res_coordinators);
+      if (res_students) {
+        setStudents(res_students);
       }
 
-      const message = "Coordinador creado correctamente";
+      const message = "Estudiante creado correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al crear el coordinador";
+      const message = "Algo salio mal al crear el estudiante";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -210,16 +208,16 @@ const CoordinatorAdmin = () => {
     onClose();
   };
 
-  const queryCoordinator = async () => {
+  const queryStudent = async () => {
     try {
       showLoading();
-      const res_coordinator = await getAllCoordinators();
-      setCoordinators(res_coordinator);
+      const res_teacher = await getAllStudents();
+      setStudents(res_teacher);
 
-      const message = "Coordinador consultados correctamente";
+      const message = "Estudiantes consultados correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al consultar los coordinadores";
+      const message = "Algo salio mal al consultar los estudiantes";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -227,39 +225,36 @@ const CoordinatorAdmin = () => {
     }
   };
 
-  const updateCoordinator = async () => {
+  const updateStudent = async () => {
     try {
       showLoading();
 
-      const { coordinator_email: email, coordinator_name: preferred_username } =
-        form;
+      const { student_email: email, student_name: preferred_username } = form;
       console.log(form);
       await updateUserAttributes({ ...form, preferred_username, email });
 
       if (checked) {
-        const id = form.id;
         switch (form.rol) {
-          case "student":
+          case "coordinator":
             const {
-              coordinator_name: student_name,
-              coordinator_email: student_email,
-            } = form;
-            const four_month_period = form.four_month_period as number;
-            const careerID = form.careerID as string;
-            createOneStudent({
               id,
-              student_email,
-              student_name,
-              four_month_period,
-              careerID,
+              student_name: coordinator_name,
+              student_email: coordinator_email,
+            } = form;
+
+            const areaID = form.areaID as string;
+
+            createOneCoordinator({
+              id,
+              coordinator_email,
+              coordinator_name,
+              areaID,
             });
-            console.log("Rol actualizado a estudiante");
+            console.log("Rol actualizado a Coordinador");
             break;
           case "teacher":
-            const {
-              coordinator_name: teacher_name,
-              coordinator_email: teacher_email,
-            } = form;
+            const { student_name: teacher_name, student_email: teacher_email } =
+              form;
             createOneTeacher({ ...form, teacher_email, teacher_name });
             console.log("Rol actualizado a Maestro");
             break;
@@ -267,20 +262,20 @@ const CoordinatorAdmin = () => {
             console.log("Lo que tenia que salir mal salio ayuda");
         }
 
-        const res_coordinators = await deleteOneCoordinator(form?.id);
+        const res_students = await deleteOneStudent(form?.id);
 
-        if (res_coordinators) {
-          setCoordinators(res_coordinators);
+        if (res_students) {
+          setStudents(res_students);
         }
 
         onClose();
         return;
       }
 
-      const res_coordinators = await updateOneCoordinator(form);
+      const res_students = await updateOneStudent(form);
 
-      if (res_coordinators) {
-        setCoordinators(res_coordinators);
+      if (res_students) {
+        setStudents(res_students);
       }
 
       const message = "Estdiante actualizado correctamente";
@@ -296,33 +291,33 @@ const CoordinatorAdmin = () => {
     onClose();
   };
 
-  const onOpenUpdate = (row: CoordinatorProps) => {
+  const onOpenUpdate = (row: StudentProps) => {
     setFormUpdate(true);
-    setForm({ ...row, rol: "coordinator" });
+    setForm({ ...row, rol: "student" });
     onOpen();
   };
 
-  const deleteCoordinator = async (row: CoordinatorProps) => {
-    const { id, coordinator_name } = row;
+  const deleteStudent = async (row: StudentProps) => {
+    const { id, student_name } = row;
 
     confirm({
       title: "Confirmar eliminación",
-      description: `¿Seguro que deseas eliminar al maestro "${coordinator_name}"? Esta acción no se puede deshacer.`,
+      description: `¿Seguro que deseas eliminar al maestro "${student_name}"? Esta acción no se puede deshacer.`,
     })
       .then(async () => {
         try {
           showLoading();
-          const res_coordinator = await deleteOneCoordinator(id);
+          const res_students = await deleteOneStudent(id);
 
           await deleteUser(id);
 
-          if (res_coordinator) {
-            setCoordinators(res_coordinator);
+          if (res_students) {
+            setStudents(res_students);
           }
-          const message = "Coordinador eliminado correctamente";
+          const message = "Maestro eliminado correctamente";
           enqueueSnackbar(message, { variant: "success" });
         } catch (err) {
-          const message = "Algo salio mal al eliminar el coordinador";
+          const message = "Algo salio mal al eliminar el maestros";
           enqueueSnackbar(message, { variant: "error" });
           console.error(err);
         } finally {
@@ -334,22 +329,27 @@ const CoordinatorAdmin = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "coordinator_name",
-      headerName: "Nombre del Coordinador",
+      field: "student_name",
+      headerName: "Nombre del Estudiante",
       flex: 1,
     },
     {
-      field: "coordinator_email",
+      field: "student_email",
       headerName: "Email",
       flex: 1,
     },
     {
-      field: "areaID",
-      headerName: "Área",
+      field: "four_month_period",
+      headerName: "Cuatrimestre",
+      flex: 1,
+    },
+    {
+      field: "careerID",
+      headerName: "Carrera",
       flex: 1,
       renderCell: (params) => {
-        const area = areas.find((area) => area.id === params.value);
-        return area ? area.area_name : "Desconocido";
+        const career = careers.find((career) => career.id === params.value);
+        return career ? career.career_name : "Desconocido";
       },
     },
     {
@@ -370,7 +370,7 @@ const CoordinatorAdmin = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => deleteCoordinator(row)}
+              onClick={() => deleteStudent(row)}
             >
               Eliminar
             </Button>
@@ -378,7 +378,6 @@ const CoordinatorAdmin = () => {
         ) : null,
     },
   ];
-  
 
   return (
     <div>
@@ -396,15 +395,15 @@ const CoordinatorAdmin = () => {
           >
             Crear
           </Button>
-          <Button variant="contained" onClick={queryCoordinator}>
+          <Button variant="contained" onClick={queryStudent}>
             Consultar
           </Button>
         </Box>
 
         {/* El condiconal es porque da error al borrar todas las areas */}
 
-        {coordinators.length > 0 ? (
-          <DataGrid columns={columns} rows={coordinators} />
+        {students.length > 0 ? (
+          <DataGrid columns={columns} rows={students} />
         ) : (
           <div>No hay datos disponibles</div> // Renderizamos un mensaje si no hay datos
         )}
@@ -417,44 +416,44 @@ const CoordinatorAdmin = () => {
           onSubmit: (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             if (formUpdate) {
-              updateCoordinator();
+              updateStudent();
               return;
             }
-            createCoordinator();
+            createStudent();
           },
         }}
       >
         <DialogTitle>
-          {formUpdate ? "Actualizar" : "Crear"} un Coordinador
+          {formUpdate ? "Actualizar" : "Crear"} un Estudiante
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para
-            {formUpdate ? "actualizar" : "crear"} el coordinador
+            {formUpdate ? "actualizar" : "crear"} el estudiantes
           </DialogContentText>
           <TextField
             autoFocus
             required
             margin="dense"
-            name="coordinator_name"
-            label="Nombre del coordinador"
+            name="student_name"
+            label="Nombre del estudiante"
             type="text"
             fullWidth
             variant="standard"
             onChange={handleChange}
-            value={form.coordinator_name}
+            value={form.student_name}
           />
           <TextField
             required={!formUpdate}
             disabled={formUpdate}
             margin="dense"
-            name="coordinator_email"
+            name="student_email"
             label="Email"
             type="email"
             fullWidth
             variant="standard"
             onChange={handleChange}
-            value={form.coordinator_email}
+            value={form.student_email}
           />
 
           {formUpdate ? (
@@ -462,29 +461,40 @@ const CoordinatorAdmin = () => {
               disabled
               fullWidth
               variant="standard"
-              label="Area"
-              value={form.areaID}
+              label="Cuatrimestre"
+              value={form.careerID}
             />
           ) : (
             <Autocomplete
               disablePortal
               fullWidth
-              options={areas}
-              getOptionLabel={(option) => option.area_name}
+              options={careers}
+              getOptionLabel={(option) => option.career_name}
               renderInput={(params) => (
                 <TextField
                   required
                   variant="standard"
                   {...params}
-                  label="Areas"
+                  label="Carrera"
                 />
               )}
-              onChange={(e: SyntheticEvent, value: AreaProps | null) =>
-                handleChangeArea(e, value)
+              onChange={(e: SyntheticEvent, value: CareerProps | null) =>
+                handleChangeCareer(e, value)
               }
             />
           )}
 
+          <TextField
+            required
+            fullWidth
+            type="number"
+            variant="standard"
+            slotProps={{ htmlInput: { min: 1, max: 6 } }}
+            name="four_month_period"
+            label="Cuatrimestre"
+            onChange={(e) => handleChange(e)}
+            value={form.four_month_period}
+          />
           {formUpdate && (
             <Box
               sx={{
@@ -533,37 +543,24 @@ const CoordinatorAdmin = () => {
               </TextField>
             </Box>
           )}
-          {form.rol === "student" && (
-            <>
-              <Autocomplete
-                disablePortal
-                fullWidth
-                options={careers}
-                getOptionLabel={(option) => option.career_name}
-                renderInput={(params) => (
-                  <TextField
-                    required
-                    variant="standard"
-                    {...params}
-                    label="Carrera"
-                  />
-                )}
-                onChange={(e: SyntheticEvent, value: CareerProps | null) =>
-                  handleChangeCareer(e, value)
-                }
-              />
-              <TextField
-                required
-                fullWidth
-                type="number"
-                variant="standard"
-                slotProps={{ htmlInput: { min: 1, max: 6 } }}
-                name="four_month_period"
-                label="Cuatrimestre"
-                onChange={(e) => handleChange(e)}
-                value={form.four_month_period}
-              />
-            </>
+          {form.rol === "coordinator" && (
+            <Autocomplete
+              disablePortal
+              fullWidth
+              options={areas}
+              getOptionLabel={(option) => option.area_name}
+              renderInput={(params) => (
+                <TextField
+                  required
+                  variant="standard"
+                  {...params}
+                  label="Areas"
+                />
+              )}
+              onChange={(e: SyntheticEvent, value: AreaProps | null) =>
+                handleChangeArea(e, value)
+              }
+            />
           )}
         </DialogContent>
         <DialogActions>
@@ -587,4 +584,4 @@ const CoordinatorAdmin = () => {
   );
 };
 
-export { CoordinatorAdmin };
+export { StudentesAdmin };

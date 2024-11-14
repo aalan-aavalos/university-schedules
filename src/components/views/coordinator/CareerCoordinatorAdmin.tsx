@@ -67,7 +67,7 @@ const initialForm: FormProps = {
   areaID: "",
 };
 
-const CareerAdmin = () => {
+const CareerCoordinatorAdmin = () => {
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
   const [areas, setAreas] = useState<Array<AreaProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
@@ -236,7 +236,7 @@ const CareerAdmin = () => {
     },
     {
       field: "areaID",
-      headerName: "Área", // Cambiado para reflejar el nombre del área
+      headerName: "Area",
       flex: 1,
       renderCell: (params) => {
         const area = areas.find((area) => area.id === params.value);
@@ -383,4 +383,4 @@ const CareerAdmin = () => {
   );
 };
 
-export { CareerAdmin };
+export { CareerCoordinatorAdmin };

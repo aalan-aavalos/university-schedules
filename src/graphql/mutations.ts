@@ -237,6 +237,7 @@ export const createStudent = /* GraphQL */ `mutation CreateStudent(
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename
@@ -256,6 +257,7 @@ export const updateStudent = /* GraphQL */ `mutation UpdateStudent(
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename
@@ -275,6 +277,7 @@ export const deleteStudent = /* GraphQL */ `mutation DeleteStudent(
     student_email
     four_month_period
     careerID
+    schedules
     createdAt
     updatedAt
     __typename

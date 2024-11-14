@@ -10,11 +10,12 @@ import { createTheme } from "@mui/material/styles";
 import {
   SpaceDashboard,
   CalendarMonth,
-  EditCalendar,
+  // EditCalendar,
   ManageAccounts,
   Business,
   PostAdd,
   School,
+  AssignmentInd,
 } from "@mui/icons-material";
 
 /* MUI Toolpad */
@@ -33,8 +34,18 @@ import { CareerAdmin } from "@/components/views/admin/CareerAdmin";
 import { SubjectsAdmin } from "@/components/views/admin/SubjectsAdmin";
 import { UsersAdmin } from "@/components/views/admin/UsersAdmin";
 
+// Coordinator
+import { AssignamentSubjects } from "@/components/views/coordinator/AssignamentSubjects";
+import { CareerCoordinatorAdmin } from "@/components/views/coordinator/CareerCoordinatorAdmin";
+import { SubjectsCoordinatorAdmin } from "@/components/views/coordinator/SubjectsCoordinatorAdmin";
+import { UsersCoordinatorAdmin } from "@/components/views/coordinator/UsersCoordinatorAdmin";
+
 // Teacher
-import { Gantt } from "@/components/gantt/Gantt";
+import { ViewSubjects } from "@/components/views/teacher/ViewSubjects";
+import { ScheduleTeacher } from "@/components/views/teacher/ScheduleTeacher";
+
+// Student
+import { ScheduleStudent } from "@/components/views/student/ScheduleStudent";
 
 const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
   const NAVIGATION_BAR: Navigation = [
@@ -52,7 +63,7 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
       NAVIGATION_BAR.push(
         {
           kind: "header",
-          title: "Administrador",
+          title: "Administrar",
         },
         {
           segment: "areas_admin",
@@ -78,22 +89,83 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
       break;
 
     case "coordinator":
+      NAVIGATION_BAR.push(
+        {
+          kind: "header",
+          title: "Asignar",
+        },
+        {
+          segment: "assignament_subjects_coordinator",
+          title: "Materias a Profesores",
+          icon: <AssignmentInd />,
+        },
+        {
+          kind: "header",
+          title: "Administrar",
+        },
+        {
+          segment: "career_coordinator_admin",
+          title: "Carreras",
+          icon: <School />,
+        },
+        {
+          segment: "subjects_coordinator_admin",
+          title: "Materias",
+          icon: <PostAdd />,
+        },
+        {
+          segment: "user_coordinator_admin",
+          title: "Usuarios",
+          icon: <ManageAccounts />,
+        }
+      );
       break;
 
     case "teacher":
-      NAVIGATION_BAR.push({
-        segment: "generator_schedule",
-        title: "Generar Calendario",
-        icon: <CalendarMonth />,
-      });
+      NAVIGATION_BAR.push(
+        {
+          kind: "header",
+          title: "Materias",
+        },
+        {
+          segment: "subjects_teacher",
+          title: "Visualizar",
+          icon: <PostAdd />,
+        },
+        {
+          kind: "header",
+          title: "Calendario",
+        },
+        {
+          segment: "generator_schedule_teacher",
+          title: "Generar",
+          icon: <CalendarMonth />,
+        }
+        /* {
+          segment: "administrator_schedules_teacher",
+          title: "Administrar",
+          icon: <EditCalendar />,
+        } */
+      );
       break;
 
     case "student":
-      NAVIGATION_BAR.push({
-        segment: "administrator_schedules",
-        title: "Administrar Calendarios",
-        icon: <EditCalendar />,
-      });
+      NAVIGATION_BAR.push(
+        {
+          kind: "header",
+          title: "Calendario",
+        },
+        {
+          segment: "generator_schedule_student",
+          title: "Generar",
+          icon: <CalendarMonth />,
+        }
+        /*  {
+          segment: "administrator_schedules_student",
+          title: "Administrar",
+          icon: <EditCalendar />,
+        } */
+      );
       break;
 
     default:
@@ -128,6 +200,7 @@ function DemoPageContent({
   pathname: string;
   user: FetchUserAttributesOutput | null;
 }) {
+  console.log(user);
   return (
     <Box
       sx={{
@@ -146,8 +219,26 @@ function DemoPageContent({
       {pathname === "/subjects_admin" && <SubjectsAdmin />}
       {pathname === "/user_admin" && <UsersAdmin />}
 
+      {/* Coordinator */}
+      {pathname === "/assignament_subjects_coordinator" && (
+        <AssignamentSubjects />
+      )}
+      {pathname === "/career_coordinator_admin" && <CareerCoordinatorAdmin />}
+      {pathname === "/subjects_coordinator_admin" && (
+        <SubjectsCoordinatorAdmin />
+      )}
+      {pathname === "/user_coordinator_admin" && <UsersCoordinatorAdmin />}
+
       {/* Teacher */}
-      {pathname === "/teacher_schedule" && <Gantt />}
+      {pathname === "/subjects_teacher" && (
+        <ViewSubjects teacharID={user?.sub} />
+      )}
+      {pathname === "/generator_schedule_teacher" && (
+        <ScheduleTeacher teacharID={user?.sub} />
+      )}
+
+      {/* Student */}
+      {pathname === "/generator_schedule_student" && <ScheduleStudent />}
     </Box>
   );
 }

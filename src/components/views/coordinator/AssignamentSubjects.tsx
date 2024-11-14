@@ -1,5 +1,12 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, {
+  //   ChangeEvent,
+  FormEvent,
+  SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 import {
+  Autocomplete,
   Box,
   Button,
   Dialog,
@@ -7,20 +14,20 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  MenuItem,
+  //   MenuItem,
   TextField,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { getAllSubjects } from "@/custom-graphql/queries";
+import { getAllSubjects, getAllTeachers } from "@/custom-graphql/queries";
 import { getAllCareers } from "@/custom-graphql/queries";
 import {
-  deleteOneSubject,
+  //   deleteOneSubject,
   createOneSubject,
   updateOneSubject,
 } from "@/custom-graphql/mutations";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { useDisclosure } from "@/hooks/useDisclousure";
-import { useConfirm } from "material-ui-confirm";
+// import { useConfirm } from "material-ui-confirm";
 import { enqueueSnackbar } from "notistack";
 
 interface SubjectProps {
@@ -64,6 +71,18 @@ interface FormProps {
   hours_per_teacher: number;
   hours_per_student: number;
   careerID: string;
+  teacherID?: string;
+}
+
+interface TeacherProps {
+  id: string;
+  teacher_name: string;
+  teacher_email: string;
+  rol?: string;
+  teacherID?: string;
+  areaID?: string;
+  careerID?: string;
+  four_month_period?: number;
 }
 
 const initialForm: FormProps = {
@@ -72,11 +91,13 @@ const initialForm: FormProps = {
   hours_per_teacher: 0,
   hours_per_student: 0,
   careerID: "",
+  teacherID: "",
 };
 
-const SubjectsAdmin = () => {
+const AssignamentSubjects = () => {
   const [subjects, setSubjects] = useState<Array<SubjectProps>>([]);
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
+  const [teachers, setTeachers] = useState<Array<TeacherProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
 
   const [formUpdate, setFormUpdate] = useState(false);
@@ -84,15 +105,19 @@ const SubjectsAdmin = () => {
   const { showLoading, hideLoading, LoadingBackdrop } = useLoadingBackdrop();
   const { isOpen, onClose, onOpen } = useDisclosure(false);
 
-  const confirm = useConfirm();
+  /* const confirm = useConfirm(); */
 
   useEffect(() => {
     const executeQueries = async () => {
       try {
         showLoading();
         const res_subjects = await getAllSubjects();
+        console.log(res_subjects);
         const res_careers = await getAllCareers(); // Cargar carreras
         setSubjects(res_subjects);
+
+        const res_teachears = await getAllTeachers();
+        setTeachers(res_teachears);
         setCareers(res_careers); // Guardar carreras en el estado
       } catch (err) {
         console.error(err);
@@ -104,12 +129,25 @@ const SubjectsAdmin = () => {
     executeQueries();
   }, [hideLoading, showLoading]);
 
-  const handleChange = (
+  /* const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     const { name, value } = e.target;
 
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
+  }; */
+
+  const handleChangeTeacher = (
+    e: SyntheticEvent,
+    value: TeacherProps | null
+  ) => {
+    if (!value) {
+      setForm((prevForm) => ({ ...prevForm, teacherID: "" }));
+      return;
+    }
+
+    const { id } = value as TeacherProps;
+    setForm((prevForm) => ({ ...prevForm, teacherID: id }));
   };
 
   const onOpenUpdate = (row: SubjectProps) => {
@@ -165,6 +203,11 @@ const SubjectsAdmin = () => {
       const res_subjects = await getAllSubjects();
       setSubjects(res_subjects);
 
+      const res_teachears = await getAllTeachers();
+      setTeachers(res_teachears);
+
+      console.log(res_teachears);
+
       const message = "Materias consultadas correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
@@ -197,7 +240,7 @@ const SubjectsAdmin = () => {
     onClose();
   };
 
-  const deleteSubject = async (row: SubjectProps) => {
+  /* const deleteSubject = async (row: SubjectProps) => {
     const { id, subject_name } = row;
 
     confirm({
@@ -222,7 +265,7 @@ const SubjectsAdmin = () => {
         }
       })
       .catch(() => {});
-  };
+  }; */
 
   const columns: GridColDef[] = [
     {
@@ -242,9 +285,13 @@ const SubjectsAdmin = () => {
       flex: 1,
     },
     {
-      field: "hours_per_student",
-      headerName: "Horas por estudiante",
+      field: "teacherID",
+      headerName: "Maestro",
       flex: 1,
+      renderCell: (params) => {
+        const teacher = teachers.find((teacher) => teacher.id === params.value);
+        return teacher ? teacher.teacher_name : "No asignado";
+      },
     },
     {
       field: "careerID",
@@ -263,20 +310,21 @@ const SubjectsAdmin = () => {
         row.id ? (
           <div>
             <Button
+              disabled={row.teacherID === "No asignado"}
               variant="contained"
               color="primary"
               onClick={() => onOpenUpdate(row)}
               style={{ marginRight: 8 }}
             >
-              Editar
+              Asignar
             </Button>
-            <Button
+            {/*  <Button
               variant="contained"
               color="error"
               onClick={() => deleteSubject(row)}
             >
               Eliminar
-            </Button>
+            </Button> */}
           </div>
         ) : null,
     },
@@ -287,7 +335,7 @@ const SubjectsAdmin = () => {
       {LoadingBackdrop}
       <Box sx={{ height: "75vh", width: "75vw" }}>
         <Box sx={{ paddingY: 1, display: "flex", gap: 1 }}>
-          <Button
+          {/* <Button
             variant="contained"
             color="success"
             onClick={() => {
@@ -297,7 +345,7 @@ const SubjectsAdmin = () => {
             }}
           >
             Crear
-          </Button>
+          </Button> */}
           <Button variant="contained" onClick={querySubject}>
             Consultar
           </Button>
@@ -325,13 +373,13 @@ const SubjectsAdmin = () => {
         }}
       >
         <DialogTitle>
-          {formUpdate ? "Actualizar Materia" : "Crear Materia"}
+          {formUpdate ? "Asignar Materia" : "Crear Materia"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para la materia.
           </DialogContentText>
-          <TextField
+          {/* <TextField
             autoFocus
             required
             margin="dense"
@@ -386,10 +434,27 @@ const SubjectsAdmin = () => {
           >
             {careers.map((career) => (
               <MenuItem key={career.id} value={career.id}>
-                {career.career_name} {/* Muestra el nombre de la carrera */}
+                {career.career_name}
               </MenuItem>
             ))}
-          </TextField>
+          </TextField> */}
+          <Autocomplete
+            disablePortal
+            fullWidth
+            options={teachers}
+            getOptionLabel={(option) => option.teacher_name}
+            renderInput={(params) => (
+              <TextField
+                required
+                variant="standard"
+                {...params}
+                label="Maestros"
+              />
+            )}
+            onChange={(e: SyntheticEvent, value: TeacherProps | null) =>
+              handleChangeTeacher(e, value)
+            }
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>Cancelar</Button>
@@ -400,4 +465,4 @@ const SubjectsAdmin = () => {
   );
 };
 
-export { SubjectsAdmin };
+export { AssignamentSubjects };

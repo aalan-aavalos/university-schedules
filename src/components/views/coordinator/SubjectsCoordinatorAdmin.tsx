@@ -11,17 +11,41 @@ import {
   TextField,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { getAllSubjects } from "@/custom-graphql/queries";
 import { getAllCareers } from "@/custom-graphql/queries";
-import { getAllAreas } from "@/custom-graphql/queries";
 import {
-  deleteOneCareer,
-  createOneCareer,
-  updateOneCareer,
+  deleteOneSubject,
+  createOneSubject,
+  updateOneSubject,
 } from "@/custom-graphql/mutations";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { useDisclosure } from "@/hooks/useDisclousure";
 import { useConfirm } from "material-ui-confirm";
 import { enqueueSnackbar } from "notistack";
+
+interface SubjectProps {
+  id: string;
+  subject_name: string;
+  four_month_period: number;
+  hours_per_teacher: number;
+  hours_per_student: number;
+  careerID: string;
+  createdAt: string;
+  updatedAt: string;
+  __typename: string;
+}
+
+/* const initialSubject: SubjectProps = {
+  id: "",
+  subject_name: "",
+  four_month_period: 0,
+  hours_per_teacher: 0,
+  hours_per_student: 0,
+  careerID: "",
+  createdAt: "",
+  updatedAt: "",
+  __typename: "",
+}; */
 
 interface CareerProps {
   id: string;
@@ -34,42 +58,25 @@ interface CareerProps {
   __typename: string;
 }
 
-/* const initialCareer: CareerProps = {
-  id: "",
-  career_name: "",
-  level: "",
-  four_month_periods: 0,
-  areaID: "",
-  createdAt: "",
-  updatedAt: "",
-  __typename: "",
-}; */
-
-interface AreaProps {
-  id: string;
-  area_name: string;
-  createdAt: string;
-  updatedAt: string;
-  __typename: string;
-}
-
 interface FormProps {
-  career_name: string;
-  level: string;
-  four_month_periods: number;
-  areaID: string;
+  subject_name: string;
+  four_month_period: number;
+  hours_per_teacher: number;
+  hours_per_student: number;
+  careerID: string;
 }
 
 const initialForm: FormProps = {
-  career_name: "",
-  level: "",
-  four_month_periods: 0,
-  areaID: "",
+  subject_name: "",
+  four_month_period: 0,
+  hours_per_teacher: 0,
+  hours_per_student: 0,
+  careerID: "",
 };
 
-const CareerAdmin = () => {
+const SubjectsCoordinatorAdmin = () => {
+  const [subjects, setSubjects] = useState<Array<SubjectProps>>([]);
   const [careers, setCareers] = useState<Array<CareerProps>>([]);
-  const [areas, setAreas] = useState<Array<AreaProps>>([]);
   const [form, setForm] = useState<FormProps>(initialForm);
 
   const [formUpdate, setFormUpdate] = useState(false);
@@ -83,10 +90,10 @@ const CareerAdmin = () => {
     const executeQueries = async () => {
       try {
         showLoading();
-        const res_careers = await getAllCareers();
-        const res_areas = await getAllAreas(); // Cargar áreas
-        setCareers(res_careers);
-        setAreas(res_areas); // Guardar áreas en el estado
+        const res_subjects = await getAllSubjects();
+        const res_careers = await getAllCareers(); // Cargar carreras
+        setSubjects(res_subjects);
+        setCareers(res_careers); // Guardar carreras en el estado
       } catch (err) {
         console.error(err);
       } finally {
@@ -102,46 +109,46 @@ const CareerAdmin = () => {
   ): void => {
     const { name, value } = e.target;
 
-    if (name === "level") {
-      const fourMonthPeriods = value === "TSU" ? 6 : 5;
-      setForm((prevForm) => ({
-        ...prevForm,
-        four_month_periods: fourMonthPeriods,
-      }));
-    }
     setForm((prevForm) => ({ ...prevForm, [name]: value }));
   };
 
-  const onOpenUpdate = (row: CareerProps) => {
+  const onOpenUpdate = (row: SubjectProps) => {
     setFormUpdate(true);
     setForm(row);
 
     onOpen();
   };
 
-  const createCareer = async () => {
-    const { career_name, level, four_month_periods, areaID } = form;
+  const createSubject = async () => {
+    const {
+      subject_name,
+      four_month_period,
+      hours_per_teacher,
+      hours_per_student,
+      careerID,
+    } = form;
 
     setFormUpdate(false);
 
     try {
       showLoading();
 
-      const res_careers = await createOneCareer({
-        career_name,
-        level,
-        four_month_periods,
-        areaID,
+      const res_subjects = await createOneSubject({
+        subject_name,
+        four_month_period,
+        hours_per_teacher,
+        hours_per_student,
+        careerID,
       });
 
-      if (res_careers) {
-        setCareers(res_careers);
+      if (res_subjects) {
+        setSubjects(res_subjects);
       }
 
-      const message = "Carrera creada correctamente";
+      const message = "Materia creada correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salió mal al crear la carrera";
+      const message = "Algo salió mal al crear la materia";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -152,36 +159,36 @@ const CareerAdmin = () => {
     onClose();
   };
 
-  const queryCareer = async () => {
+  const querySubject = async () => {
     try {
       showLoading();
-      const res_careers = await getAllCareers();
-      setCareers(res_careers);
+      const res_subjects = await getAllSubjects();
+      setSubjects(res_subjects);
 
-      const message = "Carreras consultadas correctamente";
+      const message = "Materias consultadas correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salio mal al consultar la carrera";
+      const message = "Algo salio mal al consultar la materia";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
       hideLoading();
     }
   };
-  const updateCareer = async () => {
+  const updateSubject = async () => {
     try {
       showLoading();
 
-      const res_careers = await updateOneCareer(form);
+      const res_subjects = await updateOneSubject(form);
 
-      if (res_careers) {
-        setCareers(res_careers);
+      if (res_subjects) {
+        setSubjects(res_subjects);
       }
 
-      const message = "Carrera actualizada correctamente";
+      const message = "Materia actualizada correctamente";
       enqueueSnackbar(message, { variant: "success" });
     } catch (err) {
-      const message = "Algo salió mal al actualizar la carrera";
+      const message = "Algo salió mal al actualizar la materia";
       enqueueSnackbar(message, { variant: "error" });
       console.error(err);
     } finally {
@@ -190,24 +197,24 @@ const CareerAdmin = () => {
     onClose();
   };
 
-  const deleteCareer = async (row: CareerProps) => {
-    const { id, career_name } = row;
+  const deleteSubject = async (row: SubjectProps) => {
+    const { id, subject_name } = row;
 
     confirm({
       title: "Confirmar eliminación",
-      description: `¿Seguro que deseas eliminar el área "${career_name}"? Esta acción no se puede deshacer.`,
+      description: `¿Seguro que deseas eliminar la materia "${subject_name}"? Esta acción no se puede deshacer.`,
     })
       .then(async () => {
         try {
           showLoading();
-          const res_careers = await deleteOneCareer(id);
-          if (res_careers) {
-            setCareers(res_careers);
+          const res_subjects = await deleteOneSubject(id);
+          if (res_subjects) {
+            setSubjects(res_subjects);
           }
-          const message = "Carrera eliminada correctamente";
+          const message = "Materia eliminada correctamente";
           enqueueSnackbar(message, { variant: "success" });
         } catch (err) {
-          const message = "Algo salio mal al eliminar el carrera";
+          const message = "Algo salio mal al eliminar la materia";
           enqueueSnackbar(message, { variant: "error" });
           console.error(err);
         } finally {
@@ -219,28 +226,33 @@ const CareerAdmin = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "career_name",
-      headerName: "Nombre de Carrera",
+      field: "subject_name",
+      headerName: "Nombre de Materia",
       flex: 1,
       editable: true,
     },
     {
-      field: "level",
-      headerName: "Nivel",
+      field: "four_month_period",
+      headerName: "Cuatrimestre",
       flex: 1,
     },
     {
-      field: "four_month_periods",
-      headerName: "Cuatrimestres",
+      field: "hours_per_teacher",
+      headerName: "Horas por profesor",
       flex: 1,
     },
     {
-      field: "areaID",
-      headerName: "Área", // Cambiado para reflejar el nombre del área
+      field: "hours_per_student",
+      headerName: "Horas por estudiante",
+      flex: 1,
+    },
+    {
+      field: "careerID",
+      headerName: "Carrera",
       flex: 1,
       renderCell: (params) => {
-        const area = areas.find((area) => area.id === params.value);
-        return area ? area.area_name : "Desconocido";
+        const career = careers.find((career) => career.id === params.value);
+        return career ? career.career_name : "Desconocido";
       },
     },
     {
@@ -261,7 +273,7 @@ const CareerAdmin = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => deleteCareer(row)}
+              onClick={() => deleteSubject(row)}
             >
               Eliminar
             </Button>
@@ -286,15 +298,15 @@ const CareerAdmin = () => {
           >
             Crear
           </Button>
-          <Button variant="contained" onClick={queryCareer}>
+          <Button variant="contained" onClick={querySubject}>
             Consultar
           </Button>
         </Box>
 
-        {careers.length > 0 ? (
-          <DataGrid columns={columns} rows={careers} />
+        {subjects.length > 0 ? (
+          <DataGrid columns={columns} rows={subjects} />
         ) : (
-          <div>No hay carreras disponibles</div>
+          <div>No hay materias disponibles</div>
         )}
       </Box>
 
@@ -305,71 +317,76 @@ const CareerAdmin = () => {
           onSubmit: (event: FormEvent<HTMLFormElement>) => {
             event.preventDefault();
             if (formUpdate) {
-              updateCareer();
+              updateSubject();
               return;
             }
-            createCareer();
+            createSubject();
           },
         }}
       >
         <DialogTitle>
-          {formUpdate ? "Actualizar Carrera" : "Crear Carrera"}
+          {formUpdate ? "Actualizar Materia" : "Crear Materia"}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Ingresa los datos requeridos para la carrera
+            Ingresa los datos requeridos para la materia.
           </DialogContentText>
           <TextField
             autoFocus
             required
             margin="dense"
-            name="career_name"
-            label="Nombre de Carrera"
+            name="subject_name"
+            label="Nombre de Materia"
             type="text"
             fullWidth
             variant="standard"
             onChange={handleChange}
-            value={form.career_name}
+            value={form.subject_name}
           />
           <TextField
-            required
-            select
             margin="dense"
-            name="level"
-            label="Nivel"
-            type="text"
-            fullWidth
-            variant="standard"
-            onChange={handleChange}
-            value={form.level}
-          >
-            <MenuItem value="TSU">TSU</MenuItem>
-            <MenuItem value="ING/LIC">ING/LIC</MenuItem>
-          </TextField>
-          <TextField
-            disabled
-            margin="dense"
-            name="four_month_periods"
-            label="Cuatrimestres"
+            name="four_month_period"
+            label="Cuatrimestre"
             type="number"
             fullWidth
             variant="standard"
-            value={form.four_month_periods}
+            onChange={handleChange}
+            value={form.four_month_period}
+          />
+          <TextField
+            margin="dense"
+            name="hours_per_teacher"
+            label="Horas por profesor"
+            type="number"
+            fullWidth
+            variant="standard"
+            onChange={handleChange}
+            value={form.hours_per_teacher}
+          />
+          <TextField
+            margin="dense"
+            name="hours_per_student"
+            label="Horas por estudiante"
+            type="number"
+            fullWidth
+            variant="standard"
+            onChange={handleChange}
+            value={form.hours_per_student}
           />
           <TextField
             required
             select
             margin="dense"
-            name="areaID"
-            label="ID de Área"
+            name="careerID"
+            label="ID de Carrera"
             fullWidth
             variant="standard"
             onChange={handleChange}
-            value={form.areaID}
+            value={form.careerID}
           >
-            {areas.map((area) => (
-              <MenuItem key={area.id} value={area.id}>
-                {area.area_name} {/* Muestra el nombre del área */}
+            {careers.map((career) => (
+              <MenuItem key={career.id} value={career.id}>
+                {career.career_name} {/* Muestra el nombre de la carrera */}
               </MenuItem>
             ))}
           </TextField>
@@ -383,4 +400,4 @@ const CareerAdmin = () => {
   );
 };
 
-export { CareerAdmin };
+export { SubjectsCoordinatorAdmin };

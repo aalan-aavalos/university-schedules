@@ -347,6 +347,10 @@ const StudentesAdmin = () => {
       field: "careerID",
       headerName: "Carrera",
       flex: 1,
+      renderCell: (params) => {
+        const career = careers.find((career) => career.id === params.value);
+        return career ? career.career_name : "Desconocido";
+      },
     },
     {
       field: "actions",
@@ -374,6 +378,7 @@ const StudentesAdmin = () => {
         ) : null,
     },
   ];
+  
 
   return (
     <div>

@@ -32,6 +32,7 @@ type Student @model @auth(rules: [{allow: private}, {allow: public, operations: 
   student_email: AWSEmail!
   four_month_period: Int!
   careerID: ID! @index(name: "byCareer")
+  schedules: AWSJSON
 }
 
 type Teacher @model @auth(rules: [{allow: private}]) {
