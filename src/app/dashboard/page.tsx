@@ -233,7 +233,9 @@ function DemoPageContent({
       {pathname === "/subjects_teacher" && (
         <ViewSubjects teacharID={user?.sub} />
       )}
-      {pathname === "/generator_schedule_teacher" && <ScheduleTeacher />}
+      {pathname === "/generator_schedule_teacher" && (
+        <ScheduleTeacher teacharID={user?.sub} />
+      )}
 
       {/* Student */}
       {pathname === "/generator_schedule_student" && <ScheduleStudent />}
