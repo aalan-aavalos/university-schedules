@@ -10,7 +10,7 @@ import { createTheme } from "@mui/material/styles";
 import {
   SpaceDashboard,
   CalendarMonth,
-  // EditCalendar,
+  EditCalendar,
   ManageAccounts,
   Business,
   PostAdd,
@@ -45,6 +45,7 @@ import { ViewSubjects } from "@/components/views/teacher/ViewSubjects";
 import { ScheduleTeacher } from "@/components/views/teacher/ScheduleTeacher";
 
 // Student
+import { ActualCaledar } from "@/components/views/student/ActualCaledar";
 import { ScheduleStudent } from "@/components/views/student/ScheduleStudent";
 
 const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
@@ -131,8 +132,8 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
           segment: "subjects_teacher",
           title: "Visualizar",
           icon: <PostAdd />,
-        },
-        {
+        }
+        /* {
           kind: "header",
           title: "Calendario",
         },
@@ -140,7 +141,7 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
           segment: "generator_schedule_teacher",
           title: "Generar",
           icon: <CalendarMonth />,
-        }
+        } */
         /* {
           segment: "administrator_schedules_teacher",
           title: "Administrar",
@@ -156,9 +157,14 @@ const getNavigation = (user: FetchUserAttributesOutput | null): Navigation => {
           title: "Calendario",
         },
         {
+          segment: "view_schedule_student",
+          title: "Actual",
+          icon: <CalendarMonth />,
+        },
+        {
           segment: "generator_schedule_student",
           title: "Generar",
-          icon: <CalendarMonth />,
+          icon: <EditCalendar />,
         }
         /*  {
           segment: "administrator_schedules_student",
@@ -238,7 +244,10 @@ function DemoPageContent({
       )}
 
       {/* Student */}
-      {pathname === "/generator_schedule_student" && <ScheduleStudent />}
+      {pathname === "/view_schedule_student" && <ActualCaledar user={user} />}
+      {pathname === "/generator_schedule_student" && (
+        <ScheduleStudent user={user} />
+      )}
     </Box>
   );
 }
