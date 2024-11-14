@@ -67,8 +67,6 @@ export default function DnDOutsideResource({
     [draggedEvent]
   ); */
 
-  const generateRandomId = () => Math.random().toString(36).substring(2, 15);
-
   /* const moveEvent = useCallback(
     ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
       console.log("moveEvent on...", {
@@ -90,11 +88,11 @@ export default function DnDOutsideResource({
   ); */
 
   const newEvent = useCallback(
-    (event: SlotInfo) => {
+    (event: unknown) => {
       console.log("newEvent on...", event);
 
-      // const e = event as EventProps;
-      setMyEvents((prev) => [...prev, { ...event }]);
+      const e = event as EventProps;
+      setMyEvents((prev) => [...prev, { ...e }]);
     },
     [setMyEvents]
   );
@@ -104,7 +102,7 @@ export default function DnDOutsideResource({
       console.log("onDropFromOutside on...", item);
 
       if (!itemInfo) return;
-      const { subject_name } = itemInfo;
+      const { id, subject_name } = itemInfo;
 
       const end = new Date(
         (typeof item.end === "string"
@@ -115,7 +113,7 @@ export default function DnDOutsideResource({
       );
       console.log(item);
       const event = {
-        id: generateRandomId(),
+        id,
         title: subject_name,
         start: new Date(item.start),
         end,
