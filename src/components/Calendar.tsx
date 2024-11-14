@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { DragEvent, useCallback, useEffect, useState } from "react";
 
 import { Calendar, momentLocalizer, type SlotInfo } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -38,54 +38,34 @@ export default function DnDOutsideResource({
 
   const [itemInfo, setItemInfo] = useState<SubjectByTeacherProps>();
 
-  const [itemsList, setItemsList] = useState<React.JSX.Element[]>([]);
+  const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
 
-  const handleDragStart = useCallback((event: SubjectByTeacherProps) => {
-    console.log("handleDragStart on...", event);
-
-    // setDraggedEvent(event);
-    setItemInfo(event);
-  }, []);
-
-  /* const dragFromOutsideItem = useCallback(
-    (event) => {
-      console.log("dragFromOutsideItem on...", event);
-      return draggedEvent === "undroppable" ? null : draggedEvent;
+  const handleDragStart = useCallback(
+    (event: DragEvent<HTMLDivElement>, item: SubjectByTeacherProps) => {
+      event.dataTransfer.dropEffect = "none";
+      setItemInfo(item);
     },
-    [draggedEvent]
-  ); */
+    []
+  );
 
-  /* const customOnDragOverFromOutside = useCallback(
-    (dragEvent) => {
-      console.log("customOnDragOverFromOutside on...?", dragEvent);
+  const handleDragEnd = (event: DragEvent<HTMLDivElement>) => {
+    // Queda el error que no se comprueba si si se ingreso, para que no lo borre
 
-      if (draggedEvent !== "undroppable") {
-        console.log("customOnDragOverFromOutside on...", dragEvent);
-        dragEvent.preventDefault();
-      }
-    },
-    [draggedEvent]
-  ); */
+    const id = event.currentTarget.id;
+    const [subject, hrs] = event.currentTarget.innerText.split(" - ");
+    const [hr] = hrs.split(" ");
 
-  /* const moveEvent = useCallback(
-    ({ event, start, end, isAllDay: droppedOnAllDaySlot = false }) => {
-      console.log("moveEvent on...", {
-        event,
-        start,
-        end,
-        isAllDay: (droppedOnAllDaySlot = false),
-      });
-      const { allDay } = event;
-      if (!allDay && droppedOnAllDaySlot) {
-        event.allDay = true;
-      }
-      setMyEvents((prev) => {
-        const filtered = prev.filter((ev) => ev.id !== event.id);
-        return [...filtered, { ...event, start, end, allDay }];
-      });
-    },
-    [setMyEvents]
-  ); */
+    const div = document.getElementById(id);
+    if (+hr < 2 && div) {
+      div.remove();
+      return;
+    }
+    if (!div) return;
+
+    div.innerText = `${subject} - ${+hr - 1} hrs`;
+
+    console.log(div);
+  };
 
   const newEvent = useCallback(
     (event: unknown) => {
@@ -125,28 +105,18 @@ export default function DnDOutsideResource({
     [newEvent, itemInfo]
   );
 
-  /* const resizeEvent = useCallback(
-    ({ event, start, end }) => {
-      console.log("resizeEvent", { event, start, end });
-      setMyEvents((prev) => {
-        const existing = prev.find((ev) => ev.id === event.id) ?? {};
-        const filtered = prev.filter((ev) => ev.id !== event.id);
-        return [...filtered, { ...existing, start, end }];
-      });
-    },
-    [setMyEvents]
-  ); */
-
   useEffect(() => {
     if (!subjects) return;
     const itemsLi = subjects.map((item) => (
       <div
+        id={`${item.subject_name}: ${item.hours_per_teacher}`}
         key={item.id}
         draggable="true"
-        onDragStart={() => handleDragStart(item)}
+        onDragStart={(e) => handleDragStart(e, item)}
+        onDragEnd={(e) => handleDragEnd(e)}
         className="bg-[#3174ad] text-white border border-[#121212] rounded-lg p-1 cursor-move"
       >
-        {`${item.subject_name} - ${item.hours_per_teacher}hrs`}
+        {`${item.subject_name} - ${item.hours_per_teacher} hrs`}
       </div>
     ));
     setItemsList(itemsLi);
@@ -161,24 +131,19 @@ export default function DnDOutsideResource({
 
       <div className="height600">
         <DragAndDropCalendar
+          onDragOver={(event) => event.preventDefault()}
           defaultView="week"
           views={["week"]}
           toolbar={false}
-          // dragFromOutsideItem={dragFromOutsideItem}
           draggableAccessor={() => true}
-          // eventPropGetter={eventPropGetter}
           events={myEvents}
           localizer={localizer}
           onDropFromOutside={(e: DragFromOutsideItemArgs) =>
             onDropFromOutside(e)
           }
-          // onDragOverFromOutside={customOnDragOverFromOutside}
-          // onEventDrop={moveEvent}
-          // onEventResize={resizeEvent}
           onSelectSlot={(e: SlotInfo) => newEvent(e)}
           resizable
           style={{ height: 500, width: "70vw" }}
-          // selectable
         />
       </div>
 
