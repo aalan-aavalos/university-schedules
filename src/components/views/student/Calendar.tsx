@@ -10,6 +10,9 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button } from "@mui/material";
+import { updateScheduleStudent } from "@/custom-graphql/mutations";
+import { enqueueSnackbar } from "notistack";
+import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 
 const localizer = momentLocalizer(moment);
 
@@ -38,11 +41,11 @@ const CalendarComponent = ({
 }) => {
   const [myEvents, setMyEvents] = useState<Array<EventProps>>([]);
 
-  console.log(subjects);
-
   const [itemInfo, setItemInfo] = useState<SubjectByStudent>();
 
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
+
+  const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>, item: SubjectByStudent) => {
@@ -110,9 +113,22 @@ const CalendarComponent = ({
   );
 
   const saveSchedule = async () => {
-    console.log(idUsr);
+    try {
+      showLoading();
+      console.log("Eventos en el calendario:", JSON.stringify(myEvents));
+      const schedules = JSON.stringify(myEvents);
+      const id = idUsr as string;
+      await updateScheduleStudent(id, schedules);
 
-    console.log("Eventos en el calendario:", JSON.stringify(myEvents));
+      const message = "Horario actualizado correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al actualizar el horario";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
   };
 
   useEffect(() => {
@@ -134,6 +150,7 @@ const CalendarComponent = ({
 
   return (
     <>
+      {LoadingBackdrop}
       <h4>Materias</h4>
       <div className="py-1 flex gap-2" id="drag-items">
         {itemsList}

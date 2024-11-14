@@ -4,5 +4,5 @@
  * Any changes to this file will be overwritten when running amplify pull. *
  **************************************************************************/
 
-declare const _default: unknown;
+declare const _default: any;
 export default _default;

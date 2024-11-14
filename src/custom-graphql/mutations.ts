@@ -326,3 +326,13 @@ export const deleteOneCoordinator = async (id: string) => {
 
     return allCoordinators.data.listCoordinators.items
 }
+
+
+export const updateScheduleStudent = async (id: string, schedules: string) => {
+    const res = await client.graphql({
+        query: updateStudent,
+        variables: { input: { id, schedules } }
+    });
+
+    console.log(res)
+}

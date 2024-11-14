@@ -1,4 +1,5 @@
 import { CalendarComponent } from "@/components/views/student/ViewCalendar";
+import { getSchedulesByUser } from "@/custom-graphql/queries";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { FetchUserAttributesOutput } from "aws-amplify/auth";
 import React, { useEffect, useState } from "react";
@@ -24,6 +25,22 @@ const ActualCaledar = ({
     const excuteQuieries = async () => {
       try {
         showLoading();
+        const id = user?.sub as string;
+        const res = await getSchedulesByUser(id);
+
+        if (!res) {
+          setEvents([]);
+          return;
+        }
+
+        const schedules = JSON.parse(res).map((item: EventProps) => {
+          const start = new Date(item.start);
+          const end = new Date(item.end);
+          return { ...item, start, end };
+        });
+
+        console.log(typeof schedules, schedules);
+        setEvents(schedules);
       } catch (err) {
         console.error(err);
       } finally {
