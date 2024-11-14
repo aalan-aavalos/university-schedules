@@ -29,7 +29,6 @@ const CalendarComponent = ({ events }: { events: EventProps[] }) => {
           events={events}
           localizer={localizer}
           style={{ height: "80vh", width: "70vw" }}
-          
         />
       </div>
     </>
