@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+/* import React, { useEffect } from "react";
 
 import { Timeline, TimelineOptions } from "vis-timeline";
 import { DataSet } from "vis-data";
@@ -132,3 +132,4 @@ const Gantt = () => {
 };
 
 export { Gantt };
+ */
