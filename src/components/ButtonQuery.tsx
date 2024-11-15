@@ -11,7 +11,7 @@ import { enqueueSnackbar } from "notistack";
 import Image from "next/image";
 
 const ButtonQuery = () => {
-  // const confirm = useConfirm();
+  // const confirm = useConfirm();s
 
   const query_data = async (name: string = "Invitado") => {
     /* confirm({ description: "This action is permanent!" })
