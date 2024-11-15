@@ -9,16 +9,19 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { Button } from "@mui/material";
+import { updateScheduleStudent } from "@/custom-graphql/mutations";
+import { enqueueSnackbar } from "notistack";
+import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 
 const localizer = momentLocalizer(moment);
 
-interface SubjectByTeacherProps {
+interface SubjectByStudent {
   id: string;
   subject_name: string;
-  schedule?: string | null;
-  four_month_period: number;
-  hours_per_teacher: number;
   hours_per_student: number;
+  schedule: string | null;
+  teacherID: string;
 }
 
 interface EventProps {
@@ -31,17 +34,21 @@ interface EventProps {
 
 const CalendarComponent = ({
   subjects,
+  idUsr,
 }: {
-  subjects: SubjectByTeacherProps[];
+  subjects: SubjectByStudent[];
+  idUsr: string | undefined;
 }) => {
   const [myEvents, setMyEvents] = useState<Array<EventProps>>([]);
 
-  const [itemInfo, setItemInfo] = useState<SubjectByTeacherProps>();
+  const [itemInfo, setItemInfo] = useState<SubjectByStudent>();
 
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
 
+  const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
+
   const handleDragStart = useCallback(
-    (event: DragEvent<HTMLDivElement>, item: SubjectByTeacherProps) => {
+    (event: DragEvent<HTMLDivElement>, item: SubjectByStudent) => {
       event.dataTransfer.dropEffect = "none";
       setItemInfo(item);
     },
@@ -105,18 +112,37 @@ const CalendarComponent = ({
     [newEvent, itemInfo]
   );
 
+  const saveSchedule = async () => {
+    try {
+      showLoading();
+      console.log("Eventos en el calendario:", JSON.stringify(myEvents));
+      const schedules = JSON.stringify(myEvents);
+      const id = idUsr as string;
+      await updateScheduleStudent(id, schedules);
+
+      const message = "Horario actualizado correctamente";
+      enqueueSnackbar(message, { variant: "success" });
+    } catch (err) {
+      const message = "Algo salio mal al actualizar el horario";
+      enqueueSnackbar(message, { variant: "error" });
+      console.error(err);
+    } finally {
+      hideLoading();
+    }
+  };
+
   useEffect(() => {
     if (!subjects) return;
     const itemsLi = subjects.map((item) => (
       <div
-        id={`${item.subject_name}: ${item.hours_per_teacher}`}
+        id={`${item.subject_name}: ${item.hours_per_student}`}
         key={item.id}
         draggable="true"
         onDragStart={(e) => handleDragStart(e, item)}
         onDragEnd={(e) => handleDragEnd(e)}
         className="bg-[#3174ad] text-white border border-[#121212] rounded-lg p-1 cursor-move"
       >
-        {`${item.subject_name} - ${item.hours_per_teacher} hrs`}
+        {`${item.subject_name} - ${item.hours_per_student} hrs`}
       </div>
     ));
     setItemsList(itemsLi);
@@ -124,6 +150,7 @@ const CalendarComponent = ({
 
   return (
     <>
+      {LoadingBackdrop}
       <h4>Materias</h4>
       <div className="py-1 flex gap-2" id="drag-items">
         {itemsList}
@@ -143,17 +170,13 @@ const CalendarComponent = ({
           }
           onSelectSlot={(e: SlotInfo) => newEvent(e)}
           resizable
-          style={{ height: 500, width: "70vw" }}
+          style={{ height: "70vh", width: "70vw" }}
         />
       </div>
 
-      <button
-        onClick={() => {
-          console.log("Eventos en el calendario:", myEvents);
-        }}
-      >
-        obtener eventos
-      </button>
+      <Button variant="contained" sx={{ my: 1 }} onClick={saveSchedule}>
+        Guardar Calendario
+      </Button>
     </>
   );
 };
