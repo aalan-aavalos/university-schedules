@@ -1,29 +1,32 @@
 // Clases
-import { ConfigService } from '@/models/configService';
 import { ScheduleValidator } from '@/models/scheduleValidator';
 import { ScheduleUpdater } from '@/models/updateSchedule';
+import { ScheduleSummary } from '@/models/scheduleSummary';
 
 // Interfcaes
-import { ConfigProps, EventProps } from '@/interfaces';
+import { ConfigProps, EventProps, ValidationProps } from '@/interfaces';
+
 
 export class FacadeSave {
-    private configService: ConfigService
     private scheduleValidator: ScheduleValidator
+    private scheduleSummary: ScheduleSummary
     private scheduleUpdater: ScheduleUpdater
 
-    private myEvents: Array<EventProps>
-
     constructor(idUsr: string, myEvents: Array<EventProps>, config: ConfigProps) {
-        this.myEvents = myEvents
+        this.scheduleValidator = new ScheduleValidator(myEvents, config)
+
+        this.scheduleSummary = new ScheduleSummary()
 
         this.scheduleUpdater = new ScheduleUpdater(idUsr)
-        this.scheduleValidator = new ScheduleValidator(this.myEvents, config)
-        this.configService = new ConfigService(config)
     }
 
     public save(): void {
-        console.log(this.scheduleValidator.getValidations())
+        const validations: ValidationProps = this.scheduleValidator.getValidations()
+        console.log("validations", validations)
+
+        const summary: string = this.scheduleSummary.generateInvalidSubjectsReport(validations)
+        console.log("summary", summary);
         // this.scheduleUpdater.updateSchedule(this.myEvents)
-        console.log("si jalaron las clases pa");
+
     }
 }

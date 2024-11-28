@@ -4,6 +4,7 @@ export class ScheduleValidator {
     private schedule: Array<EventProps>;
     private config: ConfigProps;
 
+
     constructor(schedule: Array<EventProps>, config: ConfigProps) {
         this.schedule = schedule;
         this.config = config;

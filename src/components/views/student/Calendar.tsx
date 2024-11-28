@@ -14,11 +14,16 @@ import { Button } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 
-// Facede
-import { FacadeSave } from "@/models/facedeSave";
+// Clases
+import { ScheduleValidator } from "@/models/scheduleValidator";
+import { ScheduleUpdater } from "@/models/updateSchedule";
+import { ScheduleSummary } from "@/models/scheduleSummary";
+import { AutoArrangeService } from "@/models/autoArrangeService";
 
-// Interfaces
-import { ConfigProps } from "@/interfaces";
+// Interfcaes
+import { ConfigProps, EventProps, ValidationProps } from "@/interfaces";
+
+import { useConfirm } from "material-ui-confirm";
 
 const localizer = momentLocalizer(moment);
 
@@ -28,14 +33,6 @@ interface SubjectByStudent {
   hours_per_student: number;
   schedule: string | null;
   teacherID: string;
-}
-
-interface EventProps {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isAllDay: boolean;
 }
 
 const CalendarComponent = ({
@@ -52,6 +49,63 @@ const CalendarComponent = ({
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
 
   const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
+
+  const confirm = useConfirm();
+
+  class FacadeSave {
+    private scheduleValidator: ScheduleValidator;
+    private scheduleSummary: ScheduleSummary;
+    private autoArrangeService: AutoArrangeService;
+    private scheduleUpdater: ScheduleUpdater;
+
+    constructor(
+      idUsr: string,
+      myEvents: Array<EventProps>,
+      config: ConfigProps
+    ) {
+      // Inicializamos las dependencias
+      this.scheduleValidator = new ScheduleValidator(myEvents, config);
+      this.scheduleSummary = new ScheduleSummary();
+      this.scheduleUpdater = new ScheduleUpdater(idUsr);
+      this.autoArrangeService = new AutoArrangeService(config);
+    }
+
+    public async save(): Promise<void> {
+      // Obtener las validaciones
+      const validations: ValidationProps =
+        this.scheduleValidator.getValidations();
+      console.log("validations", validations);
+
+      // Usamos el servicio AutoArrange para ajustar el horario según las restricciones
+      const adjustedSchedule =
+        this.autoArrangeService.autoArrangeSchedule(validations);
+      console.log("adjustedSchedule", adjustedSchedule);
+
+      // Generar el resumen de materias inválidas
+      const summary =
+        this.scheduleSummary.generateInvalidSubjectsReport(validations);
+      console.log("summary", summary);
+
+      // Mostrar el resumen de materias inválidas en una alerta
+      await confirm({
+        description: summary, // Mensaje de la alerta
+        title: "Resumen de Materias Inválidas", // Título de la alerta
+        confirmationText: "Siguiente", // Texto del botón
+        hideCancelButton: true,
+      });
+
+      // Ahora que el horario ha sido ajustado, podemos proceder a actualizar el horario
+      const updatedSchedule = adjustedSchedule.AllEvents; // Obtenemos el horario ajustado
+
+      // Realizamos la actualización en el backend o en la base de datos
+      await this.scheduleUpdater.updateSchedule(updatedSchedule);
+
+      // Mostrar mensaje de éxito
+      enqueueSnackbar("Horario actualizado correctamente", {
+        variant: "success",
+      });
+    }
+  }
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>, item: SubjectByStudent) => {
@@ -138,10 +192,6 @@ const CalendarComponent = ({
       const facedeSave = new FacadeSave(id, myEvents, config);
 
       facedeSave.save();
-
-      // Mensajes de actualización
-      const message = "Horario actualizado correctamente";
-      enqueueSnackbar(message, { variant: "success" });
 
       /* // Las siguientes dos lineas solo son para que el ESLint no marque error
       return;

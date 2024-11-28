@@ -19,3 +19,9 @@ export interface EventProps {
     isAllDay: boolean;
     brokenRule?: string
 }
+
+export interface ValidationProps {
+    AllEvents: Array<EventProps>;
+    brokeValidateDailyWeeklyLimits: Array<EventProps>;
+    brokeValidateTimeRange: Array<EventProps>
+}
