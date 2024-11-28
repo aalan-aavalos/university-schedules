@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Calendar from "@/components/Calendar";
+import { CalendarComponent } from "@/components/Calendar";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import { getAllSubjectsByTeacherID } from "@/custom-graphql/queries";
 
@@ -37,7 +37,7 @@ const ScheduleTeacher = ({ teacharID }: { teacharID: string | undefined }) => {
   return (
     <div>
       {LoadingBackdrop}
-      <Calendar subjects={subjects} />
+      <CalendarComponent subjects={subjects} />
     </div>
   );
 };
