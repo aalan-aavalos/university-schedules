@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 
 import { getAllSubjectsByCareerIdAndFourMonthPeriod } from "@/custom-graphql/queries";

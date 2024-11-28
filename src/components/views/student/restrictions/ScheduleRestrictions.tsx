@@ -20,80 +20,103 @@ import {
   Typography,
 } from "@mui/material";
 
-interface RestrictionFormProps {
-  preferredTimes: string[];
-  maxHoursPerDay: number;
-  totalWeeklyHours: number;
-  autoAdjust: boolean;
-  personalEntryHour: string;
-  independentRadio: boolean; // Nuevo estado para el segundo radio button
+interface ConfigProps {
+  restrictionOne: {
+    hoursMin: number;
+    hoursMax: number;
+    autoArrage: boolean;
+  };
+  restrictionTwo: {
+    hoursMaxPerDay: number;
+    hoursMaxPerWeek: number;
+    autoArrage: boolean;
+  };
 }
 
-const initialRestrictionForm: RestrictionFormProps = {
-  preferredTimes: [],
-  maxHoursPerDay: 0,
-  totalWeeklyHours: 40,
-  autoAdjust: false,
-  personalEntryHour: "",
-  independentRadio: false, // Valor inicial para el segundo radio button
+const initialConfig: ConfigProps = {
+  restrictionOne: { hoursMin: 8, hoursMax: 14, autoArrage: true },
+  restrictionTwo: {
+    hoursMaxPerDay: 5,
+    hoursMaxPerWeek: 25,
+    autoArrage: true,
+  },
 };
 
 const ScheduleRestrictions = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [form, setForm] = useState<RestrictionFormProps>(initialRestrictionForm);
+  const [config, setConfig] = useState<ConfigProps>(initialConfig);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => {
     setIsOpen(false);
-    setForm(initialRestrictionForm);
+    setConfig(initialConfig);
     setErrors({});
   };
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    const totalWeeklyHours = Array.isArray(newValue) ? newValue[0] : newValue;
-    setForm((prev) => ({
+    const hoursMaxPerWeek = Array.isArray(newValue) ? newValue[0] : newValue;
+    setConfig((prev) => ({
       ...prev,
-      totalWeeklyHours,
-      maxHoursPerDay: totalWeeklyHours / 5,
+      restrictionTwo: {
+        ...prev.restrictionTwo,
+        hoursMaxPerWeek,
+        hoursMaxPerDay: hoursMaxPerWeek / 5,
+      },
     }));
   };
 
   const handleEntryHourChange = (event: SelectChangeEvent) => {
     const personalEntryHour = event.target.value;
     const entryHour = parseInt(personalEntryHour.split(":")[0], 10);
-    const exitHour = entryHour + form.maxHoursPerDay;
+    const exitHour = entryHour + config.restrictionTwo.hoursMaxPerDay;
 
     if (exitHour > 21) {
+      // Limpiar el campo de hora de entrada si la suma supera las 9:00 p.m.
       setErrors({ personalEntryHour: "La hora de salida excede las 9:00 p.m." });
-      setForm((prev) => ({ ...prev, personalEntryHour: "" })); // Reiniciar la hora de entrada
+      setConfig((prev) => ({
+        ...prev,
+        restrictionOne: {
+          ...prev.restrictionOne,
+          hoursMin: 0, // Reiniciar la hora de entrada
+        },
+      }));
     } else {
       setErrors((prev) => ({ ...prev, personalEntryHour: "" }));
-      setForm((prev) => ({ ...prev, personalEntryHour }));
+      setConfig((prev) => ({
+        ...prev,
+        restrictionOne: {
+          ...prev.restrictionOne,
+          hoursMin: entryHour,
+        },
+      }));
     }
   };
 
   const handleRadioChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
     const value = event.target.value === "on";
-    setForm((prev) => ({ ...prev, [field]: value }));
-    console.log(`${field}: ${value}`);
-  };
-
-  const handleIndependentRadioChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value === "on";
-    setForm((prev) => ({ ...prev, independentRadio: value }));
-    console.log("Independent Radio:", value);
+    if (field === "autoArrageOne") {
+      setConfig((prev) => ({
+        ...prev,
+        restrictionOne: { ...prev.restrictionOne, autoArrage: value },
+      }));
+    } else {
+      setConfig((prev) => ({
+        ...prev,
+        restrictionTwo: { ...prev.restrictionTwo, autoArrage: value },
+      }));
+    }
   };
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (!form.personalEntryHour) {
+    if (!config.restrictionOne.hoursMin) {
       setErrors({ personalEntryHour: "Debes seleccionar una hora de entrada." });
       return;
     }
 
-    console.log("Restricciones enviadas:", form);
+    console.log("Restricciones enviadas:", config);
     handleClose();
   };
 
@@ -108,6 +131,7 @@ const ScheduleRestrictions = () => {
           <DialogTitle>Configuración de restricciones</DialogTitle>
           <DialogContent>
             <Box sx={{ display: "grid", gap: 2 }}>
+              {/* Restricción 1 */}
               <Box>
                 <p>Las clases inician de "8:00 a.m. y terminan a las 9:00 p.m."</p>
                 <p>Seleccione las horas semanales:</p>
@@ -117,14 +141,14 @@ const ScheduleRestrictions = () => {
                     min={25}
                     max={50}
                     step={5}
-                    value={form.totalWeeklyHours}
+                    value={config.restrictionTwo.hoursMaxPerWeek}
                     onChange={handleSliderChange}
                     aria-label="Horas semanales"
                     valueLabelDisplay="auto"
                   />
                   <TextField
                     label="Horas diarias"
-                    value={form.maxHoursPerDay}
+                    value={config.restrictionTwo.hoursMaxPerDay}
                     InputProps={{
                       readOnly: true,
                     }}
@@ -132,13 +156,14 @@ const ScheduleRestrictions = () => {
                 </Box>
               </Box>
 
+              {/* Restricción 2 */}
               <Box>
                 <FormControl>
                   <FormLabel>Ajuste automático de materias</FormLabel>
                   <RadioGroup
                     row
-                    value={form.autoAdjust ? "on" : "off"}
-                    onChange={(e) => handleRadioChange(e, "autoAdjust")}
+                    value={config.restrictionTwo.autoArrage ? "on" : "off"}
+                    onChange={(e) => handleRadioChange(e, "autoArrageTwo")}
                   >
                     <FormControlLabel value="on" control={<Radio />} label="On" />
                     <FormControlLabel value="off" control={<Radio />} label="Off" />
@@ -146,13 +171,14 @@ const ScheduleRestrictions = () => {
                 </FormControl>
               </Box>
 
+              {/* Restricción 3 (Opción Independiente) */}
               <Box>
                 <FormControl>
                   <FormLabel>Opción independiente</FormLabel>
                   <RadioGroup
                     row
-                    value={form.independentRadio ? "on" : "off"}
-                    onChange={handleIndependentRadioChange}
+                    value={config.restrictionTwo.autoArrage ? "on" : "off"}
+                    onChange={(e) => handleRadioChange(e, "independentRadio")}
                   >
                     <FormControlLabel value="on" control={<Radio />} label="On" />
                     <FormControlLabel value="off" control={<Radio />} label="Off" />
@@ -160,19 +186,20 @@ const ScheduleRestrictions = () => {
                 </FormControl>
               </Box>
 
+              {/* Hora de entrada */}
               <Box>
                 <Typography variant="subtitle1">Hora de entrada personal:</Typography>
                 <Select
-                  value={form.personalEntryHour}
+                  value={config.restrictionOne.hoursMin ? `${config.restrictionOne.hoursMin}:00` : ""}
                   onChange={handleEntryHourChange}
                   displayEmpty
                   fullWidth
                 >
                   <MenuItem value="" disabled>
-                    Seleccione una hora
+                    Seleccione una hora de entrada
                   </MenuItem>
                   {[...Array(12)].map((_, index) => {
-                    const hour = 8 + index;
+                    const hour = 8 + index; // Desde las 8:00 AM hasta las 9:00 AM
                     const formattedHour = `${hour}:00`;
                     return (
                       <MenuItem key={hour} value={formattedHour}>
@@ -186,12 +213,13 @@ const ScheduleRestrictions = () => {
                 )}
               </Box>
 
+              {/* Hora de salida */}
               <Box>
                 <TextField
                   label="Hora de salida"
                   value={
-                    form.personalEntryHour
-                      ? `${parseInt(form.personalEntryHour.split(":")[0], 10) + form.maxHoursPerDay}:00`
+                    config.restrictionOne.hoursMin
+                      ? `${config.restrictionOne.hoursMin + config.restrictionTwo.hoursMaxPerDay}:00`
                       : ""
                   }
                   InputProps={{ readOnly: true }}
@@ -207,9 +235,9 @@ const ScheduleRestrictions = () => {
             <Button
               variant="contained"
               type="submit"
-              disabled={!form.personalEntryHour || errors.personalEntryHour !== ""}
+              disabled={!config.restrictionOne.hoursMin}
             >
-              Guardar Restricciones
+              Guardar
             </Button>
           </DialogActions>
         </form>
@@ -218,4 +246,4 @@ const ScheduleRestrictions = () => {
   );
 };
 
-export { ScheduleRestrictions };
+export default ScheduleRestrictions;

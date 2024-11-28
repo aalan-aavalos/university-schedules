@@ -13,6 +13,7 @@ import { Button } from "@mui/material";
 import { updateScheduleStudent } from "@/custom-graphql/mutations";
 import { enqueueSnackbar } from "notistack";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
+import ScheduleRestrictions  from "./restrictions/ScheduleRestrictions";
 
 const localizer = momentLocalizer(moment);
 
@@ -96,7 +97,7 @@ const CalendarComponent = ({
           ? new Date(item.end)
           : item.end
         ).getTime() +
-          30 * 60 * 1000
+        30 * 60 * 1000
       );
       console.log(item);
       const event = {
@@ -151,7 +152,7 @@ const CalendarComponent = ({
   return (
     <>
       {LoadingBackdrop}
-      <h4>Materias</h4>
+      <h4>Materias a cursar</h4>
       <div className="py-1 flex gap-2" id="drag-items">
         {itemsList}
       </div>
@@ -165,19 +166,24 @@ const CalendarComponent = ({
           draggableAccessor={() => true}
           events={myEvents}
           localizer={localizer}
-          onDropFromOutside={(e: DragFromOutsideItemArgs) =>
-            onDropFromOutside(e)
-          }
+          onDropFromOutside={(e: DragFromOutsideItemArgs) => onDropFromOutside(e)}
           onSelectSlot={(e: SlotInfo) => newEvent(e)}
           resizable
           style={{ height: "70vh", width: "70vw" }}
         />
       </div>
 
-      <Button variant="contained" sx={{ my: 1 }} onClick={saveSchedule}>
-        Guardar Calendario
-      </Button>
+      {/* Contenedor para alinear los botones */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
+        <Button variant="contained" onClick={saveSchedule}>
+          Guardar Calendario
+        </Button>
+        <Button>
+          <ScheduleRestrictions />
+        </Button>
+      </div>
     </>
+
   );
 };
 
