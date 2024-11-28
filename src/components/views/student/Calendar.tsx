@@ -10,9 +10,15 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button } from "@mui/material";
-import { updateScheduleStudent } from "@/custom-graphql/mutations";
+// import { updateScheduleStudent } from "@/custom-graphql/mutations";
 import { enqueueSnackbar } from "notistack";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
+
+// Facede
+import { FacadeSave } from "@/models/facedeSave";
+
+// Interfaces
+import { ConfigProps } from "@/interfaces";
 
 const localizer = momentLocalizer(moment);
 
@@ -90,6 +96,7 @@ const CalendarComponent = ({
 
       if (!itemInfo) return;
       const { id, subject_name } = itemInfo;
+      console.log(itemInfo, id);
 
       const end = new Date(
         (typeof item.end === "string"
@@ -100,7 +107,7 @@ const CalendarComponent = ({
       );
       console.log(item);
       const event = {
-        id,
+        id: id + Math.random(),
         title: subject_name,
         start: new Date(item.start),
         end,
@@ -114,14 +121,31 @@ const CalendarComponent = ({
 
   const saveSchedule = async () => {
     try {
+      // Barra de cargar
       showLoading();
-      console.log("Eventos en el calendario:", JSON.stringify(myEvents));
-      const schedules = JSON.stringify(myEvents);
-      const id = idUsr as string;
-      await updateScheduleStudent(id, schedules);
 
+      const id = idUsr as string;
+
+      const config: ConfigProps = {
+        restrictionOne: { hoursMin: 8, hoursMax: 12, autoArrage: true },
+        restrictionTwo: {
+          hoursMaxPerDay: 4,
+          hoursMaxPerWeek: 20,
+          autoArrage: true,
+        },
+      };
+
+      const facedeSave = new FacadeSave(id, myEvents, config);
+
+      facedeSave.save();
+
+      // Mensajes de actualización
       const message = "Horario actualizado correctamente";
       enqueueSnackbar(message, { variant: "success" });
+
+      /* // Las siguientes dos lineas solo son para que el ESLint no marque error
+      return;
+      await updateScheduleStudent(id, schedules); */
     } catch (err) {
       const message = "Algo salio mal al actualizar el horario";
       enqueueSnackbar(message, { variant: "error" });
