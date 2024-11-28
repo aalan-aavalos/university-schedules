@@ -430,7 +430,7 @@ const StudentesAdmin = () => {
         <DialogContent>
           <DialogContentText>
             Ingresa los datos requeridos para
-            {formUpdate ? "actualizar" : "crear"} el estudiantes
+            {formUpdate ? " actualizar" : " crear"} el estudiante
           </DialogContentText>
           <TextField
             autoFocus
