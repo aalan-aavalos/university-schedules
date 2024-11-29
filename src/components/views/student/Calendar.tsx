@@ -16,7 +16,7 @@ import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 
 // Clases
 import { ScheduleValidator } from "@/models/scheduleValidator";
-import { ScheduleUpdater } from "@/models/updateSchedule";
+import { ScheduleUpdater } from "@/models/scheduleUpdater";
 import { ScheduleSummary } from "@/models/scheduleSummary";
 import { AutoArrangeService } from "@/models/autoArrangeService";
 
@@ -63,7 +63,6 @@ const CalendarComponent = ({
       myEvents: Array<EventProps>,
       config: ConfigProps
     ) {
-      // Inicializamos las dependencias
       this.scheduleValidator = new ScheduleValidator(myEvents, config);
       this.scheduleSummary = new ScheduleSummary();
       this.scheduleUpdater = new ScheduleUpdater(idUsr);
@@ -71,36 +70,30 @@ const CalendarComponent = ({
     }
 
     public async save(): Promise<void> {
-      // Obtener las validaciones
       const validations: ValidationProps =
         this.scheduleValidator.getValidations();
       console.log("validations", validations);
 
-      // Usamos el servicio AutoArrange para ajustar el horario según las restricciones
       const adjustedSchedule =
         this.autoArrangeService.autoArrangeSchedule(validations);
       console.log("adjustedSchedule", adjustedSchedule);
 
-      // Generar el resumen de materias inválidas
       const summary =
         this.scheduleSummary.generateInvalidSubjectsReport(validations);
       console.log("summary", summary);
 
-      // Mostrar el resumen de materias inválidas en una alerta
       await confirm({
-        description: summary, // Mensaje de la alerta
-        title: "Resumen de Materias Inválidas", // Título de la alerta
-        confirmationText: "Siguiente", // Texto del botón
+        description: summary,
+        title: "Resumen de Materias Inválidas",
+        confirmationText: "Siguiente", 
         hideCancelButton: true,
       });
 
-      // Ahora que el horario ha sido ajustado, podemos proceder a actualizar el horario
-      const updatedSchedule = adjustedSchedule.AllEvents; // Obtenemos el horario ajustado
+      
+      const updatedSchedule = adjustedSchedule.AllEvents;
 
-      // Realizamos la actualización en el backend o en la base de datos
       await this.scheduleUpdater.updateSchedule(updatedSchedule);
 
-      // Mostrar mensaje de éxito
       enqueueSnackbar("Horario actualizado correctamente", {
         variant: "success",
       });

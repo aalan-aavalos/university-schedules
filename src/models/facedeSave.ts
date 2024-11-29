@@ -1,6 +1,6 @@
 // Clases
 import { ScheduleValidator } from '@/models/scheduleValidator';
-import { ScheduleUpdater } from '@/models/updateSchedule';
+import { ScheduleUpdater } from '@/models/scheduleUpdater';
 import { ScheduleSummary } from '@/models/scheduleSummary';
 
 // Interfcaes
