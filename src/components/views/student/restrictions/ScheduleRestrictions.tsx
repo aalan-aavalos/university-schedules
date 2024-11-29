@@ -1,4 +1,11 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, {
+  useState,
+  // ChangeEvent,
+  FormEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
+
 import {
   Box,
   Button,
@@ -7,13 +14,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
-  Checkbox,
-  FormControlLabel,
   Slider,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
@@ -42,7 +43,11 @@ const initialConfig: ConfigProps = {
   },
 };
 
-const ScheduleRestrictions = () => {
+const ScheduleRestrictions = ({
+  onChange,
+}: {
+  onChange: Dispatch<SetStateAction<ConfigProps>>;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<ConfigProps>(initialConfig);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -73,7 +78,9 @@ const ScheduleRestrictions = () => {
 
     if (exitHour > 21) {
       // Limpiar el campo de hora de entrada si la suma supera las 9:00 p.m.
-      setErrors({ personalEntryHour: "La hora de salida excede las 9:00 p.m." });
+      setErrors({
+        personalEntryHour: "La hora de salida excede las 9:00 p.m.",
+      });
       setConfig((prev) => ({
         ...prev,
         restrictionOne: {
@@ -88,12 +95,16 @@ const ScheduleRestrictions = () => {
         restrictionOne: {
           ...prev.restrictionOne,
           hoursMin: entryHour,
+          hoursMax: exitHour,
         },
       }));
     }
   };
 
-  const handleRadioChange = (event: ChangeEvent<HTMLInputElement>, field: string) => {
+  /* const handleRadioChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    field: string
+  ) => {
     const value = event.target.value === "on";
     if (field === "autoArrageOne") {
       setConfig((prev) => ({
@@ -106,17 +117,20 @@ const ScheduleRestrictions = () => {
         restrictionTwo: { ...prev.restrictionTwo, autoArrage: value },
       }));
     }
-  };
+  }; */
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     if (!config.restrictionOne.hoursMin) {
-      setErrors({ personalEntryHour: "Debes seleccionar una hora de entrada." });
+      setErrors({
+        personalEntryHour: "Debes seleccionar una hora de entrada.",
+      });
       return;
     }
 
     console.log("Restricciones enviadas:", config);
+    onChange(config);
     handleClose();
   };
 
@@ -133,7 +147,9 @@ const ScheduleRestrictions = () => {
             <Box sx={{ display: "grid", gap: 2 }}>
               {/* Restricción 1 */}
               <Box>
-                <p>Las clases inician de "8:00 a.m. y terminan a las 9:00 p.m."</p>
+                <p>
+                  Las clases inician de 8:00 a.m. y terminan a las 9:00 p.m.
+                </p>
                 <p>Seleccione las horas semanales:</p>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                   <Slider
@@ -157,7 +173,7 @@ const ScheduleRestrictions = () => {
               </Box>
 
               {/* Restricción 2 */}
-              <Box>
+              {/* <Box>
                 <FormControl>
                   <FormLabel>Ajuste automático de materias</FormLabel>
                   <RadioGroup
@@ -165,14 +181,22 @@ const ScheduleRestrictions = () => {
                     value={config.restrictionTwo.autoArrage ? "on" : "off"}
                     onChange={(e) => handleRadioChange(e, "autoArrageTwo")}
                   >
-                    <FormControlLabel value="on" control={<Radio />} label="On" />
-                    <FormControlLabel value="off" control={<Radio />} label="Off" />
+                    <FormControlLabel
+                      value="on"
+                      control={<Radio />}
+                      label="On"
+                    />
+                    <FormControlLabel
+                      value="off"
+                      control={<Radio />}
+                      label="Off"
+                    />
                   </RadioGroup>
                 </FormControl>
-              </Box>
+              </Box> */}
 
               {/* Restricción 3 (Opción Independiente) */}
-              <Box>
+              {/*  <Box>
                 <FormControl>
                   <FormLabel>Opción independiente</FormLabel>
                   <RadioGroup
@@ -180,17 +204,31 @@ const ScheduleRestrictions = () => {
                     value={config.restrictionTwo.autoArrage ? "on" : "off"}
                     onChange={(e) => handleRadioChange(e, "independentRadio")}
                   >
-                    <FormControlLabel value="on" control={<Radio />} label="On" />
-                    <FormControlLabel value="off" control={<Radio />} label="Off" />
+                    <FormControlLabel
+                      value="on"
+                      control={<Radio />}
+                      label="On"
+                    />
+                    <FormControlLabel
+                      value="off"
+                      control={<Radio />}
+                      label="Off"
+                    />
                   </RadioGroup>
                 </FormControl>
-              </Box>
+              </Box> */}
 
               {/* Hora de entrada */}
               <Box>
-                <Typography variant="subtitle1">Hora de entrada personal:</Typography>
+                <Typography variant="subtitle1">
+                  Hora de entrada personal:
+                </Typography>
                 <Select
-                  value={config.restrictionOne.hoursMin ? `${config.restrictionOne.hoursMin}:00` : ""}
+                  value={
+                    config.restrictionOne.hoursMin
+                      ? `${config.restrictionOne.hoursMin}:00`
+                      : ""
+                  }
                   onChange={handleEntryHourChange}
                   displayEmpty
                   fullWidth
@@ -209,7 +247,9 @@ const ScheduleRestrictions = () => {
                   })}
                 </Select>
                 {errors.personalEntryHour && (
-                  <Typography color="error">{errors.personalEntryHour}</Typography>
+                  <Typography color="error">
+                    {errors.personalEntryHour}
+                  </Typography>
                 )}
               </Box>
 

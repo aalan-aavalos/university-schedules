@@ -13,7 +13,7 @@ import { Button } from "@mui/material";
 // import { updateScheduleStudent } from "@/custom-graphql/mutations";
 import { enqueueSnackbar } from "notistack";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
-import ScheduleRestrictions  from "./restrictions/ScheduleRestrictions";
+import ScheduleRestrictions from "./restrictions/ScheduleRestrictions";
 
 // Clases
 import { ScheduleValidator } from "@/models/scheduleValidator";
@@ -36,6 +36,15 @@ interface SubjectByStudent {
   teacherID: string;
 }
 
+const initialConfig: ConfigProps = {
+  restrictionOne: { hoursMin: 8, hoursMax: 14, autoArrage: true },
+  restrictionTwo: {
+    hoursMaxPerDay: 5,
+    hoursMaxPerWeek: 25,
+    autoArrage: true,
+  },
+};
+
 const CalendarComponent = ({
   subjects,
   idUsr,
@@ -48,6 +57,8 @@ const CalendarComponent = ({
   const [itemInfo, setItemInfo] = useState<SubjectByStudent>();
 
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
+
+  const [config, setConfig] = useState<ConfigProps>(initialConfig);
 
   const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
 
@@ -86,11 +97,10 @@ const CalendarComponent = ({
       await confirm({
         description: summary,
         title: "Resumen de Materias Inválidas",
-        confirmationText: "Siguiente", 
+        confirmationText: "Siguiente",
         hideCancelButton: true,
       });
 
-      
       const updatedSchedule = adjustedSchedule.AllEvents;
 
       await this.scheduleUpdater.updateSchedule(updatedSchedule);
@@ -151,7 +161,7 @@ const CalendarComponent = ({
           ? new Date(item.end)
           : item.end
         ).getTime() +
-        30 * 60 * 1000
+          30 * 60 * 1000
       );
       console.log(item);
       const event = {
@@ -169,27 +179,12 @@ const CalendarComponent = ({
 
   const saveSchedule = async () => {
     try {
-      // Barra de cargar
       showLoading();
-
       const id = idUsr as string;
-
-      const config: ConfigProps = {
-        restrictionOne: { hoursMin: 8, hoursMax: 12, autoArrage: true },
-        restrictionTwo: {
-          hoursMaxPerDay: 4,
-          hoursMaxPerWeek: 20,
-          autoArrage: true,
-        },
-      };
 
       const facedeSave = new FacadeSave(id, myEvents, config);
 
       facedeSave.save();
-
-      /* // Las siguientes dos lineas solo son para que el ESLint no marque error
-      return;
-      await updateScheduleStudent(id, schedules); */
     } catch (err) {
       const message = "Algo salio mal al actualizar el horario";
       enqueueSnackbar(message, { variant: "error" });
@@ -233,7 +228,9 @@ const CalendarComponent = ({
           draggableAccessor={() => true}
           events={myEvents}
           localizer={localizer}
-          onDropFromOutside={(e: DragFromOutsideItemArgs) => onDropFromOutside(e)}
+          onDropFromOutside={(e: DragFromOutsideItemArgs) =>
+            onDropFromOutside(e)
+          }
           onSelectSlot={(e: SlotInfo) => newEvent(e)}
           resizable
           style={{ height: "70vh", width: "70vw" }}
@@ -241,16 +238,21 @@ const CalendarComponent = ({
       </div>
 
       {/* Contenedor para alinear los botones */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "16px",
+        }}
+      >
         <Button variant="contained" onClick={saveSchedule}>
           Guardar Calendario
         </Button>
         <Button>
-          <ScheduleRestrictions />
+          <ScheduleRestrictions onChange={setConfig} />
         </Button>
       </div>
     </>
-
   );
 };
 
