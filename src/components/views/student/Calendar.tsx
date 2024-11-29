@@ -10,10 +10,21 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Button } from "@mui/material";
-import { updateScheduleStudent } from "@/custom-graphql/mutations";
+// import { updateScheduleStudent } from "@/custom-graphql/mutations";
 import { enqueueSnackbar } from "notistack";
 import { useLoadingBackdrop } from "@/hooks/useLoadingBackdrop";
 import ScheduleRestrictions  from "./restrictions/ScheduleRestrictions";
+
+// Clases
+import { ScheduleValidator } from "@/models/scheduleValidator";
+import { ScheduleUpdater } from "@/models/scheduleUpdater";
+import { ScheduleSummary } from "@/models/scheduleSummary";
+import { AutoArrangeService } from "@/models/autoArrangeService";
+
+// Interfcaes
+import { ConfigProps, EventProps, ValidationProps } from "@/interfaces";
+
+import { useConfirm } from "material-ui-confirm";
 
 const localizer = momentLocalizer(moment);
 
@@ -23,14 +34,6 @@ interface SubjectByStudent {
   hours_per_student: number;
   schedule: string | null;
   teacherID: string;
-}
-
-interface EventProps {
-  id: string;
-  title: string;
-  start: Date;
-  end: Date;
-  isAllDay: boolean;
 }
 
 const CalendarComponent = ({
@@ -47,6 +50,56 @@ const CalendarComponent = ({
   const [itemsList, setItemsList] = useState<JSX.Element[]>([]);
 
   const { LoadingBackdrop, hideLoading, showLoading } = useLoadingBackdrop();
+
+  const confirm = useConfirm();
+
+  class FacadeSave {
+    private scheduleValidator: ScheduleValidator;
+    private scheduleSummary: ScheduleSummary;
+    private autoArrangeService: AutoArrangeService;
+    private scheduleUpdater: ScheduleUpdater;
+
+    constructor(
+      idUsr: string,
+      myEvents: Array<EventProps>,
+      config: ConfigProps
+    ) {
+      this.scheduleValidator = new ScheduleValidator(myEvents, config);
+      this.scheduleSummary = new ScheduleSummary();
+      this.scheduleUpdater = new ScheduleUpdater(idUsr);
+      this.autoArrangeService = new AutoArrangeService(config);
+    }
+
+    public async save(): Promise<void> {
+      const validations: ValidationProps =
+        this.scheduleValidator.getValidations();
+      console.log("validations", validations);
+
+      const adjustedSchedule =
+        this.autoArrangeService.autoArrangeSchedule(validations);
+      console.log("adjustedSchedule", adjustedSchedule);
+
+      const summary =
+        this.scheduleSummary.generateInvalidSubjectsReport(validations);
+      console.log("summary", summary);
+
+      await confirm({
+        description: summary,
+        title: "Resumen de Materias Inválidas",
+        confirmationText: "Siguiente", 
+        hideCancelButton: true,
+      });
+
+      
+      const updatedSchedule = adjustedSchedule.AllEvents;
+
+      await this.scheduleUpdater.updateSchedule(updatedSchedule);
+
+      enqueueSnackbar("Horario actualizado correctamente", {
+        variant: "success",
+      });
+    }
+  }
 
   const handleDragStart = useCallback(
     (event: DragEvent<HTMLDivElement>, item: SubjectByStudent) => {
@@ -91,6 +144,7 @@ const CalendarComponent = ({
 
       if (!itemInfo) return;
       const { id, subject_name } = itemInfo;
+      console.log(itemInfo, id);
 
       const end = new Date(
         (typeof item.end === "string"
@@ -101,7 +155,7 @@ const CalendarComponent = ({
       );
       console.log(item);
       const event = {
-        id,
+        id: id + Math.random(),
         title: subject_name,
         start: new Date(item.start),
         end,
@@ -115,14 +169,27 @@ const CalendarComponent = ({
 
   const saveSchedule = async () => {
     try {
+      // Barra de cargar
       showLoading();
-      console.log("Eventos en el calendario:", JSON.stringify(myEvents));
-      const schedules = JSON.stringify(myEvents);
-      const id = idUsr as string;
-      await updateScheduleStudent(id, schedules);
 
-      const message = "Horario actualizado correctamente";
-      enqueueSnackbar(message, { variant: "success" });
+      const id = idUsr as string;
+
+      const config: ConfigProps = {
+        restrictionOne: { hoursMin: 8, hoursMax: 12, autoArrage: true },
+        restrictionTwo: {
+          hoursMaxPerDay: 4,
+          hoursMaxPerWeek: 20,
+          autoArrage: true,
+        },
+      };
+
+      const facedeSave = new FacadeSave(id, myEvents, config);
+
+      facedeSave.save();
+
+      /* // Las siguientes dos lineas solo son para que el ESLint no marque error
+      return;
+      await updateScheduleStudent(id, schedules); */
     } catch (err) {
       const message = "Algo salio mal al actualizar el horario";
       enqueueSnackbar(message, { variant: "error" });
